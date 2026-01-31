@@ -228,7 +228,7 @@ public class UserProfileEntity {
 # CryptoKey Provider
 
 Before we enable mango4j-crypto to encrypt/decrypt our UserProfile entity we need to create our implementation of the 
-[CryptoKeyProvider](../../../mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/providers/CryptoKeyProvider.java) 
+[CryptoKeyProvider](/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/providers/CryptoKeyProvider.java) 
 interface for our application. If you store your CryptoKey objects in a database it might look something like this:
 
 ```java language=java
