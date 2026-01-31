@@ -1,0 +1,30 @@
+@startuml
+:Which HMAC strategy should I use;
+if (Do you need to support unique constraints on highly confidential data) then (yes)
+  if(Do you intend to re-key all records (per tenant) once a new HMAC key is introduced?) then (yes)
+    :Double HMAC Strategy
+                     or
+        List HMAC Strategy;
+  else (no)
+    :List HMAC strategy;
+  endif
+else (no)
+  if(Do you cache HMAC keys) then (yes)
+    if(Can you tolerate a search outage when a new HMAC key is introduced) then (yes)
+        :Single HMAC Strategy
+                       or
+           List HMAC Strategy;
+    else (no)
+        :Time Based Single HMAC Strategy
+                                or
+                Double HMAC Strategy
+                                or
+                     List HMAC Strategy;
+    endif
+  else (no)
+    :Single HMAC Strategy
+                   or
+       List HMAC Strategy;
+  endif
+endif
+@enduml

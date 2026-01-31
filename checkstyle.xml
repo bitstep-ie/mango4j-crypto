@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE module PUBLIC
+        "-//Puppy Crawl//DTD Check Configuration 1.3//EN"
+        "http://checkstyle.sourceforge.net/dtds/configuration_1_3.dtd">
+
+<module name="Checker">
+    <property name="charset" value="UTF-8"/>
+
+    <module name="TreeWalker">
+        <property name="tabWidth" value="4"/>
+        <module name="AvoidStarImport"/>
+        <module name="ConstantName"/>
+
+        <!--
+            1. Only tabs are allowed for indentation - except JavaDoc and multi-line method declaration
+            2. Single line comment is enforced to include a single space between double slashes and the content
+                (e.g. "// Good", "//Bad")
+
+            Attempting to explain regex below:
+            (^ +[^\*])
+                This is to make sure that lines aren't indented with just spaces after the beginning,
+                unless they have a star directly afterwards
+            ^\t* +
+                This starts with 0 or more tabs, followed by 1 or more spaces (so if we have spaces in the line)
+            (?!\*)((\(.*\))|(.*(?&lt;!([\S]));$)|(}$))
+                This tries to account for multi-line comments, javadocs, and brackets on different lines, etc.
+                (?!\*)
+                    Negative lookahead for * - if we have a multi-line comment, ignore
+                (\(.*\))
+                    Match an opening bracket at the beginning of a line, with a closing bracket on the same line.
+                    This is for cases where we break the method arg brackets onto a new line.
+                (.*(?&lt;!([\S]));$)
+                    A bit more complex - this is any character, followed by a negative lookbehind for non-space characters
+                    before a semi-colon at the end of a line.
+                    This catches cases where we have a space before the semi-colon at the end of a line.
+            (\}$)))
+                Matching just a closing brace on a line
+            (^\t*\/\/(?! ))
+                This is for regular comments, making sure // is followed by a space
+        -->
+        <module name="RegexpSinglelineJava">
+            <property name="format"
+                      value="(^ +[^\*])|(^\t* +(?!\*)((\(.*\))|(.*(?&lt;!([\S]));$)|(\}$)))|(^\t*\/\/(?! ))"/>
+            <property name="message"
+                      value="Malformed line. Please make sure all the indentations are tab only and there is single space at the start of the comment."/>
+            <property name="ignoreComments" value="false"/>
+        </module>
+
+        <!--
+            Checks comments to make sure // is followed by a single space.
+
+            (\s+\/\/(?!NOSONAR)\S)
+                Checks if // is followed by a non-space character but allows for NOSONAR straight after //
+            (\s+\/\/\s{2,})
+                Checks if // is followed by 2 or more space characters
+
+        -->
+        <module name="RegexpSinglelineJava">
+            <property name="format" value="(\s+\/\/(?!NOSONAR)\S)|(\s+\/\/\s{2,})"/>
+            <property name="message"
+                      value="Comments must have a single space between // and the content of the comment."/>
+            <property name="ignoreComments" value="false"/>
+        </module>
+
+        <module name="EmptyLineSeparator">
+            <property name="tokens" value="METHOD_DEF"/>
+        </module>
+
+        <module name="MethodParamPad"/>
+        <module name="NoLineWrap"/>
+        <module name="ParenPad"/>
+        <module name="UnusedImports"/>
+        <module name="WhitespaceAfter"/>
+        <module name="WhitespaceAround"/>
+    </module>
+</module>

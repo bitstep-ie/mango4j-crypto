@@ -1,0 +1,29 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+title Global Create/Update/Delete PII resource Call Flow
+
+participant     "Client Application"            as client
+box             "Global PII Service"
+boundary        "Controller"                    as globalPiiController
+participant     "Service"                       as globalPiiService
+database        "Database"                      as globalPiiDb
+end box
+participant     "Axon Data Replication topic"   as axon
+box             "US Central PII Service"
+boundary        "US Central Service"            as usCentralPiiService
+database        "Database"                      as usCentralPiiDb
+end box
+
+
+client -> globalPiiController: Create/Update/Delete call from client application
+globalPiiController -> globalPiiService
+globalPiiService -> globalPiiDb: Record written to database
+globalPiiService <- globalPiiDb
+globalPiiService --> axon: Service places message on data replication topic
+globalPiiService -> globalPiiController: OK
+globalPiiController -> client: Response to client
+axon -> usCentralPiiService: US Central processes message
+usCentralPiiService -> usCentralPiiDb: DB is updated with created/updated/deleted record details
+@enduml

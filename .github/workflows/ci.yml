@@ -1,0 +1,70 @@
+name: CI Builds
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-scan:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+      contents: write # Required for dep graph and sonar
+      actions: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # fetch full history
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      - name: Build with Maven
+        run: mvn -B install --file pom.xml
+
+      - name: Update dependency graph
+        uses: advanced-security/maven-dependency-submission-action@b275d12641ac2d2108b2cbb7598b154ad2f2cee8 # v5.0.0 - Using full commit sha to avoid security hotspot
+
+      - name: SonarQube Scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: |
+          mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+            -Dsonar.projectKey=bitstep-ie_mango4j \
+            -Dsonar.organization=bitstep-ie \
+            -Dsonar.host.url=${SONAR_HOST_URL} \
+            -Dsonar.token=${SONAR_TOKEN} \
+            -Dsonar.branch.name=${GITHUB_REF_NAME} \
+            -Dsonar.coverage.exclusions=**/test/**
+
+  docs:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Validate compilation (fail on warnings)
+        run: |
+          mvn compile \
+            -Dmaven.compiler.showWarnings=true
+
+      # Disabled javadocs temporarily
+      # - name: Validate Javadocs
+      #   run: |
+      #     mvn javadoc:aggregate \
+      #       -Dadditionalparam="-Xdoclint:all" \
+      #       -Dmaven.javadoc.failOnError=true

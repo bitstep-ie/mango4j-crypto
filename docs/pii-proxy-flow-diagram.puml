@@ -1,0 +1,36 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+title US Central Create/Update/Delete PII resource Call Flow
+
+participant     "Client Application"            as client
+box             "US Central PII Service"
+boundary        "Controller"                    as usCentralPiiController
+participant     "Service"                       as usCentralPiiService
+database        "Database"                      as usCentralPiiDb
+end box
+participant     "Axon Data Replication topic"   as axon
+box             "Global PII Service"
+boundary        "Global proxy controller"       as globalPiiController
+participant     "Service"                       as globalPiiService
+database        "Database"                      as globalPiiDb
+end box
+
+
+client -> usCentralPiiController: Create/Update/Delete call from client application
+alt#Gold #LightBlue isProxyRequired flag for customer is true
+    usCentralPiiController -> globalPiiController: Call Global "'on-behalf-of' API"
+    globalPiiController -> globalPiiService: Process request on behalf of customer
+    globalPiiService -> globalPiiDb: Create/Update/Delete record
+    globalPiiDb -> globalPiiService: ok
+    globalPiiService -> globalPiiController: ok
+    globalPiiController -> axon: Service places message on data replication topic
+    globalPiiController -> usCentralPiiController: return response
+    usCentralPiiController -> client: Return response to customer
+else #Pink isProxyRequired flag for customer is false
+    usCentralPiiController -> usCentralPiiService: Process record
+    usCentralPiiService -> usCentralPiiDb: Create/Update/Delete record
+    usCentralPiiService -> usCentralPiiController: ok
+    usCentralPiiController -> client:Return response to customer
+end
+@enduml

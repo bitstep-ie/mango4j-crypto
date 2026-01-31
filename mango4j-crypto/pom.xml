@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>mango4j</artifactId>
+        <groupId>ie.bitstep.mango</groupId>
+        <version>3.0.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>mango4j-crypto</artifactId>
+    <name>mango4j-crypto</name>
+    <packaging>jar</packaging>
+
+    <properties>
+        <sonar.exclusions>
+            ie/bitstep/mango/crypto/keyrotation/**
+        </sonar.exclusions>
+        <sonar.cpd.exclusions>**/CryptoShieldHmacHolder.java</sonar.cpd.exclusions>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>ie.bitstep.mango</groupId>
+            <artifactId>mango4j-crypto-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ie.bitstep.mango</groupId>
+            <artifactId>mango4j-utils</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit-jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito-core.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <configuration>
+                    <verbose>true</verbose>
+                    <mutationThreshold>100</mutationThreshold>
+                    <excludedClasses>
+                        <!-- These classes are experimental for now (and complex) so not writing tests until it settles -->
+                        <param>ie.bitstep.mango.crypto.keyrotation.**</param>
+                    </excludedClasses>
+                    <excludedMethods>
+                        <!-- Exclude logging-only method from mutation testing -->
+                        <param>handleMigrationSupport</param>
+                    </excludedMethods>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <additionalOptions>-Xdoclint:none</additionalOptions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

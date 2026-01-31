@@ -1,0 +1,14 @@
+package ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.cascade;
+
+import ie.bitstep.mango.crypto.annotations.CascadeEncrypt;
+
+public class TestEntityWithOnlyCascadeEncryptFieldsWhoseTypesHaveOnlyCascadeEncryptAlso {
+
+	@CascadeEncrypt
+	private TestEntityWithOnlyCascadeEncryptFieldsWhoseTypesHaveEncryptAndHmac testEntityWithOnlyCascadeEncryptFieldsWhoseTypesHaveEncryptAndHmac1;
+
+	@CascadeEncrypt
+	private TestEntityWithOnlyCascadeEncryptFieldsWhoseTypesHaveEncryptAndHmac testEntityWithOnlyCascadeEncryptFieldsWhoseTypesHaveEncryptAndHmac2;
+
+	private TestEntityWithOnlyCascadeEncryptFieldsWhoseTypesHaveEncryptAndHmac testEntityWithOnlyCascadeEncryptFieldsWhoseTypesHaveEncryptAndHmacNotTraversed;
+}

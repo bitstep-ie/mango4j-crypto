@@ -1,0 +1,27 @@
+The following scenarios could happen during rekey job:
+
+encryption:
+rekey job finishes before all instances have moved onto the new key
+
+    Therefore:
+    rekey job shouldn't finish before both of the following are true:
+        There are no records to rekey
+        the instant defined by ("key created date" + "key cache duration") is in the past
+
+HMAC:
+rekey job finishes before all instances have started also using the new key
+Instances will still use the old HMAC keys after they're deleted for a period of "key cache duration" after
+the old key(s) has (have) been deleted. This means that the final notification to "purge all redundant HMACs"
+must wait for a period of "key cache duration" after the key is marked as deleted.
+So the steps are:
+Rekey job starts to rekey HMACs
+
+rekey job shouldn't finish before both of the following are true:
+        There are no records to rekey
+        the instant defined by ("key created date" + "key cache duration") is in the past
+
+After the job is finished the rekey job must called "mark key as deleted"
+The rekey job must then wait for a period of "key cache duration".
+Then the rekey job must call "purge redundant hmacs"
+
+
