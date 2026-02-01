@@ -289,11 +289,11 @@ public class ApplicationCryptoKeyProvider implements CryptoKeyProvider {
 > **NOTES**:
 > * The getCurrentKey() method should return the currently active encryption key for your tenant/application. 
 >   It is called for the CryptoShield.encrypt() method to get the key it should use for the encryption (if applicable).
-> * The getCurrentHmacKeys() should return all HMAC keys which are currently in use in order of createdDate descending
->   (so the latest HMAC key would be the 1st in the list if there are multiple). This is called by CryptoShield.encrypt() 
->   and CryptoShield.generateHmacs() to get the key(s) it should use to calculate HMACs (if applicable).
+> * The getCurrentHmacKeys() should return all HMAC keys which are currently in use for your tenant/application. 
+>   This is called by CryptoShield.encrypt() and CryptoShield.generateHmacs() to get the key(s) it should use to 
+>   calculate HMACs.
 > * This example uses the concept of statuses on the keys to keep track of which ones have been deleted. 
->   This allows us to keep the key for certain length of time after a rekey (and subsequent key deletion) and then 
+>   This allows us to keep the key for a certain length of time after a rekey (and subsequent key deletion) and then 
 >   manually clean them up when we're 100% sure we don't need them. Copying this approach is up to you.
 > * The getById() method should return the CryptoKey regardless of its status. This method is called for the 
 >   CryptoShield.decrypt() method to get the key needed to decrypt the entity.
@@ -329,7 +329,7 @@ public CryptoShield cryptoShield(CryptoKeyProvider cryptoKeyProvider) {
 > * ConfigurableObjectMapperFactory is a default implementation of
 >   [ObjectMapperFactory](mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/factories/ObjectMapperFactory.java) 
 >   that comes with the library to provide a Jackson ObjectMapper that it can use for formatting and parsing of the ciphertext. 
->   You can supply your own ObjectMapper implementation instead if needed.
+>   You can supply your own ObjectMapperFactory implementation instead if needed.
 
 Then your application code can encrypt your entities by calling:
 
@@ -359,8 +359,8 @@ explanation of this material) and this library provides 4
 [HMAC Strategies](docs/mango4j/mango4j-crypto-core/basic.md#hmac-strategies) out of the box.
 
 You can choose which ones to apply to your application entities by using the corresponding class level annotation. The
-library authors strongly advise application developers to use
-the @ListHmacStrategy unless there are very strong reasons not to. Currently, the library supports the following (in
+library authors strongly advise application developers to consider
+the @ListHmacStrategy unless there are strong reasons not to. Currently, the library supports the following (in
 order of preference of the mango4j-crypto team):
 <br>
 @ListHmacStrategy
@@ -607,7 +607,7 @@ it with an SQL DB check out the [mango4j-crypto-example](https://github.com/bits
     the Lookup interface and the getUniqueValues() and setUniqueValues() from the Unique interface. The library calls back
     to these methods to get and set the HMACs. This is what
     makes this the most powerful HMAC strategy, we can have as many HMACS for as many keys or tokenized values as needed.
-> * If you are using HMACs for unique purposes, make sure to create the appropriate unique constraint definitions on your
+> * If you are using HMACs for unique constraint purposes, make sure to create the appropriate unique constraint definitions on your
     DB. Generally you would place a compound unique constraint on the columns representing CryptoShieldHmacHolder.alias 
     and CryptoShieldHmacHolder.value (and tenant ID if applicable).
 
@@ -630,8 +630,8 @@ The library will then generate a series of alternative HMACs for that field usin
 example the PanTokenizer (which is included in the library) in
 the sample code above will result in the lookup HMAC list for that entity including the HMAC of the last 4 digit of the
 PAN, the HMAC of the first 6 digits of the PAN, the HMAC of
-the PAN without dashes or spaces (if there are any) and the HMAC of the full original PAN that was supplied. The
-library has some standard HMAC tokenizers, please see the javadocs
+the PAN without dashes or spaces (if there are any). These alternative representations will then be stored along with 
+the HMAC of the full original PAN that was supplied. The library has some standard HMAC tokenizers, please see the javadocs
 for each one to learn what HMAC representations they generate. Applications can supply their own HmacTokenizers with
 whatever tokenization logic they need by implementing the
 [HmacTokenizer](mango4j-crypto/src/main/java/ie/bitstep/mango/crypto/tokenizers/HmacTokenizer.java) interface. 
@@ -658,9 +658,9 @@ This strategy almost works the same way as the SingleHmacStrategy, except that i
 write operations until the CryptoKey.startTime has passed (make sure to set this field on your corresponding CryptoKeys) .
 
 ## Double HMAC Strategy
-Please read the [the official general documentation](docs/mango4j/mango4j-crypto-core/basic.md#double-hmac-strategy) a description 
+Please read the [the official general documentation](docs/mango4j/mango4j-crypto-core/basic.md#double-hmac-strategy) for a description 
 of the Double HMAC Strategy and for when you might want to use it. The entity definition when using it is similar to the 
-entity definition of the Single HMAC Strategy. Below is an example entity definition.
+one for the Single HMAC Strategy. Below is an example entity definition.
 
 ```java language=java
 import ie.bitstep.mango.crypto.annotations.Encrypt;
@@ -757,8 +757,7 @@ public class UserProfileEntity {
 >   @Hmac has 2 associated HMAC fields 'panHmac1'/'panHmac2' and 'userNameHmac1'/'userNameHmac2'. This is because 
 >   with the Double HMAC Strategy we need 2 HMACs to be stored separately for each HMAC source field. 
 > * Again, you'll notice that we didn't bother defining getters/setters for the USERNAME_HMAC_1, USERNAME_HMAC_2, 
->   PAN_HMAC_1 or PAN_HMAC_2 fields either, for the same reason that we didn't bother defining getters/setters for the 
->   ENCRYPTED_DATA field.
+>   PAN_HMAC_1 or PAN_HMAC_2 fields either, for the same reasons as mentioned before.
 > * The panHmac1, panHmac2, userNameHmac1 and userNameHmac2 fields are persisted to the DB in our example and each have their own columns 
 >   (we're using Hibernate here). 
 > * The USERNAME_HMAC_1 and USERNAME_HMAC_2 each have a unique constraint on them also.
@@ -769,11 +768,11 @@ public class UserProfileEntity {
 <br>
 
 # Key Rotation
-Key rotation is fairly straightforward when you just think of it as an additive process. A new encryption or HMAC key is 
-added to the system but the old keys are left as they are. Only when no more records are left which were encrypted or 
-has had HMACs calculated with an older key should that key be removed from the system. As long as your 
-CryptoKeyProvider implementation works as prescribed then there shouldn't be much to think about when it comes to key 
-rotation. 
+Key rotation is almost fairly straightforward when you just think of it as an additive process. A new encryption or HMAC key is 
+added to the system but the old keys are left as they are. Only when no more records are left which were encrypted, or 
+has had HMACs calculated, with an older key should that key be removed from the system. As long as your 
+CryptoKeyProvider implementation works as prescribed then things should be fine. 
+[But make sure you understand how HMACs are different](docs/mango4j/mango4j-crypto-core/basic.md#hmac-key-rotation-challenges)...
 
 # Rekeying
 Mango4j-crypto has built in support for rekey jobs (currently in BETA). Encryption rekeying is supported for all 

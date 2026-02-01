@@ -78,7 +78,7 @@ cryptographic provider in mind (e.g. Azure Dedicated HSM) but doing this could i
 application needs the potential to use different providers (different regions might have
 different cryptographic providers or regulations). You may need to perform a [key rotation](#What-is-a-key-rotation)
 from one key which uses some cryptographic provider to a new
-key which uses some other cryptographic provider. So a more flexible design should be used to support a more generic
+key which uses some other cryptographic provider. Or even just rotate a key to a stronger algorithm, or whatever. So a more flexible design should be used to support a more generic
 approach to implementing ALE. We call
 the approach that the mango4j-crypto takes 'Key Driven Design'. The term 'Key Driven Design' comes from the fact
 that each tenant has a group of encryption/HMAC keys (referred
