@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
  * This annotation is used to tell the library which HMAC strategy an entity class uses.
  * <p>
  * For convenience just use {@link ListHmacStrategy @ListHmacStrategy}, {@link DoubleHmacStrategy @DoubleHmacStrategy},
- * {@link SingleHmacStrategy @SingleHmacStrategy} or {@link SingleTimeBasedHmacStrategy @SingleTimeBasedHmacStrategy}
+ * or {@link SingleHmacStrategy @SingleHmacStrategy}
  * instead of this annotation.
  * </p>
  */

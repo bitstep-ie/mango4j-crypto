@@ -650,13 +650,6 @@ order number (which you must never change!) and the library will calculate a sin
 > NOTE: Mixing HMAC and cleartext fields in a unique group is fine. But at least one field in the group must be marked 
 > with @Hmac otherwise the library will throw an error on startup.
 
-## Single HMAC Strategy With Key Start Time
-
-The entity definition is the same as the @SingleHmacStrategy entity except with the @SingleHmacStrategyForTimeBasedCryptoKey 
-annotation on the class instead.
-This strategy almost works the same way as the SingleHmacStrategy, except that it will not use the current HMAC key for 
-write operations until the CryptoKey.startTime has passed (make sure to set this field on your corresponding CryptoKeys) .
-
 ## Double HMAC Strategy
 Please read the [the official general documentation](docs/mango4j/mango4j-crypto-core/basic.md#double-hmac-strategy) for a description 
 of the Double HMAC Strategy and for when you might want to use it. The entity definition when using it is similar to the 
