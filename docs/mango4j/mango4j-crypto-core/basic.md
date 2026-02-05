@@ -446,7 +446,100 @@ the [mango4j-crypto](../../../README.md) library.
 # HMAC Strategies
 There are several designs you can choose to work with HMACs in your code depending on your application's ability to 
 tolerate or circumvent the challenges documented above (if they apply). So this section will discuss the ones supported 
-by Mango4j-crypto in the following section.
+by Mango4j-crypto in the following section. We strongly advise considering the List HMAC Strategy but due to its 
+unfamiliarity we'll start with the Single HMAC Strategy. 
+
+## Single HMAC Strategy
+
+This strategy is only recommended if you're aware of the challenges mentioned above and are confident that they do not 
+apply to your application.
+The Single HMAC strategy isn't really much of a strategy, it's just the way that many applications (unfortunately in
+many cases) default to using HMACs. So for each HMAC you have a
+single column in your table/record where you store the HMAC. So our USER_PROFILE table would simply look like this:
+
+| ID                                   | TENANT_ID  | CIPHER_TEXT                                                          | SOME_OTHER_NON_CONFIDENTIAL_ATTRIBUTE | USERNAME_HMAC                | ENCRYPTION_KEY_ID                    | HMAC_KEY_ID                          |
+|--------------------------------------|------------|----------------------------------------------------------------------|---------------------------------------|------------------------------|--------------------------------------|--------------------------------------|
+| 9c7e275e-3729-421c-a7c5-cf02bba17f2d | MyTenantID | QmFzZTY0RW5jb2RpbmdPZlVzZXJQcm9maWxlQ29uZmlkZW50aWFsQXR0cmlidXRlcw== | some value In the clear               | QmFzZTY0VmFsdWVPZlVzZXJuYW1l | 23a0a1b4-3897-4eaa-b8fa-1818a9540f0c | 31ae30a7-4228-40a9-9078-d5e994491981 |
+
+And (as usual) you have a list of HMAC keys on a tenant.
+However, as mentioned previously this strategy exposes you to the 2 main challenges associated with HMAC key rotation.
+
+Those challenges can still be dealt with using this strategy but the trade offs may not be worth it. Let's explore:
+
+## Search challenge solution
+The 1st of the HMAC challenges (search outage) can be dealt with in a fairly simple manner by introducing the concept 
+of a "HMAC key start time". When a new HMAC key is introduced into the system we could set this key start time to 
+"the current time + the key cache time". Then we make sure that the application never performs write operations with 
+that key until after the "key start time". An application would always use all of the HMAC keys it knows about to 
+perform search operations (regardless of key start times). But since no application would create/update a record with 
+the new key until all instances know about that key then all instances should be able to find all records including 
+new/updated ones.
+
+## Unique constraints challenge partial solution
+
+For the 2nd challenge (unique constraint integrity) it can only be narrowed down to a race condition but even then, only 
+by using a costly trade-off (in addition to using the "key start time" concept): forcing the application to perform a search before every write operation.
+<br>
+Let's elaborate with the username scenario:
+<br>
+<br>
+Before every write operation the application will search (using all HMAC keys) to see if a record already exists with 
+that username.
+<br>
+   . If the record exists then prevent the operation
+<br>
+   . If the record does not exist then carry out the operation.
+<br>
+This solution will be unacceptable to many applications as the necessity of performing a search operation before every 
+single write operation will have a negative impact on performance. As an aside, it also makes any unique constraint 
+definitions on the database irrelevant for most cases (but not all - so they're still needed).
+
+Imagine the following scenario (for even just a single instance application):
+<br>
+* Username `john.doe@test.com` is not in the system
+* A new HMAC key has been created in the application with a valid key start time
+* A request comes in to create a new record for username `john.doe@test.com` (on thread 1) 1 millisecond _<ins>before</ins>_ 
+"key start time"
+* Thread 1 searches for username `john.doe@test.com` with both HMAC keys 
+* Username with that HMAC doesn't exist so Thread 1 doesn't find it
+* Thread 1 decides to insert record using HMAC key 1 (since it's still before the "HMAC key start time")
+* Thread 1 gets paused before insert
+* A request comes in to create a new record for username `john.doe@test.com` (on thread 2) 1 millisecond _<ins>after</ins>_ 
+"key start time"
+* Thread 2 searches for username `john.doe@test.com` with both HMAC keys
+* Username with that HMAC doesn't exist so Thread 2 doesn't find it
+* Thread 2 decides to insert record using HMAC key 2 (since it's now after the "HMAC key start time")
+* Thread 1 wakes up and inserts the record with HMAC key 1
+* Thread 2 inserts the record with HMAC key 2
+* Username `john.doe@test.com` is now duplicated in the system
+
+
+As mentioned previously the Single HMAC Strategy should only be used for applications which do not use HMACs for unique 
+constraint requirements. Even then there's a better strategy for not only unique constraint integrity but also for 
+a more powerful search support. But please consider the challenges above when deciding which HMAC strategy is right for your application.
+
+<br>
+<br>
+
+**Pros of the Single HMAC strategy:**
+
+- Probably the simplest design possible for supporting HMACs in an application
+- Relational DB friendly, single table design
+- No performance impact on write operations. Only calculates and inserts a single HMAC (per attribute) 
+  for each write operation
+- Not much of a window for process (human) error during a key rotation or re-keying job.
+
+**Cons of the Single HMAC strategy:**
+
+- Cannot support applications which require both unique constraint enforcement and key rotation without serious drawbacks.
+- Without "key start time" a key rotation will cause intermittent search outages for applications which cache HMAC keys.
+- Without "key start time" unique constraints cannot be supported.
+- Even with "key start time" unique constraint support requires performance degradation.
+- Can never fully support unique constraint integrity under all circumstances.
+
+
+
+
 
 ## List HMAC strategy
 
@@ -643,93 +736,11 @@ SET USERNAME_HMAC_1 = USERNAME_HMAC_2
 <!--name=admonition;type=info;title=Note;body=You don't need to stop at 2 HMAC keys/columns. You can have a Triple HMAC Strategy or a Quadruple HMAC strategy if that suits your application requirements. The concept is
 the same, but at that point you may as well go with the List HMAC Strategy instead. -->
 
-## Single HMAC Strategy
+<br>
+<br>
+<br>
 
-This strategy is only recommended for a very specific set of application requirements which will most likely only apply
-to a small number of applications.
-The Single HMAC strategy isn't really much of a strategy, it's just the way that many applications (unfortunately in
-many cases) default to using HMACs. So for each HMAC you have a
-single column in your table/record where you store the HMAC. So our USER_PROFILE table would simply look like this:
-
-| ID                                   | TENANT_ID  | CIPHER_TEXT                                                          | SOME_OTHER_NON_CONFIDENTIAL_ATTRIBUTE | USERNAME_HMAC                | ENCRYPTION_KEY_ID                    | HMAC_KEY_ID                          |
-|--------------------------------------|------------|----------------------------------------------------------------------|---------------------------------------|------------------------------|--------------------------------------|--------------------------------------|
-| 9c7e275e-3729-421c-a7c5-cf02bba17f2d | MyTenantID | QmFzZTY0RW5jb2RpbmdPZlVzZXJQcm9maWxlQ29uZmlkZW50aWFsQXR0cmlidXRlcw== | some value In the clear               | QmFzZTY0VmFsdWVPZlVzZXJuYW1l | 23a0a1b4-3897-4eaa-b8fa-1818a9540f0c | 31ae30a7-4228-40a9-9078-d5e994491981 |
-
-And (as usual) you have a list of HMAC keys on a tenant.
-However, there are serious limitations with this 'strategy' when it comes to key rotation. If your application caches
-HMAC keys then you will have some period of time after
-changing the HMAC key where you intermittently won't find records that have just been created/updated with the new HMAC
-key. The result will depend on which application instance
-the search is executed on and the state of its HMAC key cache. This strategy cannot support applications which require
-both key rotation and HMAC unique constraint enforcement
-under any circumstances.
-
-### Process for re-keying data with the Single HMAC Strategy
-
-1. Add your new HMAC key to the tenant's list of HMAC keys. Single HMAC Strategy convention dictates that the list
-   should be sorted in descending order by date created. So the new
-   HMAC key should be inserted at the start of the list.
-2. Wait until the HMAC key cache expiry time has passed (if applicable), so that all application instances are using the
-   new HMAC key.
-3. Kick off the re-keying job.
-4. The re-keying job should find each record it needs to re-key. This depends on application requirements but will
-   probably fall into one of 2 criteria:
-   a. Any record which doesn't yet have HMACs calculated with the new HMAC key - **common for full re-keying of all data
-   **
-   b. Any record which has HMACs calculated with some old HMAC key (that you're trying to remove from the system) - *
-   *common for passive key rotation**
-5. For each record found, decrypt the record, calculate the HMAC(s) with the new key, overwrite all HMAC columns (e.g.
-   the USERNAME_HMAC column above) with the new HMAC(s).
-6. Wait for all applicable records to be re-keyed
-7. Remove the old HMAC key from the tenant's list of HMAC keys
-
-**Pros of the Single HMAC strategy:**
-
-- Probably the simplest design possible for supporting HMACs in an application
-- Relational DB friendly, single table design
-- No performance impact. Only calculates and inserts a single HMAC (per attribute) for each write operation
-- Not much of a window for anything to go wrong during a key rotation or re-keying job.
-
-**Cons of the Single HMAC strategy:**
-
-- Cannot support applications which require both unique constraint enforcement and key rotation under any circumstances
-- Will cause intermittent search outages during key rotation for applications which cache HMAC keys
-
-## Single Time Based HMAC Strategy
-
-This strategy is almost identical to the regular Single HMAC strategy documented previously with one small difference
-that solves the search outage window associated with key
-rotation using cached HMAC keys.
-All HMAC keys have a 'start time' attribute, which is set to some time in the future. If the application caches keys
-then the start time must be longer than that time period from
-the moment that the HMAC key is added to the tenants list of HMAC keys. i.e. if your application HMAC key cache period
-is 15 minutes and the new HMAC key is added to the tenant at
-15:00 3rd April 2030, then the start time needs to be set to at least 15:16 3rd April 2030. This will then guarantee
-that no application instances will start to use the key to
-insert HMACs until that start time has passed. This solves the search problem for applications which cache HMAC keys
-because it means that all searches will work regardless of when
-each instance updates their HMAC key cache.
-However, just like the Single HMAC Strategy, this one cannot support applications which require both key rotation and
-unique constraint enforcement under any circumstances.
-
-### Process for re-keying data with the Single Time Based HMAC Strategy
-
-The process for re-keying data is the same as the Single HMAC Strategy
-
-**Pros of the Single Time Based HMAC strategy:**
-
-- Solves the intermittent search outage problem for applications which cache HMAC keys that the Single HMAC Strategy
-  has.
-
-**Cons of the Single Time Based HMAC strategy:**
-
-- Cannot support applications which require both unique constraint enforcement and key rotation under any circumstances
-- Will cause intermittent search outages during key rotation for applications which cache HMAC keys
-- Introduces a bigger window where things can go wrong. e.g. If the start time of the HMAC key is not set correctly or
-  there are other problems with application instances not
-  refreshing their HMAC keys correctly then this strategy reduces to the Single HMAC Strategy.
-
-### Some final considerations for application designs
+## Some final considerations for application designs
 
 Although corporate security guidelines in some companies may only require applications to support HMAC key
 rotation but not necessarily rekeying, we strongly advise application developers to reconsider this in the context of
@@ -740,10 +751,11 @@ search operations will progressively get slower. This is because if a tenant has
 HMACs when we search for something. Since we can't remove a tenant's keys (because there may be records that have never
 been modified since being written with the key in use at that time) then we'll have to keep using all of them to
 generate HMACs for every operation until the end of time.
-Also, although challenge 1 above will still be solved in a functional sense, challenge 2 still remains a serious problem
-in your application (if you have unique constraint requirements). The only concrete way to solve challenge 2 for key
-rotation
-(without rekey) for long-lived data would be to use the List HMAC Strategy.
+Also, although the search challenge documented above will still be solved in a functional sense, the unique constraint 
+challenge will still remain a serious problem in your application (if you have unique constraint 
+requirements). 
+The only concrete way to solve the unique constraint challenge for key rotation without rekey would be to use 
+the List HMAC Strategy.
 <br>
 <br>
 
