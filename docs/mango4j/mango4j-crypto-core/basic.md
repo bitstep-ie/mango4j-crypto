@@ -401,7 +401,7 @@ above shortcoming.
 
 > * IMPORTANT!!! - This problem is much more important than the previous search problem! If your application has unique
     constraints on
-    confidential fields then there's a chance that changing a HMAC key could leave your application in a broken state!*
+    confidential fields then there's a chance that changing a HMAC key could leave your application in a broken state!
 
 If you have a confidential field which you need to be unique for your tenant, let's say....a username field. Then you
 will have a DB column with a unique constraint where you store the HMAC of this username. Now, if you switch HMAC keys
