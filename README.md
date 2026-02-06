@@ -1,19 +1,19 @@
-# mango4j
+# Mango4j Crypto
 
-[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=bitstep-ie_mango4j&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=bitstep-ie_mango4j)
-[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=bitstep-ie_mango4j&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=bitstep-ie_mango4j)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=bitstep-ie_mango4j&metric=coverage)](https://sonarcloud.io/summary/new_code?id=bitstep-ie_mango4j)
-[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=bitstep-ie_mango4j&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=bitstep-ie_mango4j)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=bitstep-ie_mango4j-crypto&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=bitstep-ie_mango4j-crypto)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=bitstep-ie_mango4j-crypto&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=bitstep-ie_mango4j-crypto)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=bitstep-ie_mango4j-crypto&metric=coverage)](https://sonarcloud.io/summary/new_code?id=bitstep-ie_mango4j-crypto)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=bitstep-ie_mango4j-crypto&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=bitstep-ie_mango4j-crypto)
 
 
-[![CI](https://github.com/bitstep-ie/mango4j/actions/workflows/ci.yml/badge.svg)](https://github.com/bitstep-ie/mango4j/actions/workflows/ci.yml)
-[![CodeQL](https://github.com/bitstep-ie/mango4j/actions/workflows/codeql.yml/badge.svg)](https://github.com/bitstep-ie/mango4j/actions/workflows/codeql.yml)
-[![Dependabot](https://github.com/bitstep-ie/mango4j/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/bitstep-ie/mango4j/actions/workflows/dependabot/dependabot-updates)
+[![CI](https://github.com/bitstep-ie/mango4j-crypto/actions/workflows/ci.yml/badge.svg)](https://github.com/bitstep-ie/mango4j-crypto/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/bitstep-ie/mango4j-crypto/actions/workflows/codeql.yml/badge.svg)](https://github.com/bitstep-ie/mango4j-crypto/actions/workflows/codeql.yml)
+[![Dependabot](https://github.com/bitstep-ie/mango4j-crypto/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/bitstep-ie/mango4j-crypto/actions/workflows/dependabot/dependabot-updates)
 
 
 <br />
 <div align="center">
-    <a href="https://github.com/bitstep-ie/mango4j">
+    <a href="https://github.com/bitstep-ie/mango4j-crypto">
     <picture>
         <source srcset="docs/assets/mango-with-text-black.png" media="(prefers-color-scheme: light)">
         <source srcset="docs/assets/mango-with-text-white.png" media="(prefers-color-scheme: dark)">
