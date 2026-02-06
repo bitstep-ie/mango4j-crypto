@@ -72,10 +72,10 @@ public class CachedWrappedKeyEncryptionService extends EncryptionServiceDelegate
 	/**
 	 * Creates a cached wrapped key encryption service with custom cache settings.
 	 *
-	 * @param entryTTL the entry TTL
-	 * @param currentEntryTTL the current entry TTL
-	 * @param cacheGracePeriod grace period before destruction
-	 * @param cryptoKeyProvider the key provider
+	 * @param entryTTL            the entry TTL
+	 * @param currentEntryTTL     the current entry TTL
+	 * @param cacheGracePeriod    grace period before destruction
+	 * @param cryptoKeyProvider   the key provider
 	 * @param ciphertextFormatter the ciphertext formatter
 	 */
 	@SuppressWarnings("java:S3010")
@@ -95,7 +95,7 @@ public class CachedWrappedKeyEncryptionService extends EncryptionServiceDelegate
 	/**
 	 * Creates a cached wrapped key encryption service with default cache settings.
 	 *
-	 * @param cryptoKeyProvider the key provider
+	 * @param cryptoKeyProvider   the key provider
 	 * @param ciphertextFormatter the ciphertext formatter
 	 */
 	public CachedWrappedKeyEncryptionService(CryptoKeyProvider cryptoKeyProvider, CiphertextFormatter ciphertextFormatter) {
@@ -112,7 +112,7 @@ public class CachedWrappedKeyEncryptionService extends EncryptionServiceDelegate
 	 * Encrypts payload using a cached wrapped data encryption key.
 	 *
 	 * @param cryptoKey the crypto key
-	 * @param payload the plaintext payload
+	 * @param payload   the plaintext payload
 	 * @return the ciphertext container
 	 */
 	@Override
@@ -126,7 +126,7 @@ public class CachedWrappedKeyEncryptionService extends EncryptionServiceDelegate
 			try {
 				key = wrappedKeyHolder.key();
 			} catch (KeyAlreadyDestroyedException e) {
-// race condition - just retry
+				// race condition - just retry
 				LOGGER.log(INFO, "The current key has been destroyed since a reference to it was obtained, this can happen.....trying to get it again");
 				wrappedKeyHolder = getCurrentWrappedKeyHolder(cep);
 				key = wrappedKeyHolder.key();
@@ -160,7 +160,7 @@ public class CachedWrappedKeyEncryptionService extends EncryptionServiceDelegate
 	/**
 	 * Destroys the generated key material.
 	 *
-	 * @param dek the secret key
+	 * @param dek      the secret key
 	 * @param keyBytes the key bytes to wipe
 	 */
 	private static void destroyKey(SecretKey dek, byte[] keyBytes) {
@@ -169,8 +169,8 @@ public class CachedWrappedKeyEncryptionService extends EncryptionServiceDelegate
 		} catch (DestroyFailedException e) {
 			LOGGER.log(DEBUG, "Error occurred calling SecretKey.destroy(). This is common enough and happens because the SecretKey implementation doesn't support it");
 		}
-// CachedWrappedKeyHolder.key() returns a new key byte array each time
-// so we still need to blast away this key byte array once we're done with it
+		// CachedWrappedKeyHolder.key() returns a new key byte array each time
+		// so we still need to blast away this key byte array once we're done with it
 		destroyKeyBytes(keyBytes);
 	}
 
@@ -207,7 +207,7 @@ public class CachedWrappedKeyEncryptionService extends EncryptionServiceDelegate
 	 * @return the new cached holder
 	 */
 	private CachedWrappedKeyHolder newCachedWrappedKeyHolder(CryptoKeyConfiguration cep) {
-// Current key not set or expired, create a new one and set as current
+		// Current key not set or expired, create a new one and set as current
 		final var keyId = UUID.randomUUID().toString();
 		final var dek = Generators.generateRandomBits(cep.keySize());
 		final var keyEncryptionKey = getWrappingKey(cep.keyEncryptionKey());
@@ -253,7 +253,7 @@ public class CachedWrappedKeyEncryptionService extends EncryptionServiceDelegate
 			try {
 				key = cachedWrappedKeyHolder.key();
 			} catch (KeyAlreadyDestroyedException e) {
-// race condition - just retry
+				// race condition - just retry
 				LOGGER.log(INFO, "The cached key has been destroyed since a reference to it was obtained, this can happen.....trying to get it again");
 				cachedWrappedKeyHolder = getWrappedKeyHolder(
 						ciphertextContainer,
@@ -280,7 +280,7 @@ public class CachedWrappedKeyEncryptionService extends EncryptionServiceDelegate
 	 * Returns a wrapped key holder for a ciphertext container.
 	 *
 	 * @param ciphertextContainer the ciphertext container
-	 * @param edc the encrypted data config
+	 * @param edc                 the encrypted data config
 	 * @return the cached key holder
 	 */
 	private CachedWrappedKeyHolder getWrappedKeyHolder(CiphertextContainer ciphertextContainer, EncryptedDataConfig edc) {
@@ -291,7 +291,7 @@ public class CachedWrappedKeyEncryptionService extends EncryptionServiceDelegate
 			if (cachedWrappedKeyHolder != null) {
 				return cachedWrappedKeyHolder;
 			} else {
-// key not cached, create holder and put it in cache
+				// key not cached, create holder and put it in cache
 				final var encodedKey = super.encryptionService.decrypt(edc.dataEncryptionKey());
 				final var decodedKey = Base64.getDecoder().decode(encodedKey.getBytes(StandardCharsets.UTF_8));
 
@@ -329,7 +329,7 @@ public class CachedWrappedKeyEncryptionService extends EncryptionServiceDelegate
 	/**
 	 * Generates a data encryption key from cached key bytes.
 	 *
-	 * @param key the key bytes
+	 * @param key          the key bytes
 	 * @param cipherConfig the cipher config
 	 * @return the secret key
 	 */
