@@ -7,7 +7,7 @@ Annotation-driven encryption and HMAC support for Java entities.
 ## Architecture
 - `CryptoShield` is the main entry point, wiring `EncryptionService` and `AnnotatedEntityManager`.
 - `AnnotatedEntityManager` registers entity metadata (`@Encrypt`, `@Hmac`, `@EncryptedBlob`, `@EncryptionKeyId`, `@CascadeEncrypt`).
-- HMAC strategies (`SingleHmacFieldStrategy`, `DoubleHmacFieldStrategy`, `ListHmacFieldStrategy`, `SingleHmacFieldStrategyForTimeBasedCryptoKey`) are selected via annotations.
+- HMAC strategies (`SingleHmacFieldStrategy`, `DoubleHmacFieldStrategy`, `ListHmacFieldStrategy`) are selected via annotations.
 - Tokenizers (`HmacTokenizer`, `PanTokenizer`) generate alternative HMAC representations.
 - Key rotation: `RekeyCryptoShield`, `RekeyScheduler`, `RekeyService`, and `ProgressTracker` support background re-key operations.
 

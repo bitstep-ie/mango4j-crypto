@@ -62,8 +62,7 @@ public class CryptoKey {
 	private Map<String, Object> configuration;
 
 	/**
-	 * Optional field to support
-	 * {@code SingleHmacFieldStrategyForTimeBasedCryptoKey} the strategy (see mango4j-crypto for explanation)
+	 * Optional field to support the possibility of handling the shortcomings of the {@code SingleHmacStrategy} (see mango4j-crypto for explanation)
 	 * When using this strategy and when a new HMAC key is being added to a tenant, this field should be set to a future
 	 * moment in time. This moment in time should be set to a longer period of time than the length of time that
 	 * tenant/HMAC key information is cached for.
@@ -74,8 +73,8 @@ public class CryptoKey {
 	 * So say you set this field to now plus 24 hours. The library will only begin using this HMAC key for write
 	 * operations around 24 hours from the date the key was added to the tenant. As long as applications use all
 	 * tenant HMAC keys to perform searches (which should always be the case anyway) then this would allow the
-	 * {@code SingleHmacFieldStrategyForTimeBasedCryptoKey} to successfully support unique constraint functionality
-	 * during HMAC key rotation.
+	 * {@code SingleHmacFieldStrategy} to successfully support all search functionality and better (but still problematic)
+	 * unique constraint functionality during HMAC key rotation.
 	 * </p>
 	 */
 	private Instant keyStartTime;
