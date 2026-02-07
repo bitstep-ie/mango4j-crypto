@@ -39,7 +39,7 @@
         <pitest.junit5.plugin.version>1.2.3</pitest.junit5.plugin.version>
 
         <!--    Dependencies versions    -->
-        <junit-jupiter.version>5.13.3</junit-jupiter.version>
+        <junit-jupiter.version>6.0.2</junit-jupiter.version>
         <junit-mockito.version>5.18.0</junit-mockito.version>
         <mockito-core.version>5.18.0</mockito-core.version>
         <assertj.version>3.27.3</assertj.version>
