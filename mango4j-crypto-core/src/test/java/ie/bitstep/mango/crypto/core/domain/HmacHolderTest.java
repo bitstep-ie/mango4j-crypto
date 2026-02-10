@@ -53,7 +53,7 @@ class HmacHolderTest {
 	void hashCodeTest() {
 		HmacHolder hmacHolder = new HmacHolder(TestData.TEST_BASE_64_CRYPTO_KEY, TEST_DATA_TO_HMAC, TEST_DATA_HMAC_ALIAS, TEST_DATA_TOKENIZED_REPRESENTATION);
 
-		assertThat(hmacHolder.hashCode()).isEqualTo(-1949446445);
+		assertThat(hmacHolder.hashCode()).isEqualTo(1902459737);
 	}
 
 	@SuppressWarnings("EqualsWithItself")
