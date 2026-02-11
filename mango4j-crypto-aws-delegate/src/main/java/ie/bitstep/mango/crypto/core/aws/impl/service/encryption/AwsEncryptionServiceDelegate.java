@@ -1,4 +1,4 @@
-package ie.bitstep.mango.crypto.core.impl.service.encryption;
+package ie.bitstep.mango.crypto.core.aws.impl.service.encryption;
 
 import ie.bitstep.mango.crypto.core.domain.CiphertextContainer;
 import ie.bitstep.mango.crypto.core.domain.CryptoKey;
@@ -57,12 +57,12 @@ public class AwsEncryptionServiceDelegate extends EncryptionServiceDelegate {
 
 	@Override
 	public String decrypt(CiphertextContainer ciphertextContainer) {
-		DecryptRequest encryptRequest = DecryptRequest.builder()
+		DecryptRequest decryptRequest = DecryptRequest.builder()
 				.ciphertextBlob(SdkBytes.fromByteArray(Base64.getDecoder().decode((String) ciphertextContainer.getData().get(CIPHER_DATA_NODE))))
 				.build();
 
-		DecryptResponse encryptResponse = kmsClient.decrypt(encryptRequest);
-		return new String(encryptResponse.plaintext().asByteArray(), ENCODING_CHARSET);
+		DecryptResponse decryptResponse = kmsClient.decrypt(decryptRequest);
+		return new String(decryptResponse.plaintext().asByteArray(), ENCODING_CHARSET);
 	}
 
 	@Override
