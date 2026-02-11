@@ -177,54 +177,30 @@ public class RekeyScheduler {
 	private void reHmac(String tenantId, List<CryptoKey> tenantAllCryptoKeysSortedByDateDescending) {
 		Optional<CryptoKey> hmacKeyToRekeyTo = getHmacKeyToRekeyTo(tenantAllCryptoKeysSortedByDateDescending);
 		if (hmacKeyToRekeyTo.isEmpty()) {
-			logger.log(ERROR, "No valid HMAC key found to rekey to{0}.....skipping HMAC rekey for this tenant", tenantLogString(tenantId));
-			return;
-		} else if (hmacKeyToRekeyTo.get().getCreatedDate().plus(rekeySchedulerConfig.getCryptoKeyCacheDuration()).isAfter(now())) {
-			logger.log(DEBUG, "Some application instances might not be using some of the HMAC keys yet{0}....." +
-							"skipping the currently scheduled HMAC rekey tasks{0}",
-					tenantLogString(tenantId));
+			logger.log(INFO, "skipping HMAC rekey for this tenant", tenantLogString(tenantId));
 			return;
 		}
 
-		List<CryptoKey> tenantHmacKeysSortedByDateDescending = getTenantHmacKeysSortedByDateDescending(tenantAllCryptoKeysSortedByDateDescending);
-		if (tenantHmacKeysSortedByDateDescending.isEmpty()) {
-			logger.log(INFO, "No HMACs to rekey{0}", tenantLogString(tenantId));
-			return;
-		} else if (hmacKeyToRekeyTo.get().getCreatedDate().plus(rekeySchedulerConfig.getCryptoKeyCacheDuration()).isAfter(now())) {
-			logger.log(DEBUG, "Some application instances might not be using some of the HMAC keys yet{0}....." +
-							"skipping the currently scheduled HMAC rekey tasks{0}",
-					tenantLogString(tenantId));
-			return;
-		}
-
-		if (doAnyRecordsWithHmacsNeedRekeying(tenantHmacKeysSortedByDateDescending)) {
-			if (tenantHmacKeysSortedByDateDescending.get(0).getRekeyMode() == KEY_ON) {
-				RekeyCryptoShield rekeyCryptoShield = new RekeyCryptoShield(rekeySchedulerConfig.getCryptoShield(), null, hmacKeyToRekeyTo.get());
-				long totalHmacRecordsRekeyedToTheCurrentKey = rekey(hmacKeyToRekeyTo.get(), rekeyCryptoShield, keyOnRecordSupplier(hmacKeyToRekeyTo.get()));
-				logger.log(INFO, "Full HMAC re-key of all ({0}) records has been completed{1}", totalHmacRecordsRekeyedToTheCurrentKey, tenantLogString(tenantId));
-				for (CryptoKey tenantHmacKey : tenantHmacKeysSortedByDateDescending) {
-					if (canBeRemoved(tenantHmacKey)) {
-						removeKey(tenantHmacKey);
-					} else {
-						logger.log(INFO, "The following HMAC key is not yet ready to be marked as deleted: {0}", tenantHmacKey);
-					}
+		if (hmacKeyToRekeyTo.get().getRekeyMode() == KEY_ON) {
+			RekeyCryptoShield rekeyCryptoShield = new RekeyCryptoShield(rekeySchedulerConfig.getCryptoShield(), null, hmacKeyToRekeyTo.get());
+			long totalHmacRecordsRekeyedToTheCurrentKey = rekey(hmacKeyToRekeyTo.get(), rekeyCryptoShield, keyOnRecordSupplier(hmacKeyToRekeyTo.get()));
+			logger.log(INFO, "Full HMAC re-key of all ({0}) records has been completed{1}", totalHmacRecordsRekeyedToTheCurrentKey, tenantLogString(tenantId));
+			for (CryptoKey tenantHmacKey : justHmacKeys(tenantAllCryptoKeysSortedByDateDescending)) {
+				if (tenantHmacKey.equals(hmacKeyToRekeyTo.get())) {
+					continue;
 				}
-			} else {
-				// TODO: Update to find records which are using the KEY_OFF key but not all the keys after that
-				tenantHmacKeysSortedByDateDescending.stream()
-						.filter(hmacKey -> hmacKey.getRekeyMode() == KEY_OFF)
-						.forEach(deprecatedHmacKey -> {
-							RekeyCryptoShield rekeyCryptoShield = new RekeyCryptoShield(rekeySchedulerConfig.getCryptoShield(), null, hmacKeyToRekeyTo.get());
-							long totalHmacRecordsRekeyedForThisKey = rekey(deprecatedHmacKey, rekeyCryptoShield, keyOffRecordSupplier(deprecatedHmacKey));
-							logger.log(INFO, "HMAC re-key of all ({0}) records using deprecated HMAC key {1} has been completed{2}",
-									totalHmacRecordsRekeyedForThisKey, deprecatedHmacKey, tenantLogString(tenantId));
-							removeKey(deprecatedHmacKey);
-						});
+
+				if (canBeRemovedAfterKeyOnJob(tenantHmacKey)) {
+					removeKey(tenantHmacKey);
+				} else {
+					logger.log(INFO, "The following HMAC key is not yet ready to be marked as deleted: {0}", tenantHmacKey);
+				}
 			}
 		}
+		// TODO: Update to find records which are using the KEY_OFF key but not all the keys after that
 	}
 
-	private boolean canBeRemoved(CryptoKey tenantHmacKey) {
+	private boolean canBeRemovedAfterKeyOnJob(CryptoKey tenantHmacKey) {
 		return tenantHmacKey.getCreatedDate().plus(rekeySchedulerConfig.getCryptoKeyCacheDuration()).isBefore(now());
 	}
 
@@ -282,40 +258,20 @@ public class RekeyScheduler {
 	}
 
 	private Optional<CryptoKey> getHmacKeyToRekeyTo(List<CryptoKey> tenantAllCryptoKeysSortedByDateDescending) {
-		List<CryptoKey> tenantHmacKeysSortedByDateDescending = getTenantHmacKeysSortedByDateDescending(tenantAllCryptoKeysSortedByDateDescending);
+		List<CryptoKey> tenantHmacKeysSortedByDateDescending = justHmacKeys(tenantAllCryptoKeysSortedByDateDescending);
+		Optional<CryptoKey> currentHmacCryptoKey = Optional.empty();
 		if (tenantHmacKeysSortedByDateDescending.isEmpty()) {
 			logger.log(DEBUG, "No HMAC keys exist{0}", tenantLogString(tenantAllCryptoKeysSortedByDateDescending.get(0).getTenantId()));
-			return Optional.empty();
 		} else if (tenantHmacKeysSortedByDateDescending.stream().anyMatch(cryptoKey -> cryptoKey.getCreatedDate().plus(rekeySchedulerConfig.getCryptoKeyCacheDuration()).isAfter(now()))) {
-			logger.log(DEBUG, "Some application instances might not be using some of the HMAC keys yet{0}....." +
-							"so we''ll skip rekeying any HMACs{0}",
+			logger.log(DEBUG, "Some application instances might not be using some of the HMAC keys yet{0}",
 					tenantLogString(tenantHmacKeysSortedByDateDescending.get(0).getTenantId()));
-			return Optional.empty();
+		} else {
+			currentHmacCryptoKey = Optional.of(tenantHmacKeysSortedByDateDescending.get(0));
 		}
-
-		Optional<CryptoKey> tenantHmacKeyToRekeyToMaybe = Optional.empty();
-
-		if (tenantHmacKeysSortedByDateDescending.get(0).getRekeyMode() == KEY_ON) {
-			// KEY_ON means rekey all HMACs to this key
-			tenantHmacKeyToRekeyToMaybe = Optional.of(tenantHmacKeysSortedByDateDescending.get(0));
-		} else if (tenantHmacKeysSortedByDateDescending.stream()
-				.anyMatch(tenantHmacKey -> tenantHmacKey.getRekeyMode() == KEY_OFF)) {
-			// if the oldest key is key off then we just need to key on to the next most recent key that is not KEY_OFF
-			// if a KEY_OFF key is not the oldest key the just delete the key without a rekey
-			int newestDeprecatedKeyFromStart = 0;
-			for (int i = 0; i < tenantHmacKeysSortedByDateDescending.size(); i++) {
-				if (i == newestDeprecatedKeyFromStart
-						&& tenantHmacKeysSortedByDateDescending.get(i).getRekeyMode() == KEY_OFF) {
-					++newestDeprecatedKeyFromStart;
-					continue;
-				}
-				tenantHmacKeyToRekeyToMaybe = Optional.of(tenantHmacKeysSortedByDateDescending.get(newestDeprecatedKeyFromStart + 1));
-			}
-		}
-		return tenantHmacKeyToRekeyToMaybe;
+		return currentHmacCryptoKey;
 	}
 
-	private static List<CryptoKey> getTenantHmacKeysSortedByDateDescending(List<CryptoKey> tenantAllCryptoKeysSortedByDateDescending) {
+	private static List<CryptoKey> justHmacKeys(List<CryptoKey> tenantAllCryptoKeysSortedByDateDescending) {
 		return tenantAllCryptoKeysSortedByDateDescending.stream()
 				.filter(cryptoKey -> cryptoKey.getUsage() == CryptoKeyUsage.HMAC)
 				.toList();
