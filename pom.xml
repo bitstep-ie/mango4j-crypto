@@ -9,13 +9,10 @@
     <modules>
         <module>mango4j-crypto-core</module>
         <module>mango4j-crypto</module>
-        <module>mango4j-crypto-nonprod-delegates</module>
-        <module>mango4j-crypto-wrapped-delegate</module>
-        <module>mango4j-crypto-aws-delegate</module>
     </modules>
 
     <groupId>ie.bitstep.mango</groupId>
-    <artifactId>mango4j-crypto-parent</artifactId>
+    <artifactId>mango4j-crypto-framework</artifactId>
     <version>3.0.0-SNAPSHOT</version>
 
     <properties>
@@ -43,7 +40,7 @@
         <junit-jupiter.version>5.13.3</junit-jupiter.version>
         <junit-mockito.version>5.18.0</junit-mockito.version>
         <mockito-core.version>5.18.0</mockito-core.version>
-        <assertj.version>3.27.7</assertj.version>
+        <assertj.version>3.27.3</assertj.version>
         <jackson.version>2.19.1</jackson.version>
         <commons-collections.version>4.5.0</commons-collections.version>
         <slf4j-api.version>2.0.17</slf4j-api.version>

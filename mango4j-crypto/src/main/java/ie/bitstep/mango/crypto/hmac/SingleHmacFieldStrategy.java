@@ -14,14 +14,17 @@ import ie.bitstep.mango.crypto.exceptions.NoHmacFieldsFoundException;
 import ie.bitstep.mango.crypto.utils.ReflectionUtils;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static ie.bitstep.mango.crypto.hmac.FieldValidator.validateSourceHmacField;
 import static ie.bitstep.mango.crypto.utils.ReflectionUtils.getFieldStringValue;
 import static java.lang.String.format;
-import static java.util.Comparator.comparing;
+import static java.time.Instant.now;
+import static java.util.stream.Collectors.toCollection;
 
 /**
  * Applications should rarely (almost never) use this strategy.
@@ -120,30 +123,50 @@ public class SingleHmacFieldStrategy implements HmacStrategy {
 	}
 
 	/**
-	 * Resolves the HMAC key to use from the current key list.
+	 * Picks the most recent HMAC key from the supplied list whose getKeyStartTime is not set to a value in the future,
+	 * if none of the {@link CryptoKey HMAC keys} have a createdDate then this just returns the first one in the list.
 	 *
 	 * @return the selected HMAC key
 	 */
 	private CryptoKey getHmacKeyToUse() {
-		CryptoKey cryptoKeyToUse;
 		List<CryptoKey> currentHmacKeys = hmacStrategyHelper.cryptoKeyProvider().getCurrentHmacKeys();
 		if (currentHmacKeys == null || currentHmacKeys.isEmpty()) {
 			throw new NoHmacKeysFoundException();
 		}
-		cryptoKeyToUse = getHmacKeyToUse(currentHmacKeys);
-		return cryptoKeyToUse;
+
+		// existing list could be unmodifiable so create a new list to sort
+		ArrayList<CryptoKey> sortedCryptoKeys = currentHmacKeys.stream()
+				.filter(Objects::nonNull)
+				.sorted(SingleHmacFieldStrategy::compareCreatedDates)
+				.collect(toCollection(ArrayList::new));
+		for (CryptoKey cryptoKey : sortedCryptoKeys) {
+			if (cryptoKey.getKeyStartTime() != null && cryptoKey.getKeyStartTime().isAfter(now())) {
+				continue;
+			}
+			return cryptoKey;
+		}
+		throw new ActiveHmacKeyNotFoundException();
 	}
 
 	/**
-	 * Picks the most recent HMAC key from the supplied list or else just gets the first one in the list.
+	 * Compares 2 {@link CryptoKey} objects by their createdDate in descending order (newest first).
+	 * <p>
+	 * If both createdDate values are null then they are considered equal.
+	 * If one createdDate is null then it is considered 'less than' the other.
+	 * </p>
 	 *
-	 * @param currentHmacKeys the current HMAC keys
-	 * @return the selected HMAC key
+	 * @param o1 the first {@link CryptoKey}
+	 * @param o2 the second {@link CryptoKey}
+	 * @return comparison result
 	 */
-	protected CryptoKey getHmacKeyToUse(List<CryptoKey> currentHmacKeys) {
-		return currentHmacKeys.stream()
-				.filter(cryptoKey -> cryptoKey.getCreatedDate() != null)
-				.max(comparing(CryptoKey::getCreatedDate))
-				.orElse(currentHmacKeys.get(0));
+	private static int compareCreatedDates(CryptoKey o1, CryptoKey o2) {
+		if (o1.getCreatedDate() == null && o2.getCreatedDate() == null) {
+			return 0;
+		} else if (o1.getCreatedDate() == null) {
+			return 1;
+		} else if (o2.getCreatedDate() == null) {
+			return -1;
+		}
+		return o2.getCreatedDate().compareTo(o1.getCreatedDate());
 	}
 }
