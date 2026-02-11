@@ -1,4 +1,4 @@
-package ie.bitstep.mango.crypto.core.encryption.impl;
+package ie.bitstep.mango.crypto.core.encryption.impl.test;
 
 import ie.bitstep.mango.crypto.core.domain.CiphertextContainer;
 import ie.bitstep.mango.crypto.core.domain.CryptoKey;

@@ -7,7 +7,7 @@ import ie.bitstep.mango.crypto.core.domain.CryptoKeyUsage;
 import ie.bitstep.mango.crypto.core.domain.HmacHolder;
 import ie.bitstep.mango.crypto.core.encryption.EncryptionService;
 import ie.bitstep.mango.crypto.core.encryption.EncryptionServiceDelegate;
-import ie.bitstep.mango.crypto.core.encryption.impl.Base64EncryptionService;
+import ie.bitstep.mango.crypto.core.encryption.impl.test.Base64EncryptionService;
 import ie.bitstep.mango.crypto.core.enums.Algorithm;
 import ie.bitstep.mango.crypto.core.enums.CoreCryptoKeyTypes;
 import ie.bitstep.mango.crypto.core.enums.Mode;
@@ -198,17 +198,17 @@ class CachedWrappedKeyEncryptionServiceTest implements CryptoKeyProvider {
 
 	@Test
 	void testCachedWrappedKeyEncryptionService() {
-// GIVEN
+		// GIVEN
 		CiphertextFormatter cipherTextFormatter = new CiphertextFormatter(this, new ConfigurableObjectMapperFactory());
 
-// WHEN
+		// WHEN
 		new CachedWrappedKeyEncryptionService(
 				Duration.ofMillis(250),
 				Duration.ofDays(7),
 				Duration.ofDays(5),
 				this, cipherTextFormatter);
 
-// THEN
+		// THEN
 		assertThat(getCacheEntryTTL()).isEqualTo(Duration.ofMillis(250));
 		assertThat(getCurrentEntryTTL()).isEqualTo(Duration.ofDays(7));
 		assertThat(getCacheGracePeriod()).isEqualTo(Duration.ofDays(5));
@@ -349,10 +349,10 @@ class CachedWrappedKeyEncryptionServiceTest implements CryptoKeyProvider {
 			assertThat(encrypted.getData()).containsEntry(CIPHERTEXT_PADDING_FIELD_NAME, NO_PADDING_VALUE);
 			assertThat(encrypted.getCryptoKey()).isEqualTo(aesGCMKey);
 
-// ensure key bytes have been destroyed
+			// ensure key bytes have been destroyed
 			assertThat(isEmpty(keyBytes)).isTrue();
 
-// don't normally use another method to help a test but better to just make sure whatever got encrypted can be decrypted ok too!
+			// don't normally use another method to help a test but better to just make sure whatever got encrypted can be decrypted ok too!
 			assertThat(encryptionService.decrypt(new CiphertextFormatter(this, new ConfigurableObjectMapperFactory()).format(encrypted))).isEqualTo(data);
 		}
 	}
@@ -378,10 +378,10 @@ class CachedWrappedKeyEncryptionServiceTest implements CryptoKeyProvider {
 			assertThat(encrypted.getData()).containsEntry(CIPHERTEXT_PADDING_FIELD_NAME, PKCS5_PADDING_VALUE);
 			assertThat(encrypted.getCryptoKey()).isEqualTo(cbcCryptoKey);
 
-// ensure key bytes have been destroyed
+			// ensure key bytes have been destroyed
 			assertThat(isEmpty(keyBytes)).isTrue();
 
-// don't normally use another method to help a test but better to just make sure whatever got encrypted can be decrypted ok too!
+			// don't normally use another method to help a test but better to just make sure whatever got encrypted can be decrypted ok too!
 			assertThat(encryptionService.decrypt(new CiphertextFormatter(this, new ConfigurableObjectMapperFactory()).format(encrypted))).isEqualTo(data);
 		}
 	}
@@ -405,7 +405,7 @@ class CachedWrappedKeyEncryptionServiceTest implements CryptoKeyProvider {
 			mockedGenerator.when(() -> Generators.generateRandomBits(TEST_KEY_BYTES.length)).thenReturn(keyBytes);
 			mockedGenerator.when(() -> Generators.generateIV(TEST_24_IV_BYTES.length)).thenReturn(ivBytes);
 
-// call encrypt first to make sure there's a key in the cache. Need to improve this part of the test by explicitly doing this
+			// call encrypt first to make sure there's a key in the cache. Need to improve this part of the test by explicitly doing this
 			encryptionService.encrypt(aesGCMKey, data);
 			destroyCurrentKey();
 
@@ -422,10 +422,10 @@ class CachedWrappedKeyEncryptionServiceTest implements CryptoKeyProvider {
 			assertThat(encrypted.getData()).containsEntry(CIPHERTEXT_PADDING_FIELD_NAME, NO_PADDING_VALUE);
 			assertThat(encrypted.getCryptoKey()).isEqualTo(aesGCMKey);
 
-// ensure key bytes have been destroyed
+			// ensure key bytes have been destroyed
 			assertThat(isEmpty(mockedCachedWrappedKeyHolder.key())).isTrue();
-// don't normally use another method to help a test but better to just make sure whatever got encrypted can be decrypted ok too!
-// first have to reset the key bytes in the cache because encrypt will have destroyed them
+			// don't normally use another method to help a test but better to just make sure whatever got encrypted can be decrypted ok too!
+			// first have to reset the key bytes in the cache because encrypt will have destroyed them
 			given(mockedCachedWrappedKeyHolder.key()).willReturn(Arrays.copyOf(currentKeyBytes, currentKeyBytes.length));
 			assertThat(encryptionService.decrypt(new CiphertextFormatter(this, new ConfigurableObjectMapperFactory()).format(encrypted))).isEqualTo(data);
 		}
@@ -447,7 +447,7 @@ class CachedWrappedKeyEncryptionServiceTest implements CryptoKeyProvider {
 		try (MockedStatic<Generators> mockedGenerator = mockStatic(Generators.class)) {
 			mockedGenerator.when(() -> Generators.generateRandomBits(TEST_KEY_BYTES.length)).thenReturn(keyBytes);
 			mockedGenerator.when(() -> Generators.generateIV(TEST_24_IV_BYTES.length)).thenReturn(ivBytes);
-// creates a new key and puts it in the cache
+			// creates a new key and puts it in the cache
 			CiphertextContainer encrypted = encryptionService.encrypt(aesGCMKey, data);
 			String decrypted = encryptionService.decrypt(
 					new CiphertextFormatter(this, new ConfigurableObjectMapperFactory())
@@ -455,7 +455,7 @@ class CachedWrappedKeyEncryptionServiceTest implements CryptoKeyProvider {
 
 			assertThat(decrypted).isEqualTo(data);
 
-// ensure key bytes have been destroyed
+			// ensure key bytes have been destroyed
 			assertThat(isEmpty(keyBytes)).isTrue();
 		}
 	}
@@ -476,7 +476,7 @@ class CachedWrappedKeyEncryptionServiceTest implements CryptoKeyProvider {
 
 			assertThat(decrypted).isEqualTo(data);
 
-// ensure key bytes have been destroyed
+			// ensure key bytes have been destroyed
 			assertThat(isEmpty(keyBytes)).isTrue();
 		}
 	}
@@ -490,7 +490,7 @@ class CachedWrappedKeyEncryptionServiceTest implements CryptoKeyProvider {
 		String cacheCurrentKeyId = (String) ((Map.Entry) currentEntry.get()).getKey();
 
 		CachedWrappedKeyHolder actualCurrentKey = getCurrentKey();
-// store a copy of this for later because CachedWrappedKeyEncryptionService destroys these key byte arrays
+		// store a copy of this for later because CachedWrappedKeyEncryptionService destroys these key byte arrays
 		currentKeyBytes = Arrays.copyOf(actualCurrentKey.key(), actualCurrentKey.key().length);
 
 		mockedCachedWrappedKeyHolder = Mockito.mock(CachedWrappedKeyHolder.class);

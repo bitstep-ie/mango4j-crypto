@@ -4,7 +4,7 @@ import ie.bitstep.mango.crypto.core.domain.CiphertextContainer;
 import ie.bitstep.mango.crypto.core.domain.CryptoKey;
 import ie.bitstep.mango.crypto.core.domain.CryptoKeyUsage;
 import ie.bitstep.mango.crypto.core.domain.HmacHolder;
-import ie.bitstep.mango.crypto.core.encryption.impl.Base64EncryptionService;
+import ie.bitstep.mango.crypto.core.encryption.impl.test.Base64EncryptionService;
 import ie.bitstep.mango.crypto.core.encryption.EncryptionService;
 import ie.bitstep.mango.crypto.core.encryption.EncryptionServiceDelegate;
 import ie.bitstep.mango.crypto.core.enums.Algorithm;

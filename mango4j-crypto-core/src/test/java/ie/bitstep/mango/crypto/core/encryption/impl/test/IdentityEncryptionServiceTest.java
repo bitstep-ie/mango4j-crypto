@@ -1,4 +1,4 @@
-package ie.bitstep.mango.crypto.core.encryption.impl;
+package ie.bitstep.mango.crypto.core.encryption.impl.test;
 
 import ie.bitstep.mango.crypto.core.domain.CiphertextContainer;
 import ie.bitstep.mango.crypto.core.domain.HmacHolder;
@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Map;
 
-import static ie.bitstep.mango.crypto.core.encryption.impl.IdentityEncryptionService.CIPHER_TEXT;
+import static ie.bitstep.mango.crypto.core.encryption.impl.test.IdentityEncryptionService.CIPHER_TEXT;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class IdentityEncryptionServiceTest {
