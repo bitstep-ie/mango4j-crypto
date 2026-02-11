@@ -9,6 +9,7 @@
     <modules>
         <module>mango4j-crypto-core</module>
         <module>mango4j-crypto</module>
+        <module>mango4j-crypto-aws-delegate</module>
     </modules>
 
     <groupId>ie.bitstep.mango</groupId>
