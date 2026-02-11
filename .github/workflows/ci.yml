@@ -35,7 +35,7 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
           mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-            -Dsonar.projectKey=bitstep-ie_mango4j \
+            -Dsonar.projectKey=bitstep-ie_mango4j-crypto \
             -Dsonar.organization=bitstep-ie \
             -Dsonar.host.url=${SONAR_HOST_URL} \
             -Dsonar.token=${SONAR_TOKEN} \

@@ -9,12 +9,10 @@
     <modules>
         <module>mango4j-crypto-core</module>
         <module>mango4j-crypto</module>
-        <module>mango4j-crypto-nonprod-delegates</module>
-        <module>mango4j-crypto-wrapped-delegate</module>
     </modules>
 
     <groupId>ie.bitstep.mango</groupId>
-    <artifactId>mango4j</artifactId>
+    <artifactId>mango4j-crypto-framework</artifactId>
     <version>3.0.0-SNAPSHOT</version>
 
     <properties>
