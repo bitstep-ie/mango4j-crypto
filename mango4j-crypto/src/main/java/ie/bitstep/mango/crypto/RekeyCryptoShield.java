@@ -30,8 +30,6 @@ public class RekeyCryptoShield {
 						hmacStrategy.get().getClass().isAssignableFrom(ListHmacFieldStrategy.class)) {
 					RekeyListHmacFieldStrategy rekeyListHmacFieldStrategy = new RekeyListHmacFieldStrategy((ListHmacFieldStrategy) hmacStrategy.get(), currentHmacKey);
 					hmacStrategy = Optional.of(rekeyListHmacFieldStrategy);
-				} else {
-					hmacStrategy = Optional.empty();
 				}
 				return hmacStrategy;
 			}

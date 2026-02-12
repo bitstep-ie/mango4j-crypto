@@ -14,17 +14,14 @@ import ie.bitstep.mango.crypto.exceptions.NoHmacFieldsFoundException;
 import ie.bitstep.mango.crypto.utils.ReflectionUtils;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import static ie.bitstep.mango.crypto.hmac.FieldValidator.validateSourceHmacField;
 import static ie.bitstep.mango.crypto.utils.ReflectionUtils.getFieldStringValue;
 import static java.lang.String.format;
 import static java.time.Instant.now;
-import static java.util.stream.Collectors.toCollection;
 
 /**
  * Applications should rarely (almost never) use this strategy.
@@ -129,16 +126,7 @@ public class SingleHmacFieldStrategy implements HmacStrategy {
 	 * @return the selected HMAC key
 	 */
 	private CryptoKey getHmacKeyToUse() {
-		List<CryptoKey> currentHmacKeys = hmacStrategyHelper.cryptoKeyProvider().getCurrentHmacKeys();
-		if (currentHmacKeys == null || currentHmacKeys.isEmpty()) {
-			throw new NoHmacKeysFoundException();
-		}
-
-		// existing list could be unmodifiable so create a new list to sort
-		ArrayList<CryptoKey> sortedCryptoKeys = currentHmacKeys.stream()
-				.filter(Objects::nonNull)
-				.sorted(SingleHmacFieldStrategy::compareCreatedDates)
-				.collect(toCollection(ArrayList::new));
+		List<CryptoKey> sortedCryptoKeys = HmacUtils.hmacKeysInCreationDateDescendingOrder(hmacStrategyHelper.cryptoKeyProvider().getCurrentHmacKeys());
 		for (CryptoKey cryptoKey : sortedCryptoKeys) {
 			if (cryptoKey.getKeyStartTime() != null && cryptoKey.getKeyStartTime().isAfter(now())) {
 				continue;
@@ -146,27 +134,5 @@ public class SingleHmacFieldStrategy implements HmacStrategy {
 			return cryptoKey;
 		}
 		throw new ActiveHmacKeyNotFoundException();
-	}
-
-	/**
-	 * Compares 2 {@link CryptoKey} objects by their createdDate in descending order (newest first).
-	 * <p>
-	 * If both createdDate values are null then they are considered equal.
-	 * If one createdDate is null then it is considered 'less than' the other.
-	 * </p>
-	 *
-	 * @param o1 the first {@link CryptoKey}
-	 * @param o2 the second {@link CryptoKey}
-	 * @return comparison result
-	 */
-	private static int compareCreatedDates(CryptoKey o1, CryptoKey o2) {
-		if (o1.getCreatedDate() == null && o2.getCreatedDate() == null) {
-			return 0;
-		} else if (o1.getCreatedDate() == null) {
-			return 1;
-		} else if (o2.getCreatedDate() == null) {
-			return -1;
-		}
-		return o2.getCreatedDate().compareTo(o1.getCreatedDate());
 	}
 }

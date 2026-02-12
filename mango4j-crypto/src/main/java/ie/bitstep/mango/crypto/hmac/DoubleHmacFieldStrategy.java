@@ -4,15 +4,11 @@ import ie.bitstep.mango.crypto.HmacStrategyHelper;
 import ie.bitstep.mango.crypto.annotations.Hmac;
 import ie.bitstep.mango.crypto.core.domain.CryptoKey;
 import ie.bitstep.mango.crypto.core.domain.HmacHolder;
-import ie.bitstep.mango.crypto.core.exceptions.ActiveHmacKeyNotFoundException;
-import ie.bitstep.mango.crypto.core.exceptions.CryptoKeyNotFoundException;
 import ie.bitstep.mango.crypto.core.exceptions.NonTransientCryptoException;
 import ie.bitstep.mango.crypto.core.exceptions.TransientCryptoException;
-import ie.bitstep.mango.crypto.core.exceptions.UnsupportedKeyTypeException;
 import ie.bitstep.mango.crypto.utils.ReflectionUtils;
 
 import java.lang.reflect.Field;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -109,28 +105,27 @@ public class DoubleHmacFieldStrategy implements HmacStrategy {
 				continue;
 			}
 			try {
-				List<CryptoKey> currentHmacKeys = hmacStrategyHelper.cryptoKeyProvider().getCurrentHmacKeys();
-				List<HmacHolder> hmacHolders = currentHmacKeys.stream()
-						// It's important to sort the keys by created date ascending so that the latest HMAC value goes
-						// into the 2nd HMAC field and the older HMAC value goes into the 1st HMAC field. This the
-						// convention of the DoubleHmacFieldStrategy
-						.sorted(Comparator.comparing(CryptoKey::getCreatedDate))
-						.map(cryptoKey -> new HmacHolder(cryptoKey, fieldValue, sourceField.getName()))
-						.toList();
-				if(hmacHolders.size() > 2) {
+				List<CryptoKey> sortedCryptoKeys = HmacUtils.hmacKeysInCreationDateDescendingOrder(hmacStrategyHelper.cryptoKeyProvider().getCurrentHmacKeys());
+				if (sortedCryptoKeys.size() > 2) {
 					throw new NonTransientCryptoException(format("More than 2 current HMAC keys were found for entity " +
-							"class '%s' and field '%s'. This strategy only supports up to 2 HMAC keys.",
+									"class '%s' and field '%s'. This strategy only supports up to 2 HMAC keys.",
 							entity.getClass().getName(), sourceField.getName()));
 				}
+
+				List<HmacHolder> hmacHolders = sortedCryptoKeys.stream()
+						.map(cryptoKey -> new HmacHolder(cryptoKey, fieldValue, sourceField.getName()))
+						.toList();
 				hmacStrategyHelper.encryptionService().hmac(hmacHolders);
-				targetHmacFields.get(0).set(entity, hmacHolders.get(0).getValue()); // NOSONAR
+				// Put the 1st HMAC value (the one with the most recent key) into the 2nd field
+				targetHmacFields.get(1).set(entity, hmacHolders.get(0).getValue()); // NOSONAR
 				if (hmacHolders.size() == 1) {
-					targetHmacFields.get(1).set(entity, hmacHolders.get(0).getValue()); // NOSONAR
+					// if there's only 1 HMAC key then just put the same HMAC value into the 1st field too
+					targetHmacFields.get(0).set(entity, hmacHolders.get(0).getValue()); // NOSONAR
 				} else {
-					targetHmacFields.get(1).set(entity, hmacHolders.get(1).getValue()); // NOSONAR
+					// if there's 2 HMAC keys then put the 2nd HMAC value (the one with the old key) into the 1st field
+					targetHmacFields.get(0).set(entity, hmacHolders.get(1).getValue()); // NOSONAR
 				}
-			} catch (TransientCryptoException | UnsupportedKeyTypeException |
-					 CryptoKeyNotFoundException | ActiveHmacKeyNotFoundException e) {
+			} catch (TransientCryptoException | NonTransientCryptoException e) {
 				throw e;
 			} catch (Exception e) {
 				throw new NonTransientCryptoException(String.format("An error occurred trying to set the HMAC fields:%s", e.getClass()), e);
