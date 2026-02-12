@@ -12,6 +12,7 @@ import ie.bitstep.mango.crypto.core.exceptions.UnsupportedKeyTypeException;
 import ie.bitstep.mango.crypto.utils.ReflectionUtils;
 
 import java.lang.reflect.Field;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -110,8 +111,17 @@ public class DoubleHmacFieldStrategy implements HmacStrategy {
 			try {
 				List<CryptoKey> currentHmacKeys = hmacStrategyHelper.cryptoKeyProvider().getCurrentHmacKeys();
 				List<HmacHolder> hmacHolders = currentHmacKeys.stream()
+						// It's important to sort the keys by created date ascending so that the latest HMAC value goes
+						// into the 2nd HMAC field and the older HMAC value goes into the 1st HMAC field. This the
+						// convention of the DoubleHmacFieldStrategy
+						.sorted(Comparator.comparing(CryptoKey::getCreatedDate))
 						.map(cryptoKey -> new HmacHolder(cryptoKey, fieldValue, sourceField.getName()))
 						.toList();
+				if(hmacHolders.size() > 2) {
+					throw new NonTransientCryptoException(format("More than 2 current HMAC keys were found for entity " +
+							"class '%s' and field '%s'. This strategy only supports up to 2 HMAC keys.",
+							entity.getClass().getName(), sourceField.getName()));
+				}
 				hmacStrategyHelper.encryptionService().hmac(hmacHolders);
 				targetHmacFields.get(0).set(entity, hmacHolders.get(0).getValue()); // NOSONAR
 				if (hmacHolders.size() == 1) {
