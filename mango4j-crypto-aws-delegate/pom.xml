@@ -12,7 +12,7 @@
     <artifactId>mango4j-crypto-aws-delegate</artifactId>
 
     <properties>
-        <aws-kms-sdk.version>2.41.19</aws-kms-sdk.version>
+        <aws-kms-sdk.version>2.41.29</aws-kms-sdk.version>
     </properties>
 
     <dependencies>
