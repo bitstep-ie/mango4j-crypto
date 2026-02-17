@@ -16,15 +16,15 @@ import java.util.function.Predicate;
 public class RekeyListHmacFieldStrategy implements HmacStrategy, ListHmacFieldStrategyDelegate {
 
 	private final ListHmacFieldStrategy wrappedListHmacFieldStrategy;
-	private final CryptoKey currentHmacCryptoKeys;
+	private final List<CryptoKey> currentHmacCryptoKeys;
 
-	public RekeyListHmacFieldStrategy(ListHmacFieldStrategy wrappedListHmacFieldStrategy, CryptoKey currentHmacCryptoKeys) {
+	public RekeyListHmacFieldStrategy(ListHmacFieldStrategy wrappedListHmacFieldStrategy, List<CryptoKey> currentHmacCryptoKeys) {
 		this.wrappedListHmacFieldStrategy = wrappedListHmacFieldStrategy;
 		this.currentHmacCryptoKeys = currentHmacCryptoKeys;
 	}
 
 	public List<CryptoKey> getCurrentHmacKeys() {
-		return List.of(currentHmacCryptoKeys);
+		return currentHmacCryptoKeys;
 	}
 
 	/**
@@ -32,7 +32,7 @@ public class RekeyListHmacFieldStrategy implements HmacStrategy, ListHmacFieldSt
 	 * that we've already got HMACs for.
 	 *
 	 * @param currentHmacKeys HMAC keys currently in use (will not include any {@link CryptoKey HMAC keys} with
-	 *                        {@link CryptoKey#rekeyMode} of {@link CryptoKey.RekeyMode#KEY_OFF KEY_OFF})
+	 *                        {@link CryptoKey#getRekeyMode()  CryptoKey.rekeyMode} of {@link CryptoKey.RekeyMode#KEY_OFF KEY_OFF})
 	 * @param sourceField     Source field which contains the value to calculate the HMAC for
 	 * @param fieldValue      original value to calculate the HMAC for
 	 * @param entity          Application entity/record being processed

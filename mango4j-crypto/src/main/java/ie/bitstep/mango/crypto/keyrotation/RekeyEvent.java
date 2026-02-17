@@ -2,10 +2,12 @@ package ie.bitstep.mango.crypto.keyrotation;
 
 import ie.bitstep.mango.crypto.core.domain.CryptoKey;
 
+import java.util.List;
+
 public class RekeyEvent {
 	Type type;
 	Class<?> rekeyServiceClass;
-	CryptoKey cryptoKey;
+	List<CryptoKey> cryptoKeysThatTriggeredTheRekey;
 	ProgressTracker progressTracker;
 
 	public Type getType() {
@@ -24,12 +26,12 @@ public class RekeyEvent {
 		this.rekeyServiceClass = rekeyServiceClass;
 	}
 
-	public CryptoKey getCryptoKey() {
-		return cryptoKey;
+	public List<CryptoKey> getCryptoKeysThatTriggeredTheRekey() {
+		return cryptoKeysThatTriggeredTheRekey;
 	}
 
-	public void setCryptoKey(CryptoKey cryptoKey) {
-		this.cryptoKey = cryptoKey;
+	public void setCryptoKeysThatTriggeredTheRekey(List<CryptoKey> cryptoKeysThatTriggeredTheRekey) {
+		this.cryptoKeysThatTriggeredTheRekey = cryptoKeysThatTriggeredTheRekey;
 	}
 
 	public ProgressTracker getProgressTracker() {

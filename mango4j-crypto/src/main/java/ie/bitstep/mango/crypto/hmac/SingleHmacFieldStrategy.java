@@ -2,6 +2,7 @@ package ie.bitstep.mango.crypto.hmac;
 
 import ie.bitstep.mango.crypto.HmacStrategyHelper;
 import ie.bitstep.mango.crypto.annotations.Hmac;
+import ie.bitstep.mango.crypto.annotations.HmacKeyId;
 import ie.bitstep.mango.crypto.core.domain.CryptoKey;
 import ie.bitstep.mango.crypto.core.domain.HmacHolder;
 import ie.bitstep.mango.crypto.core.exceptions.ActiveHmacKeyNotFoundException;
@@ -24,15 +25,13 @@ import static java.lang.String.format;
 import static java.time.Instant.now;
 
 /**
- * Applications should rarely (almost never) use this strategy.
  * An application should only use this strategy for an entity if the answer to the following 2 questions is <b>'NO!'</b>:
  *     <ol>
  *         <li>
  *             Does any encrypted field in this entity need to be guaranteed unique (has an associated unique constraint)?
  *         </li>
  *         <li>
- *             Would it have a negative impact on the business if the application experienced functional problems
- *             with search operations on this entity during a key rotation?
+ *             Am I using the {@link CryptoKey#getKeyStartTime() keyStartTime} feature on my {@link CryptoKey CryptoKeys}?
  *         </li>
  *     </ol>
  * <p>
@@ -54,6 +53,7 @@ public class SingleHmacFieldStrategy implements HmacStrategy {
 	public static final String HMAC_FIELD_NAME_SUFFIX = "Hmac";
 
 	private final Map<Field, Field> entityHmacFields = new HashMap<>();
+	private Field entityHmacKeyIdField;
 	private final HmacStrategyHelper hmacStrategyHelper;
 
 	/**
@@ -84,9 +84,17 @@ public class SingleHmacFieldStrategy implements HmacStrategy {
 			targetHmacField.setAccessible(true); // NOSONAR
 			entityHmacFields.put(hmacSourceField, targetHmacField);
 		});
-
+		setHmacKeyIdField(annotatedEntityClass);
 		if (entityHmacFields.isEmpty()) {
 			throw new NoHmacFieldsFoundException(String.format("Class '%s' does not have any fields annotated with %s", annotatedEntityClass.getName(), Hmac.class.getSimpleName()));
+		}
+	}
+
+	private void setHmacKeyIdField(Class<?> annotatedEntityClass) {
+		List<Field> hmacKeyIdFields = ReflectionUtils.getFieldsByAnnotation(annotatedEntityClass, HmacKeyId.class);
+		if (!hmacKeyIdFields.isEmpty()) {
+			entityHmacKeyIdField = hmacKeyIdFields.get(0);
+			entityHmacKeyIdField.setAccessible(true);
 		}
 	}
 
@@ -110,12 +118,19 @@ public class SingleHmacFieldStrategy implements HmacStrategy {
 				List<HmacHolder> hmacHolders = List.of(new HmacHolder(hmacKeyToUse, fieldValue, sourceField.getName()));
 				hmacStrategyHelper.encryptionService().hmac(hmacHolders);
 				targetHmacField.set(entity, hmacHolders.get(0).getValue()); // NOSONAR
+				setHmacKeyId(entity, hmacKeyToUse);
 			}
 		} catch (TransientCryptoException | UnsupportedKeyTypeException |
 				 CryptoKeyNotFoundException | ActiveHmacKeyNotFoundException | NoHmacKeysFoundException e) {
 			throw e;
 		} catch (Exception e) {
 			throw new NonTransientCryptoException(format("An error occurred trying to set the HMAC fields:%s", e.getClass()), e);
+		}
+	}
+
+	private void setHmacKeyId(Object entity, CryptoKey hmacKeyToUse) throws IllegalAccessException {
+		if (entityHmacKeyIdField != null) {
+			entityHmacKeyIdField.set(entity, hmacKeyToUse.getId());
 		}
 	}
 

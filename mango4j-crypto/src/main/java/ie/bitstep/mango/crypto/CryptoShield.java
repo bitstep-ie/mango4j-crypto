@@ -329,8 +329,8 @@ public class CryptoShield {
 				.ifPresent(hmacStrategy -> hmacStrategy.hmac(entity));
 	}
 
-	Optional<HmacStrategy> getHmacStrategy(Object entity) {
-		return annotatedEntityManager.getHmacStrategy(entity.getClass());
+	public AnnotatedEntityManager getAnnotatedEntityManager() {
+		return annotatedEntityManager;
 	}
 
 	private void setEncryptedDataField(Object entity, CryptoShieldDelegate cryptoShieldDelegate) {

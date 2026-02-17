@@ -2,6 +2,7 @@ package ie.bitstep.mango.crypto.hmac;
 
 import ie.bitstep.mango.crypto.HmacStrategyHelper;
 import ie.bitstep.mango.crypto.annotations.Hmac;
+import ie.bitstep.mango.crypto.annotations.HmacKeyId;
 import ie.bitstep.mango.crypto.core.domain.CryptoKey;
 import ie.bitstep.mango.crypto.core.domain.HmacHolder;
 import ie.bitstep.mango.crypto.core.exceptions.NonTransientCryptoException;
@@ -9,6 +10,8 @@ import ie.bitstep.mango.crypto.core.exceptions.TransientCryptoException;
 import ie.bitstep.mango.crypto.utils.ReflectionUtils;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +55,7 @@ public class DoubleHmacFieldStrategy implements HmacStrategy {
 	public static final String HMAC_2_FIELD_NAME_SUFFIX = "Hmac2";
 
 	private final Map<Field, List<Field>> entityHmacFields = new HashMap<>();
+	private final List<Field> entityHmacKeyIdFields = new ArrayList<>();
 	private final HmacStrategyHelper hmacStrategyHelper;
 
 	/**
@@ -87,6 +91,25 @@ public class DoubleHmacFieldStrategy implements HmacStrategy {
 			targetHmacField2.setAccessible(true); // NOSONAR
 			entityHmacFields.put(hmacSourceField, List.of(targetHmacField1, targetHmacField2));
 		});
+		setHmacKeyIdFields(annotatedEntityClass);
+	}
+
+	private void setHmacKeyIdFields(Class<?> annotatedEntityClass) {
+		List<Field> hmacKeyIdFields = ReflectionUtils.getFieldsByAnnotation(annotatedEntityClass, HmacKeyId.class);
+		if (!hmacKeyIdFields.isEmpty()) {
+			hmacKeyIdFields.sort(Comparator.comparingInt(o -> o.getAnnotation(HmacKeyId.class).keyNumber()));
+			for (int i = 1; i <= hmacKeyIdFields.size(); i++) {
+				Field hmacKeyIdField = hmacKeyIdFields.get(i - 1);
+				if (hmacKeyIdField.getAnnotation(HmacKeyId.class).keyNumber() == i) {
+					hmacKeyIdField.setAccessible(true); // NOSONAR
+					entityHmacKeyIdFields.add(hmacKeyIdField);
+				} else {
+					throw new NonTransientCryptoException(String.format("Field '%1$s' in '%2$s' marked with @%3$s but did not have a valid " +
+							"keyNumber value. Entities using the Double HMAC strategy mush have keyNumbers from 1 to 2 " +
+							"on the %3$s annotation.", hmacKeyIdField.getName(), annotatedEntityClass.getSimpleName(), HmacKeyId.class.getSimpleName()));
+				}
+			}
+		}
 	}
 
 	/**
@@ -118,12 +141,15 @@ public class DoubleHmacFieldStrategy implements HmacStrategy {
 				hmacStrategyHelper.encryptionService().hmac(hmacHolders);
 				// Put the 1st HMAC value (the one with the most recent key) into the 2nd field
 				targetHmacFields.get(1).set(entity, hmacHolders.get(0).getValue()); // NOSONAR
+				entityHmacKeyIdFields.get(1).set(entity, hmacHolders.get(0).getCryptoKey().getId());
 				if (hmacHolders.size() == 1) {
 					// if there's only 1 HMAC key then just put the same HMAC value into the 1st field too
 					targetHmacFields.get(0).set(entity, hmacHolders.get(0).getValue()); // NOSONAR
+					entityHmacKeyIdFields.get(0).set(entity, hmacHolders.get(0).getCryptoKey().getId());
 				} else {
 					// if there's 2 HMAC keys then put the 2nd HMAC value (the one with the old key) into the 1st field
 					targetHmacFields.get(0).set(entity, hmacHolders.get(1).getValue()); // NOSONAR
+					entityHmacKeyIdFields.get(0).set(entity, hmacHolders.get(1).getCryptoKey().getId());
 				}
 			} catch (TransientCryptoException | NonTransientCryptoException e) {
 				throw e;

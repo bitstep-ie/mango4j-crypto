@@ -154,9 +154,10 @@ public class ListHmacFieldStrategy implements HmacStrategy {
 	 * (e.g. {@link Hmac.Purposes#LOOKUP LOOKUP} or
 	 * {@link Hmac.Purposes#UNIQUE UNIQUE})
 	 * on any of the {@link Hmac} fields. That would cause problems.
+	 *
 	 * @param annotatedEntityClass entity class being registered
-	 * @param purpose {@link Hmac.Purposes purpose} which we check is
-	 * on at least one {@link Hmac} field on the class.
+	 * @param purpose              {@link Hmac.Purposes purpose} which we check is
+	 *                             on at least one {@link Hmac} field on the class.
 	 */
 	private void validateEntityNotAssignableFromMissingPurpose(Class<?> annotatedEntityClass, Hmac.Purposes purpose) {
 		if (correspondingInterface(purpose).isAssignableFrom(annotatedEntityClass)) {
@@ -281,7 +282,7 @@ public class ListHmacFieldStrategy implements HmacStrategy {
 	/**
 	 * Calculates HMACs for the supplied entity with an optional rekey delegate.
 	 *
-	 * @param entity                       the entity to HMAC
+	 * @param entity                        the entity to HMAC
 	 * @param listHmacFieldStrategyDelegate optional delegate for rekey operations
 	 */
 	void hmac(Object entity, ListHmacFieldStrategyDelegate listHmacFieldStrategyDelegate) {
@@ -309,10 +310,10 @@ public class ListHmacFieldStrategy implements HmacStrategy {
 	/**
 	 * Builds lookup and unique HMAC holder lists for the entity.
 	 *
-	 * @param entity                       the entity to inspect
+	 * @param entity                        the entity to inspect
 	 * @param listHmacFieldStrategyDelegate optional delegate for rekey operations
-	 * @param uniqueHmacs                  output list for unique HMACs
-	 * @param lookupHmacs                  output list for lookup HMACs
+	 * @param uniqueHmacs                   output list for unique HMACs
+	 * @param lookupHmacs                   output list for lookup HMACs
 	 */
 	private void populateHmacHolders(Object entity, ListHmacFieldStrategyDelegate listHmacFieldStrategyDelegate,
 									 List<HmacHolder> uniqueHmacs, List<HmacHolder> lookupHmacs) {
@@ -359,8 +360,8 @@ public class ListHmacFieldStrategy implements HmacStrategy {
 	/**
 	 * Populates compound unique HMACs for unique groups.
 	 *
-	 * @param entity       the entity to inspect
-	 * @param uniqueHmacs  output list for unique HMACs
+	 * @param entity      the entity to inspect
+	 * @param uniqueHmacs output list for unique HMACs
 	 */
 	private void populateCompoundUniqueHmacs(Object entity, List<HmacHolder> uniqueHmacs) {
 		UniqueGroupSet entityUniqueGroups = new UniqueGroupSet(this.entityUniqueGroups);
@@ -394,8 +395,8 @@ public class ListHmacFieldStrategy implements HmacStrategy {
 	/**
 	 * Updates entity lookup/unique lists, retaining any existing HMACs not regenerated.
 	 *
-	 * @param entity            the entity to update
-	 * @param newLookupHmacs    newly generated lookup HMACs
+	 * @param entity              the entity to update
+	 * @param newLookupHmacs      newly generated lookup HMACs
 	 * @param newUniqueValueHmacs newly generated unique HMACs
 	 */
 	private static void postProcess(Object entity, List<HmacHolder> newLookupHmacs, List<HmacHolder> newUniqueValueHmacs) {
@@ -426,11 +427,15 @@ public class ListHmacFieldStrategy implements HmacStrategy {
 		Collection<CryptoShieldHmacHolder> newEntityHmacs = new ArrayList<>(newHmacHolders.stream()
 				.map(newHmacHolder -> new CryptoShieldHmacHolder(newHmacHolder.getCryptoKey().getId(), newHmacHolder.getValue(), newHmacHolder.getHmacAlias(), newHmacHolder.getTokenizedRepresentation()))
 				.toList());
+
 		for (CryptoShieldHmacHolder existingEntityHmac : existingEntityHmacHolders) {
-			if (newEntityHmacs.stream().noneMatch(newEntityHmac -> newEntityHmac.getCryptoKeyId().equals(existingEntityHmac.getCryptoKeyId()))) {
-				newEntityHmacs.add(existingEntityHmac);
+			if (newEntityHmacs.stream()
+					.noneMatch(newEntityHmac ->
+							newEntityHmac.getCryptoKeyId().equals(existingEntityHmac.getCryptoKeyId()))) {
+				newEntityHmacs.addAll(existingEntityHmacHolders.stream().filter(cryptoShieldHmacHolder -> cryptoShieldHmacHolder.getCryptoKeyId().equals(existingEntityHmac.getCryptoKeyId())).collect(Collectors.toSet()));
 			}
 		}
+
 		if (!newHmacHolders.isEmpty()) {
 			hmacsConsumer.accept(newEntityHmacs);
 		}
@@ -440,7 +445,7 @@ public class ListHmacFieldStrategy implements HmacStrategy {
 	 * Builds tokenized HMACs for the supplied field using configured tokenizers.
 	 *
 	 * @param defaultHmacHoldersForThisField default HMAC holders for the field
-	 * @param sourceField                   the source field being tokenized
+	 * @param sourceField                    the source field being tokenized
 	 * @return a list of tokenized HMAC holders
 	 */
 	private Collection<HmacHolder> buildTokenizedHmacHolders(Collection<HmacHolder> defaultHmacHoldersForThisField, Field sourceField) {

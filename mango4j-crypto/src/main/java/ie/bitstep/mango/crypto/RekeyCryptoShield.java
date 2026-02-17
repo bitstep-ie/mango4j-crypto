@@ -5,6 +5,7 @@ import ie.bitstep.mango.crypto.hmac.HmacStrategy;
 import ie.bitstep.mango.crypto.hmac.ListHmacFieldStrategy;
 import ie.bitstep.mango.crypto.hmac.RekeyListHmacFieldStrategy;
 
+import java.util.List;
 import java.util.Optional;
 
 public class RekeyCryptoShield {
@@ -13,7 +14,7 @@ public class RekeyCryptoShield {
 
 	public RekeyCryptoShield(CryptoShield cryptoShield,
 							 CryptoKey currentEncryptionKey,
-							 CryptoKey currentHmacKey) {
+							 List<CryptoKey> currentHmacKeys) {
 		this.cryptoShield = cryptoShield;
 		this.rekeyCryptoShieldDelegate = new CryptoShieldDelegate() {
 
@@ -24,13 +25,13 @@ public class RekeyCryptoShield {
 
 			@Override
 			public Optional<HmacStrategy> getHmacStrategy(Object entity) {
-				Optional<HmacStrategy> hmacStrategy = cryptoShield.getHmacStrategy(entity);
+				Optional<HmacStrategy> hmacStrategy = cryptoShield.getAnnotatedEntityManager().getHmacStrategy(entity.getClass());
 				if (hmacStrategy.isPresent() &&
-						currentHmacKey != null &&
+						!currentHmacKeys.isEmpty() &&
 						hmacStrategy.get().getClass().isAssignableFrom(ListHmacFieldStrategy.class)) {
-					RekeyListHmacFieldStrategy rekeyListHmacFieldStrategy = new RekeyListHmacFieldStrategy((ListHmacFieldStrategy) hmacStrategy.get(), currentHmacKey);
+					RekeyListHmacFieldStrategy rekeyListHmacFieldStrategy = new RekeyListHmacFieldStrategy((ListHmacFieldStrategy) hmacStrategy.get(), currentHmacKeys);
 					hmacStrategy = Optional.of(rekeyListHmacFieldStrategy);
-				} else if (currentHmacKey == null) {
+				} else if (currentHmacKeys.isEmpty()) {
 					return Optional.empty();
 				}
 				return hmacStrategy;

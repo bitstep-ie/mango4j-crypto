@@ -240,7 +240,6 @@ public class RekeySchedulerConfig {
 		private void validateSettings() {
 			boolean isValid = areRekeyServicesValid()
 					&& isCryptoShieldValid()
-					&& isObjectMapperValid()
 					&& isClockValid()
 					&& isCryptoKeyCacheDurationValid()
 					&& isRekeyCryptoManagerValid()
@@ -296,14 +295,6 @@ public class RekeySchedulerConfig {
 		private boolean isClockValid() {
 			if (clock == null) {
 				LOGGER.log(ERROR, "Clock field was set to a null value. Please make sure to set it to a non-null value using the withClock() method");
-				return false;
-			}
-			return true;
-		}
-
-		private boolean isObjectMapperValid() {
-			if (objectMapper == null) {
-				LOGGER.log(ERROR, "ObjectMapper field was set to a null value. Please make sure to set it to a non-null value using the withObjectMapper() method");
 				return false;
 			}
 			return true;
