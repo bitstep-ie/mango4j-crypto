@@ -12,7 +12,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.lang.reflect.Field;
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,7 +42,7 @@ class RekeyCryptoShieldTest {
 
 	@BeforeEach
 	void setup() {
-		rekeyCryptoShield = new RekeyCryptoShield(mockCryptoShield, mockEncryptionKey, List.of(mockEncryptionKey));
+		rekeyCryptoShield = new RekeyCryptoShield(mockCryptoShield, mockEncryptionKey, mockEncryptionKey);
 		testEntity = new TestMockHmacEntity();
 	}
 
@@ -70,7 +69,7 @@ class RekeyCryptoShieldTest {
 
 	@Test
 	void constructorListHmacStrategyButNoHMACKey() {
-		rekeyCryptoShield = new RekeyCryptoShield(mockCryptoShield, mockEncryptionKey, List.of());
+		rekeyCryptoShield = new RekeyCryptoShield(mockCryptoShield, mockEncryptionKey, null);
 		given(mockAnnotatedEntityManager.getHmacStrategy(testEntity.getClass())).willReturn(Optional.of(mockListHmacFieldStrategy));
 		given(mockCryptoShield.getAnnotatedEntityManager()).willReturn(mockAnnotatedEntityManager);
 		CryptoShieldDelegate cryptoShieldDelegate = getRekeyCryptoShieldDelegate();
@@ -91,7 +90,7 @@ class RekeyCryptoShieldTest {
 
 	@Test
 	void constructorNoHmacKeys() {
-		rekeyCryptoShield = new RekeyCryptoShield(mockCryptoShield, mockEncryptionKey, List.of());
+		rekeyCryptoShield = new RekeyCryptoShield(mockCryptoShield, mockEncryptionKey, null);
 		given(mockAnnotatedEntityManager.getHmacStrategy(testEntity.getClass())).willReturn(Optional.empty());
 		given(mockCryptoShield.getAnnotatedEntityManager()).willReturn(mockAnnotatedEntityManager);
 		CryptoShieldDelegate cryptoShieldDelegate = getRekeyCryptoShieldDelegate();

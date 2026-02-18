@@ -18,9 +18,9 @@ public class RekeyListHmacFieldStrategy implements HmacStrategy, ListHmacFieldSt
 	private final ListHmacFieldStrategy wrappedListHmacFieldStrategy;
 	private final List<CryptoKey> currentHmacCryptoKeys;
 
-	public RekeyListHmacFieldStrategy(ListHmacFieldStrategy wrappedListHmacFieldStrategy, List<CryptoKey> currentHmacCryptoKeys) {
+	public RekeyListHmacFieldStrategy(ListHmacFieldStrategy wrappedListHmacFieldStrategy, CryptoKey hmacCryptoKeyToKeyOnto) {
 		this.wrappedListHmacFieldStrategy = wrappedListHmacFieldStrategy;
-		this.currentHmacCryptoKeys = currentHmacCryptoKeys;
+		this.currentHmacCryptoKeys = hmacCryptoKeyToKeyOnto == null ? List.of() : List.of(hmacCryptoKeyToKeyOnto);
 	}
 
 	public List<CryptoKey> getCurrentHmacKeys() {

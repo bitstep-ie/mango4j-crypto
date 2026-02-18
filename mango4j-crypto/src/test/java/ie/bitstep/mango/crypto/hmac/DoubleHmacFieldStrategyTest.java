@@ -373,4 +373,20 @@ class DoubleHmacFieldStrategyTest {
 
 		assertThatNoException().isThrownBy(() -> doubleHmacFieldStrategy.hmac(new TestAnnotatedEntityNoHmacFields()));
 	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	void setFieldForOlderHmacKeyGeneralExceptionFailure() throws NoSuchFieldException, IllegalAccessException {
+		given(mockCryptoKeyProvider.getCurrentHmacKeys()).willReturn(List.of(TEST_CRYPTO_KEY));
+		given(mockHmacHelper.cryptoKeyProvider()).willReturn(mockCryptoKeyProvider);
+		given(mockHmacHelper.encryptionService()).willReturn(mockEncryptionService);
+
+		Field entityHmacKeyIdFieldsField = doubleHmacFieldStrategy.getClass().getDeclaredField("entityHmacKeyIdFields");
+		entityHmacKeyIdFieldsField.setAccessible(true);
+		List<Field> entityHmacKeyIdFields = (List<Field>) entityHmacKeyIdFieldsField.get(doubleHmacFieldStrategy);
+		entityHmacKeyIdFields.set(0, null);
+		assertThatThrownBy(() -> doubleHmacFieldStrategy.hmac(testEntity))
+				.isInstanceOf(RuntimeException.class)
+				.hasMessage("An error occurred trying to set the HMAC field on entity TestAnnotatedEntityForDoubleHmacFieldStrategy: NullPointerException");
+	}
 }

@@ -43,7 +43,7 @@ public class RekeyListHmacStrategyTest {
 
 	@BeforeEach
 	void setup() {
-		rekeyListHmacFieldStrategy = new RekeyListHmacFieldStrategy(mockListHmacStrategy, List.of(TEST_CRYPTO_KEY));
+		rekeyListHmacFieldStrategy = new RekeyListHmacFieldStrategy(mockListHmacStrategy, TEST_CRYPTO_KEY);
 
 		testEntity = new TestAnnotatedEntityForListHmacFieldStrategy();
 		testEntity.setPan(TEST_PAN);
