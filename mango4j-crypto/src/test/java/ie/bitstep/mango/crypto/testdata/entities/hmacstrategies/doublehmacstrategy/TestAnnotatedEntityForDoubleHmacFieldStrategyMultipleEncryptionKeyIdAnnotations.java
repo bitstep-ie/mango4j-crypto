@@ -4,6 +4,7 @@ import ie.bitstep.mango.crypto.annotations.Encrypt;
 import ie.bitstep.mango.crypto.annotations.EncryptedBlob;
 import ie.bitstep.mango.crypto.annotations.EncryptionKeyId;
 import ie.bitstep.mango.crypto.annotations.Hmac;
+import ie.bitstep.mango.crypto.annotations.HmacKeyId;
 import ie.bitstep.mango.crypto.annotations.strategies.DoubleHmacStrategy;
 
 @DoubleHmacStrategy
@@ -38,6 +39,12 @@ public class TestAnnotatedEntityForDoubleHmacFieldStrategyMultipleEncryptionKeyI
 
 	@EncryptionKeyId
 	private String encryptionKeyId2;
+
+	@HmacKeyId
+	private String hmacKeyId1;
+
+	@HmacKeyId(keyNumber = 2)
+	private String hmacKeyId2;
 
 	public String getPan() {
 		return pan;

@@ -51,8 +51,8 @@ import java.util.Set;
 
 import static ie.bitstep.mango.crypto.testdata.TestData.ENTITY_HMAC_FIELDS_FIELD_NAME;
 import static ie.bitstep.mango.crypto.testdata.TestData.ENTITY_HMAC_TOKENIZERS_FIELD_NAME;
-import static ie.bitstep.mango.crypto.testdata.TestData.TEST_CRYPTO_KEY_2;
 import static ie.bitstep.mango.crypto.testdata.TestData.TEST_CRYPTO_KEY;
+import static ie.bitstep.mango.crypto.testdata.TestData.TEST_CRYPTO_KEY_2;
 import static ie.bitstep.mango.crypto.testdata.TestData.TEST_CRYPTO_KEY_ID;
 import static ie.bitstep.mango.crypto.testdata.TestData.TEST_FAVOURITE_COLOR;
 import static ie.bitstep.mango.crypto.testdata.TestData.TEST_IDENTITY_CRYPTO_KEY_ID;
@@ -146,70 +146,70 @@ class ListHmacFieldStrategyTest {
 	@Test
 	void constructorWithTokenizerNoDefaultConstructorFailure() {
 		assertThatThrownBy(() -> new ListHmacFieldStrategy(TestAnnotatedEntityWithInvalidHmacTokenizerForListHmacFieldStrategy.class, mockStrategyHmacHelper))
-			.isInstanceOf(HmacTokenizerInstantiationException.class)
-			.hasMessage("Could not create an instance of HmacTokenizer type TestInvalidHmacTokenizerNoDefaultConstructor. Please make sure that TestInvalidHmacTokenizerNoDefaultConstructor has a default no-args constructor declared");
+				.isInstanceOf(HmacTokenizerInstantiationException.class)
+				.hasMessage("Could not create an instance of HmacTokenizer type TestInvalidHmacTokenizerNoDefaultConstructor. Please make sure that TestInvalidHmacTokenizerNoDefaultConstructor has a default no-args constructor declared");
 	}
 
 	@Test
 	void constructorNonTransientHmacFields() {
 		assertThatThrownBy(() -> new ListHmacFieldStrategy(InvalidAnnotatedEntityForListHmacFieldStrategyNonTransientField.class, mockStrategyHmacHelper))
-			.isInstanceOf(NonTransientCryptoException.class)
-			.hasMessage("InvalidAnnotatedEntityForListHmacFieldStrategyNonTransientField has a field named pan marked with @Hmac but it is not transient. Please mark any fields annotated with @Hmac as transient");
+				.isInstanceOf(NonTransientCryptoException.class)
+				.hasMessage("InvalidAnnotatedEntityForListHmacFieldStrategyNonTransientField has a field named pan marked with @Hmac but it is not transient. Please mark any fields annotated with @Hmac as transient");
 	}
 
 	@Test
 	void constructorUniqueGroupFieldButNoUniquePurpose() {
 		assertThatThrownBy(() -> new ListHmacFieldStrategy(TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroupWithNoUniquePurpose.class, mockStrategyHmacHelper))
-			.isInstanceOf(NonTransientCryptoException.class)
-			.hasMessage("TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroupWithNoUniquePurpose has a HMAC field named pan marked with @UniqueGroup with but it does not have a purpose of UNIQUE");
+				.isInstanceOf(NonTransientCryptoException.class)
+				.hasMessage("TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroupWithNoUniquePurpose has a HMAC field named pan marked with @UniqueGroup with but it does not have a purpose of UNIQUE");
 	}
 
 	@Test
 	void constructorNonStringHmacFields() {
 		assertThatThrownBy(() -> new ListHmacFieldStrategy(InvalidAnnotatedEntityForListHmacFieldStrategyNonStringField.class, mockStrategyHmacHelper))
-			.isInstanceOf(NonTransientCryptoException.class)
-			.hasMessage("InvalidAnnotatedEntityForListHmacFieldStrategyNonStringField has a field named pan marked with @Hmac but it is of type of int. HMAC fields can only be of type String");
+				.isInstanceOf(NonTransientCryptoException.class)
+				.hasMessage("InvalidAnnotatedEntityForListHmacFieldStrategyNonStringField has a field named pan marked with @Hmac but it is of type of int. HMAC fields can only be of type String");
 	}
 
 	@Test
 	void constructorLookupHmacFieldWithoutLookupImplementation() {
 		assertThatThrownBy(() -> new ListHmacFieldStrategy(InvalidAnnotatedEntityForListHmacFieldStrategyLookupFieldWithoutLookupImplementation.class, mockStrategyHmacHelper))
-			.isInstanceOf(NonTransientCryptoException.class)
-			.hasMessage("InvalidAnnotatedEntityForListHmacFieldStrategyLookupFieldWithoutLookupImplementation has at least one field marked with @Hmac with Purposes containing LOOKUP but this class does not implement Lookup. Please make InvalidAnnotatedEntityForListHmacFieldStrategyLookupFieldWithoutLookupImplementation implements the Lookup interface if you want this entity class to use the ListHmacFieldStrategy strategy");
+				.isInstanceOf(NonTransientCryptoException.class)
+				.hasMessage("InvalidAnnotatedEntityForListHmacFieldStrategyLookupFieldWithoutLookupImplementation has at least one field marked with @Hmac with Purposes containing LOOKUP but this class does not implement Lookup. Please make InvalidAnnotatedEntityForListHmacFieldStrategyLookupFieldWithoutLookupImplementation implements the Lookup interface if you want this entity class to use the ListHmacFieldStrategy strategy");
 	}
 
 	@Test
 	void constructorUniqueHmacFieldWithoutUniqueImplementation() {
 		assertThatThrownBy(() -> new ListHmacFieldStrategy(InvalidAnnotatedEntityForListHmacFieldStrategyUniqueFieldWithoutUniqueImplementation.class, mockStrategyHmacHelper))
-			.isInstanceOf(NonTransientCryptoException.class)
-			.hasMessage("InvalidAnnotatedEntityForListHmacFieldStrategyUniqueFieldWithoutUniqueImplementation has at least one field marked with @Hmac with Purposes containing UNIQUE but this class does not implement Unique. Please make InvalidAnnotatedEntityForListHmacFieldStrategyUniqueFieldWithoutUniqueImplementation implements the Unique interface if you want this entity class to use the ListHmacFieldStrategy strategy");
+				.isInstanceOf(NonTransientCryptoException.class)
+				.hasMessage("InvalidAnnotatedEntityForListHmacFieldStrategyUniqueFieldWithoutUniqueImplementation has at least one field marked with @Hmac with Purposes containing UNIQUE but this class does not implement Unique. Please make InvalidAnnotatedEntityForListHmacFieldStrategyUniqueFieldWithoutUniqueImplementation implements the Unique interface if you want this entity class to use the ListHmacFieldStrategy strategy");
 	}
 
 	@Test
 	void constructorLookupImplementationWithoutLookupHmacField() {
 		assertThatThrownBy(() -> new ListHmacFieldStrategy(InvalidAnnotatedEntityForListHmacFieldStrategyLookupImplementationWithoutLookupField.class, mockStrategyHmacHelper))
-			.isInstanceOf(NonTransientCryptoException.class)
-			.hasMessage("InvalidAnnotatedEntityForListHmacFieldStrategyLookupImplementationWithoutLookupField implements Lookup but does not have any fields marked with @Hmac with LOOKUP purpose. Please either add a Hmac field with LOOKUP purpose or remove 'implements Lookup' from this class");
+				.isInstanceOf(NonTransientCryptoException.class)
+				.hasMessage("InvalidAnnotatedEntityForListHmacFieldStrategyLookupImplementationWithoutLookupField implements Lookup but does not have any fields marked with @Hmac with LOOKUP purpose. Please either add a Hmac field with LOOKUP purpose or remove 'implements Lookup' from this class");
 	}
 
 	@Test
 	void constructorUniqueImplementationWithoutUniqueHmacField() {
 		assertThatThrownBy(() -> new ListHmacFieldStrategy(InvalidAnnotatedEntityForListHmacFieldStrategyUniqueImplementationWithoutUniqueField.class, mockStrategyHmacHelper))
-			.isInstanceOf(NonTransientCryptoException.class)
-			.hasMessage("InvalidAnnotatedEntityForListHmacFieldStrategyUniqueImplementationWithoutUniqueField implements Unique but does not have any fields marked with @Hmac with UNIQUE purpose. Please either add a Hmac field with UNIQUE purpose or remove 'implements Unique' from this class");
+				.isInstanceOf(NonTransientCryptoException.class)
+				.hasMessage("InvalidAnnotatedEntityForListHmacFieldStrategyUniqueImplementationWithoutUniqueField implements Unique but does not have any fields marked with @Hmac with UNIQUE purpose. Please either add a Hmac field with UNIQUE purpose or remove 'implements Unique' from this class");
 	}
 
 	@Test
 	void constructorNoHmacFields() {
 		assertThatThrownBy(() -> new ListHmacFieldStrategy(TestAnnotatedEntityNoHmacFields.class, mockStrategyHmacHelper))
-			.isInstanceOf(NoHmacFieldsFoundException.class)
-			.hasMessage("Class 'ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.custom.TestAnnotatedEntityNoHmacFields' does not have any fields annotated with Hmac");
+				.isInstanceOf(NoHmacFieldsFoundException.class)
+				.hasMessage("Class 'ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.custom.TestAnnotatedEntityNoHmacFields' does not have any fields annotated with Hmac");
 	}
 
 	@SuppressWarnings("unchecked")
 	private Map<Field, Hmac> getEntityHmacFieldsMap() throws NoSuchFieldException, IllegalAccessException {
 		Field entityHmacFieldsField = ListHmacFieldStrategy.class
-			.getDeclaredField(ENTITY_HMAC_FIELDS_FIELD_NAME);
+				.getDeclaredField(ENTITY_HMAC_FIELDS_FIELD_NAME);
 		entityHmacFieldsField.setAccessible(true);
 		return (Map<Field, Hmac>) entityHmacFieldsField.get(listHmacFieldStrategy);
 	}
@@ -217,7 +217,7 @@ class ListHmacFieldStrategyTest {
 	@SuppressWarnings("unchecked")
 	private Map<Field, Set<HmacTokenizer>> getEntityHmacTokenizersMap() throws NoSuchFieldException, IllegalAccessException {
 		Field entityHmacFieldsField = ListHmacFieldStrategy.class
-			.getDeclaredField(ENTITY_HMAC_TOKENIZERS_FIELD_NAME);
+				.getDeclaredField(ENTITY_HMAC_TOKENIZERS_FIELD_NAME);
 		entityHmacFieldsField.setAccessible(true);
 		return (Map<Field, Set<HmacTokenizer>>) entityHmacFieldsField.get(listHmacFieldStrategy);
 	}
@@ -255,7 +255,7 @@ class ListHmacFieldStrategyTest {
 
 		assertThat(annotatedEntityForListHmacFieldStrategy.getUniqueValues()).hasSize(1);
 		CryptoShieldHmacHolder uniqueFieldUserNameHmacHolder = annotatedEntityForListHmacFieldStrategy.getUniqueValues().stream()
-			.filter(hmacHolder -> TEST_USER_NAME_FIELD_NAME.equals(hmacHolder.getHmacAlias())).findFirst().orElseThrow();
+				.filter(hmacHolder -> TEST_USER_NAME_FIELD_NAME.equals(hmacHolder.getHmacAlias())).findFirst().orElseThrow();
 		assertThat(uniqueFieldUserNameHmacHolder.getCryptoKeyId()).isEqualTo(TEST_CRYPTO_KEY_ID);
 		assertThat(uniqueFieldUserNameHmacHolder.getHmacAlias()).isEqualTo(TEST_USER_NAME_FIELD_NAME);
 		assertThat(uniqueFieldUserNameHmacHolder.getValue()).isEqualTo(TEST_USERNAME);
@@ -265,12 +265,12 @@ class ListHmacFieldStrategyTest {
 
 		then(mockEncryptionService).should().hmac(cryptoShieldHmacHolderArgumentCaptor.capture());
 		assertThat(cryptoShieldHmacHolderArgumentCaptor.getValue()).hasSize(2)
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
-			.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_USERNAME))
-			.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_USER_NAME_FIELD_NAME))
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
-			.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN))
-			.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_PAN_FIELD_NAME));
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
+				.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_USERNAME))
+				.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_USER_NAME_FIELD_NAME))
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
+				.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN))
+				.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_PAN_FIELD_NAME));
 	}
 
 	@Test
@@ -308,7 +308,7 @@ class ListHmacFieldStrategyTest {
 
 		assertThat(entity.getUniqueValues()).hasSize(1);
 		CryptoShieldHmacHolder uniqueFieldUserNameHmacHolder = entity.getUniqueValues().stream()
-			.filter(hmacHolder -> TEST_USER_NAME_FIELD_NAME.equals(hmacHolder.getHmacAlias())).findFirst().orElseThrow();
+				.filter(hmacHolder -> TEST_USER_NAME_FIELD_NAME.equals(hmacHolder.getHmacAlias())).findFirst().orElseThrow();
 		assertThat(uniqueFieldUserNameHmacHolder.getCryptoKeyId()).isEqualTo(TEST_CRYPTO_KEY_ID);
 		assertThat(uniqueFieldUserNameHmacHolder.getHmacAlias()).isEqualTo(TEST_USER_NAME_FIELD_NAME);
 		assertThat(uniqueFieldUserNameHmacHolder.getValue()).isEqualTo(TEST_USERNAME);
@@ -318,12 +318,12 @@ class ListHmacFieldStrategyTest {
 
 		then(mockEncryptionService).should().hmac(cryptoShieldHmacHolderArgumentCaptor.capture());
 		assertThat(cryptoShieldHmacHolderArgumentCaptor.getValue()).hasSize(2)
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
-			.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_USERNAME))
-			.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_USER_NAME_FIELD_NAME))
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
-			.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN))
-			.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_PAN_FIELD_NAME));
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
+				.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_USERNAME))
+				.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_USER_NAME_FIELD_NAME))
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
+				.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN))
+				.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_PAN_FIELD_NAME));
 	}
 
 	@Test
@@ -356,7 +356,7 @@ class ListHmacFieldStrategyTest {
 
 		assertThat(annotatedEntityForListHmacFieldStrategy.getUniqueValues()).hasSize(1);
 		CryptoShieldHmacHolder uniqueFieldUserNameHmacHolder = annotatedEntityForListHmacFieldStrategy.getUniqueValues().stream()
-			.filter(hmacHolder -> TEST_USER_NAME_FIELD_NAME.equals(hmacHolder.getHmacAlias())).findFirst().orElseThrow();
+				.filter(hmacHolder -> TEST_USER_NAME_FIELD_NAME.equals(hmacHolder.getHmacAlias())).findFirst().orElseThrow();
 		assertThat(uniqueFieldUserNameHmacHolder.getCryptoKeyId()).isEqualTo(TEST_CRYPTO_KEY_ID);
 		assertThat(uniqueFieldUserNameHmacHolder.getHmacAlias()).isEqualTo(TEST_USER_NAME_FIELD_NAME);
 		assertThat(uniqueFieldUserNameHmacHolder.getValue()).isEqualTo(TEST_USERNAME);
@@ -366,12 +366,12 @@ class ListHmacFieldStrategyTest {
 
 		then(mockEncryptionService).should().hmac(cryptoShieldHmacHolderArgumentCaptor.capture());
 		assertThat(cryptoShieldHmacHolderArgumentCaptor.getValue()).hasSize(2)
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
-			.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_USERNAME))
-			.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_USER_NAME_FIELD_NAME))
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
-			.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN))
-			.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_PAN_FIELD_NAME));
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
+				.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_USERNAME))
+				.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_USER_NAME_FIELD_NAME))
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
+				.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN))
+				.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_PAN_FIELD_NAME));
 	}
 
 	@Test
@@ -410,7 +410,7 @@ class ListHmacFieldStrategyTest {
 
 		assertThat(annotatedEntityForListHmacFieldStrategy.getUniqueValues()).hasSize(2);
 		CryptoShieldHmacHolder uniqueFieldUserNameHmacHolder = annotatedEntityForListHmacFieldStrategy.getUniqueValues().stream()
-			.filter(hmacHolder -> TEST_USER_NAME_FIELD_NAME.equals(hmacHolder.getHmacAlias())).findFirst().orElseThrow();
+				.filter(hmacHolder -> TEST_USER_NAME_FIELD_NAME.equals(hmacHolder.getHmacAlias())).findFirst().orElseThrow();
 		assertThat(uniqueFieldUserNameHmacHolder.getCryptoKeyId()).isEqualTo(TEST_CRYPTO_KEY_ID);
 		assertThat(uniqueFieldUserNameHmacHolder.getHmacAlias()).isEqualTo(TEST_USER_NAME_FIELD_NAME);
 		assertThat(uniqueFieldUserNameHmacHolder.getValue()).isEqualTo(TEST_USERNAME);
@@ -425,12 +425,12 @@ class ListHmacFieldStrategyTest {
 
 		then(mockEncryptionService).should().hmac(cryptoShieldHmacHolderArgumentCaptor.capture());
 		assertThat(cryptoShieldHmacHolderArgumentCaptor.getValue()).hasSize(2)
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
-			.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_USERNAME))
-			.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_USER_NAME_FIELD_NAME))
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
-			.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN))
-			.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_PAN_FIELD_NAME));
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
+				.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_USERNAME))
+				.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_USER_NAME_FIELD_NAME))
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
+				.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN))
+				.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_PAN_FIELD_NAME));
 	}
 
 	@Test
@@ -464,7 +464,7 @@ class ListHmacFieldStrategyTest {
 
 		assertThat(entity.getUniqueValues()).hasSize(1);
 		CryptoShieldHmacHolder uniqueFieldUserNameHmacHolder = entity.getUniqueValues().stream()
-			.filter(hmacHolder -> TEST_USER_NAME_FIELD_NAME.equals(hmacHolder.getHmacAlias())).findFirst().orElseThrow();
+				.filter(hmacHolder -> TEST_USER_NAME_FIELD_NAME.equals(hmacHolder.getHmacAlias())).findFirst().orElseThrow();
 		assertThat(uniqueFieldUserNameHmacHolder.getCryptoKeyId()).isEqualTo(TEST_CRYPTO_KEY_ID);
 		assertThat(uniqueFieldUserNameHmacHolder.getHmacAlias()).isEqualTo(TEST_USER_NAME_FIELD_NAME);
 		assertThat(uniqueFieldUserNameHmacHolder.getValue()).isEqualTo(TEST_USERNAME);
@@ -474,18 +474,18 @@ class ListHmacFieldStrategyTest {
 
 		then(mockEncryptionService).should().hmac(cryptoShieldHmacHolderArgumentCaptor.capture());
 		assertThat(cryptoShieldHmacHolderArgumentCaptor.getValue()).hasSize(4)
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
-			.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_USERNAME))
-			.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_USER_NAME_FIELD_NAME))
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
-			.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN))
-			.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_PAN_FIELD_NAME))
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
-			.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN + TOKENIZED_ALIAS_SUFFIX + 1))
-			.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_PAN_FIELD_NAME + TOKENIZED_ALIAS_SUFFIX + 1))
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
-			.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN + TOKENIZED_ALIAS_SUFFIX + 2))
-			.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_PAN_FIELD_NAME + TOKENIZED_ALIAS_SUFFIX + 2));
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
+				.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_USERNAME))
+				.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_USER_NAME_FIELD_NAME))
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
+				.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN))
+				.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_PAN_FIELD_NAME))
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
+				.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN + TOKENIZED_ALIAS_SUFFIX + 1))
+				.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_PAN_FIELD_NAME + TOKENIZED_ALIAS_SUFFIX + 1))
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
+				.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN + TOKENIZED_ALIAS_SUFFIX + 2))
+				.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_PAN_FIELD_NAME + TOKENIZED_ALIAS_SUFFIX + 2));
 	}
 
 	@Test
@@ -521,12 +521,12 @@ class ListHmacFieldStrategyTest {
 
 		then(mockEncryptionService).should().hmac(cryptoShieldHmacHolderArgumentCaptor.capture());
 		assertThat(cryptoShieldHmacHolderArgumentCaptor.getValue()).hasSize(2)
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
-			.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_USERNAME))
-			.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_USER_NAME_FIELD_NAME))
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
-			.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN))
-			.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_PAN_FIELD_NAME));
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
+				.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_USERNAME))
+				.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_USER_NAME_FIELD_NAME))
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
+				.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN))
+				.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_PAN_FIELD_NAME));
 
 	}
 
@@ -562,12 +562,12 @@ class ListHmacFieldStrategyTest {
 
 		then(mockEncryptionService).should().hmac(cryptoShieldHmacHolderArgumentCaptor.capture());
 		assertThat(cryptoShieldHmacHolderArgumentCaptor.getValue()).hasSize(2)
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
-			.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_USERNAME))
-			.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_USER_NAME_FIELD_NAME))
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
-			.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN))
-			.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_PAN_FIELD_NAME));
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
+				.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_USERNAME))
+				.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_USER_NAME_FIELD_NAME))
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
+				.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN))
+				.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_PAN_FIELD_NAME));
 	}
 
 	@Test
@@ -604,9 +604,9 @@ class ListHmacFieldStrategyTest {
 
 		then(mockEncryptionService).should().hmac(cryptoShieldHmacHolderArgumentCaptor.capture());
 		assertThat(cryptoShieldHmacHolderArgumentCaptor.getValue()).hasSize(1)
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
-			.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN))
-			.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_PAN_FIELD_NAME));
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
+				.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN))
+				.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_PAN_FIELD_NAME));
 	}
 
 	@Test
@@ -643,9 +643,9 @@ class ListHmacFieldStrategyTest {
 
 		then(mockEncryptionService).should().hmac(cryptoShieldHmacHolderArgumentCaptor.capture());
 		assertThat(cryptoShieldHmacHolderArgumentCaptor.getValue()).hasSize(1)
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
-			.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN))
-			.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_PAN_FIELD_NAME));
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
+				.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN))
+				.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_PAN_FIELD_NAME));
 	}
 
 	@Test
@@ -682,12 +682,12 @@ class ListHmacFieldStrategyTest {
 
 		then(mockEncryptionService).should().hmac(cryptoShieldHmacHolderArgumentCaptor.capture());
 		assertThat(cryptoShieldHmacHolderArgumentCaptor.getValue()).hasSize(2)
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
-			.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN))
-			.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_PAN_FIELD_NAME))
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
-			.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_USERNAME))
-			.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_USER_NAME_FIELD_NAME));
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
+				.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN))
+				.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_PAN_FIELD_NAME))
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
+				.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_USERNAME))
+				.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_USER_NAME_FIELD_NAME));
 	}
 
 	@Test
@@ -724,9 +724,9 @@ class ListHmacFieldStrategyTest {
 
 		then(mockEncryptionService).should().hmac(cryptoShieldHmacHolderArgumentCaptor.capture());
 		assertThat(cryptoShieldHmacHolderArgumentCaptor.getValue()).hasSize(1)
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
-			.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN))
-			.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_PAN_FIELD_NAME));
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
+				.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN))
+				.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_PAN_FIELD_NAME));
 	}
 
 	@Test
@@ -763,9 +763,9 @@ class ListHmacFieldStrategyTest {
 
 		then(mockEncryptionService).should().hmac(cryptoShieldHmacHolderArgumentCaptor.capture());
 		assertThat(cryptoShieldHmacHolderArgumentCaptor.getValue()).hasSize(1)
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
-			.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN))
-			.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_PAN_FIELD_NAME));
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
+				.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN))
+				.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_PAN_FIELD_NAME));
 	}
 
 	@Test
@@ -836,7 +836,7 @@ class ListHmacFieldStrategyTest {
 
 		assertThat(annotatedEntityForListHmacFieldStrategy.getUniqueValues()).hasSize(1);
 		CryptoShieldHmacHolder uniqueFieldUserNameHmacHolder = annotatedEntityForListHmacFieldStrategy.getUniqueValues().stream()
-			.filter(hmacHolder -> TEST_USER_NAME_FIELD_NAME.equals(hmacHolder.getHmacAlias())).findFirst().orElseThrow();
+				.filter(hmacHolder -> TEST_USER_NAME_FIELD_NAME.equals(hmacHolder.getHmacAlias())).findFirst().orElseThrow();
 		assertThat(uniqueFieldUserNameHmacHolder.getCryptoKeyId()).isEqualTo(TEST_CRYPTO_KEY_ID);
 		assertThat(uniqueFieldUserNameHmacHolder.getHmacAlias()).isEqualTo(TEST_USER_NAME_FIELD_NAME);
 		assertThat(uniqueFieldUserNameHmacHolder.getValue()).isEqualTo(TEST_USERNAME);
@@ -846,9 +846,9 @@ class ListHmacFieldStrategyTest {
 
 		then(mockEncryptionService).should().hmac(cryptoShieldHmacHolderArgumentCaptor.capture());
 		assertThat(cryptoShieldHmacHolderArgumentCaptor.getValue()).hasSize(1)
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
-			.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_USERNAME))
-			.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_USER_NAME_FIELD_NAME));
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
+				.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_USERNAME))
+				.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_USER_NAME_FIELD_NAME));
 	}
 
 	@Test
@@ -877,7 +877,7 @@ class ListHmacFieldStrategyTest {
 
 		assertThat(annotatedEntityForListHmacFieldStrategy.getUniqueValues()).hasSize(1);
 		CryptoShieldHmacHolder uniqueFieldUserNameHmacHolder = annotatedEntityForListHmacFieldStrategy.getUniqueValues().stream()
-			.filter(hmacHolder -> TEST_USER_NAME_FIELD_NAME.equals(hmacHolder.getHmacAlias())).findFirst().orElseThrow();
+				.filter(hmacHolder -> TEST_USER_NAME_FIELD_NAME.equals(hmacHolder.getHmacAlias())).findFirst().orElseThrow();
 		assertThat(uniqueFieldUserNameHmacHolder.getCryptoKeyId()).isEqualTo(TEST_CRYPTO_KEY_ID);
 		assertThat(uniqueFieldUserNameHmacHolder.getHmacAlias()).isEqualTo(TEST_USER_NAME_FIELD_NAME);
 		assertThat(uniqueFieldUserNameHmacHolder.getValue()).isEqualTo(TEST_USERNAME);
@@ -887,9 +887,9 @@ class ListHmacFieldStrategyTest {
 
 		then(mockEncryptionService).should().hmac(cryptoShieldHmacHolderArgumentCaptor.capture());
 		assertThat(cryptoShieldHmacHolderArgumentCaptor.getValue()).hasSize(1)
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
-			.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_USERNAME))
-			.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_USER_NAME_FIELD_NAME));
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
+				.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_USERNAME))
+				.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_USER_NAME_FIELD_NAME));
 	}
 
 	@Test
@@ -916,9 +916,9 @@ class ListHmacFieldStrategyTest {
 
 		then(mockEncryptionService).should().hmac(cryptoShieldHmacHolderArgumentCaptor.capture());
 		assertThat(cryptoShieldHmacHolderArgumentCaptor.getValue()).hasSize(1)
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
-			.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN))
-			.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_PAN_FIELD_NAME));
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
+				.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN))
+				.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_PAN_FIELD_NAME));
 	}
 
 	@Test
@@ -945,9 +945,9 @@ class ListHmacFieldStrategyTest {
 
 		then(mockEncryptionService).should().hmac(cryptoShieldHmacHolderArgumentCaptor.capture());
 		assertThat(cryptoShieldHmacHolderArgumentCaptor.getValue()).hasSize(1)
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
-			.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN))
-			.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_PAN_FIELD_NAME));
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
+				.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN))
+				.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_PAN_FIELD_NAME));
 	}
 
 	@Test
@@ -957,8 +957,8 @@ class ListHmacFieldStrategyTest {
 		given(mockCryptoKeyProvider.getCurrentHmacKeys()).willReturn(List.of());
 
 		assertThatThrownBy(() -> listHmacFieldStrategy.hmac(annotatedEntityForListHmacFieldStrategy))
-			.isInstanceOf(NoHmacKeysFoundException.class)
-			.hasMessage("No HMAC CryptoKeys were found");
+				.isInstanceOf(NoHmacKeysFoundException.class)
+				.hasMessage("No HMAC CryptoKeys were found");
 	}
 
 	@Test
@@ -968,8 +968,8 @@ class ListHmacFieldStrategyTest {
 		given(mockCryptoKeyProvider.getCurrentHmacKeys()).willReturn(null);
 
 		assertThatThrownBy(() -> listHmacFieldStrategy.hmac(annotatedEntityForListHmacFieldStrategy))
-			.isInstanceOf(NoHmacKeysFoundException.class)
-			.hasMessage("No HMAC CryptoKeys were found");
+				.isInstanceOf(NoHmacKeysFoundException.class)
+				.hasMessage("No HMAC CryptoKeys were found");
 	}
 
 	@Test
@@ -981,9 +981,9 @@ class ListHmacFieldStrategyTest {
 		String testValue = "TestValue";
 		String testAlias = "testAlias";
 		given(mockListHmacFieldStrategyDelegate.getDefaultHmacHolders(eq(mockListHmacFieldStrategyDelegateCryptoKeys), any(), eq(TEST_PAN), eq(annotatedEntityForListHmacFieldStrategy)))
-			.willReturn(List.of(new HmacHolder(TEST_CRYPTO_KEY_2, testValue, testAlias)));
+				.willReturn(List.of(new HmacHolder(TEST_CRYPTO_KEY_2, testValue, testAlias)));
 		given(mockListHmacFieldStrategyDelegate.getDefaultHmacHolders(eq(mockListHmacFieldStrategyDelegateCryptoKeys), any(), eq(TEST_USERNAME), eq(annotatedEntityForListHmacFieldStrategy)))
-			.willReturn(List.of(new HmacHolder(TEST_CRYPTO_KEY_2, testValue, testAlias)));
+				.willReturn(List.of(new HmacHolder(TEST_CRYPTO_KEY_2, testValue, testAlias)));
 
 		listHmacFieldStrategy.hmac(annotatedEntityForListHmacFieldStrategy, mockListHmacFieldStrategyDelegate);
 
@@ -992,27 +992,27 @@ class ListHmacFieldStrategyTest {
 		assertThat(annotatedEntityForListHmacFieldStrategy.getLookups()).hasSize(2);
 
 		assertThat(annotatedEntityForListHmacFieldStrategy.getLookups())
-			.allMatch(cryptoShieldHmacHolder ->
-				cryptoShieldHmacHolder.getCryptoKeyId().equals(TEST_IDENTITY_CRYPTO_KEY_ID)
-					&& cryptoShieldHmacHolder.getValue().equals(testValue)
-					&& cryptoShieldHmacHolder.getHmacAlias().equals(testAlias));
+				.allMatch(cryptoShieldHmacHolder ->
+						cryptoShieldHmacHolder.getCryptoKeyId().equals(TEST_IDENTITY_CRYPTO_KEY_ID)
+								&& cryptoShieldHmacHolder.getValue().equals(testValue)
+								&& cryptoShieldHmacHolder.getHmacAlias().equals(testAlias));
 
 
 		assertThat(annotatedEntityForListHmacFieldStrategy.getUniqueValues()).hasSize(1);
 		assertThat(annotatedEntityForListHmacFieldStrategy.getUniqueValues())
-			.anyMatch(cryptoShieldHmacHolder ->
-				cryptoShieldHmacHolder.getCryptoKeyId().equals(TEST_IDENTITY_CRYPTO_KEY_ID)
-					&& cryptoShieldHmacHolder.getValue().equals(testValue)
-					&& cryptoShieldHmacHolder.getHmacAlias().equals(testAlias));
+				.anyMatch(cryptoShieldHmacHolder ->
+						cryptoShieldHmacHolder.getCryptoKeyId().equals(TEST_IDENTITY_CRYPTO_KEY_ID)
+								&& cryptoShieldHmacHolder.getValue().equals(testValue)
+								&& cryptoShieldHmacHolder.getHmacAlias().equals(testAlias));
 
 		assertThat(annotatedEntityForListHmacFieldStrategy.getNumberOfTimesAddLookupsWasCalled()).isEqualTo(1);
 		assertThat(annotatedEntityForListHmacFieldStrategy.getNumberOfTimesAddUniqueValuesWasCalled()).isEqualTo(1);
 
 		then(mockEncryptionService).should().hmac(cryptoShieldHmacHolderArgumentCaptor.capture());
 		assertThat(cryptoShieldHmacHolderArgumentCaptor.getValue()).hasSize(1)
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY_2))
-			.anyMatch(hmacHolder -> hmacHolder.getValue().equals(testValue))
-			.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(testAlias));
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY_2))
+				.anyMatch(hmacHolder -> hmacHolder.getValue().equals(testValue))
+				.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(testAlias));
 
 		then(mockListHmacFieldStrategyDelegate).should().preProcessForRekey(eq(annotatedEntityForListHmacFieldStrategy), any(), any());
 	}
@@ -1037,7 +1037,7 @@ class ListHmacFieldStrategyTest {
 
 		assertThat(testEntity.getUniqueValues()).hasSize(1);
 		CryptoShieldHmacHolder uniqueFieldUserNameHmacHolder = testEntity.getUniqueValues().stream()
-			.filter(hmacHolder -> TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroup.TEST_GROUP_NAME.equals(hmacHolder.getHmacAlias())).findFirst().orElseThrow();
+				.filter(hmacHolder -> TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroup.TEST_GROUP_NAME.equals(hmacHolder.getHmacAlias())).findFirst().orElseThrow();
 		assertThat(uniqueFieldUserNameHmacHolder.getCryptoKeyId()).isEqualTo(TEST_CRYPTO_KEY_ID);
 		assertThat(uniqueFieldUserNameHmacHolder.getHmacAlias()).isEqualTo(TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroup.TEST_GROUP_NAME);
 		assertThat(uniqueFieldUserNameHmacHolder.getValue()).isEqualTo(TEST_PAN + TEST_USERNAME);
@@ -1046,9 +1046,9 @@ class ListHmacFieldStrategyTest {
 
 		then(mockEncryptionService).should().hmac(cryptoShieldHmacHolderArgumentCaptor.capture());
 		assertThat(cryptoShieldHmacHolderArgumentCaptor.getValue()).hasSize(1)
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
-			.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN + TEST_USERNAME))
-			.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroup.TEST_GROUP_NAME));
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
+				.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN + TEST_USERNAME))
+				.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroup.TEST_GROUP_NAME));
 	}
 
 	@Test
@@ -1071,7 +1071,7 @@ class ListHmacFieldStrategyTest {
 
 		assertThat(testEntity.getUniqueValues()).hasSize(1);
 		CryptoShieldHmacHolder uniqueFieldUserNameHmacHolder = testEntity.getUniqueValues().stream()
-			.filter(hmacHolder -> TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroup.TEST_GROUP_NAME.equals(hmacHolder.getHmacAlias())).findFirst().orElseThrow();
+				.filter(hmacHolder -> TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroup.TEST_GROUP_NAME.equals(hmacHolder.getHmacAlias())).findFirst().orElseThrow();
 		assertThat(uniqueFieldUserNameHmacHolder.getCryptoKeyId()).isEqualTo(TEST_CRYPTO_KEY_ID);
 		assertThat(uniqueFieldUserNameHmacHolder.getHmacAlias()).isEqualTo(TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroup.TEST_GROUP_NAME);
 		assertThat(uniqueFieldUserNameHmacHolder.getValue()).isEqualTo(TEST_PAN + TEST_USERNAME);
@@ -1080,9 +1080,9 @@ class ListHmacFieldStrategyTest {
 
 		then(mockEncryptionService).should().hmac(cryptoShieldHmacHolderArgumentCaptor.capture());
 		assertThat(cryptoShieldHmacHolderArgumentCaptor.getValue()).hasSize(1)
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
-			.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN + TEST_USERNAME))
-			.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroup.TEST_GROUP_NAME));
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
+				.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN + TEST_USERNAME))
+				.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroup.TEST_GROUP_NAME));
 	}
 
 	@Test
@@ -1128,7 +1128,7 @@ class ListHmacFieldStrategyTest {
 
 		assertThat(testEntity.getUniqueValues()).hasSize(1);
 		CryptoShieldHmacHolder uniqueFieldUserNameHmacHolder = testEntity.getUniqueValues().stream()
-			.filter(hmacHolder -> TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroup.TEST_GROUP_NAME.equals(hmacHolder.getHmacAlias())).findFirst().orElseThrow();
+				.filter(hmacHolder -> TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroup.TEST_GROUP_NAME.equals(hmacHolder.getHmacAlias())).findFirst().orElseThrow();
 		assertThat(uniqueFieldUserNameHmacHolder.getCryptoKeyId()).isEqualTo(TEST_CRYPTO_KEY_ID);
 		assertThat(uniqueFieldUserNameHmacHolder.getHmacAlias()).isEqualTo(TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroup.TEST_GROUP_NAME);
 		assertThat(uniqueFieldUserNameHmacHolder.getValue()).isEqualTo(TEST_PAN + "null");
@@ -1137,9 +1137,9 @@ class ListHmacFieldStrategyTest {
 
 		then(mockEncryptionService).should().hmac(cryptoShieldHmacHolderArgumentCaptor.capture());
 		assertThat(cryptoShieldHmacHolderArgumentCaptor.getValue()).hasSize(1)
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
-			.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN + "null"))
-			.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroup.TEST_GROUP_NAME));
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
+				.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN + "null"))
+				.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroup.TEST_GROUP_NAME));
 	}
 
 	@Test
@@ -1208,7 +1208,7 @@ class ListHmacFieldStrategyTest {
 
 		assertThat(testEntity.getUniqueValues()).hasSize(1);
 		CryptoShieldHmacHolder uniqueFieldUserNameHmacHolder = testEntity.getUniqueValues().stream()
-			.filter(hmacHolder -> TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroup.TEST_GROUP_NAME.equals(hmacHolder.getHmacAlias())).findFirst().orElseThrow();
+				.filter(hmacHolder -> TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroup.TEST_GROUP_NAME.equals(hmacHolder.getHmacAlias())).findFirst().orElseThrow();
 		assertThat(uniqueFieldUserNameHmacHolder.getCryptoKeyId()).isEqualTo(TEST_CRYPTO_KEY_ID);
 		assertThat(uniqueFieldUserNameHmacHolder.getHmacAlias()).isEqualTo(TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroup.TEST_GROUP_NAME);
 		assertThat(uniqueFieldUserNameHmacHolder.getValue()).isEqualTo(TEST_PAN + TEST_USERNAME + TEST_FAVOURITE_COLOR);
@@ -1217,9 +1217,9 @@ class ListHmacFieldStrategyTest {
 
 		then(mockEncryptionService).should().hmac(cryptoShieldHmacHolderArgumentCaptor.capture());
 		assertThat(cryptoShieldHmacHolderArgumentCaptor.getValue()).hasSize(1)
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
-			.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN + TEST_USERNAME + TEST_FAVOURITE_COLOR))
-			.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroup.TEST_GROUP_NAME));
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
+				.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN + TEST_USERNAME + TEST_FAVOURITE_COLOR))
+				.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroup.TEST_GROUP_NAME));
 	}
 
 	@Test
@@ -1242,7 +1242,7 @@ class ListHmacFieldStrategyTest {
 
 		assertThat(testEntity.getUniqueValues()).hasSize(1);
 		CryptoShieldHmacHolder uniqueFieldUserNameHmacHolder = testEntity.getUniqueValues().stream()
-			.filter(hmacHolder -> TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroup.TEST_GROUP_NAME.equals(hmacHolder.getHmacAlias())).findFirst().orElseThrow();
+				.filter(hmacHolder -> TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroup.TEST_GROUP_NAME.equals(hmacHolder.getHmacAlias())).findFirst().orElseThrow();
 		assertThat(uniqueFieldUserNameHmacHolder.getCryptoKeyId()).isEqualTo(TEST_CRYPTO_KEY_ID);
 		assertThat(uniqueFieldUserNameHmacHolder.getHmacAlias()).isEqualTo(TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroup.TEST_GROUP_NAME);
 		assertThat(uniqueFieldUserNameHmacHolder.getValue()).isEqualTo(TEST_PAN + TEST_USERNAME);
@@ -1259,25 +1259,25 @@ class ListHmacFieldStrategyTest {
 
 		then(mockEncryptionService).should().hmac(cryptoShieldHmacHolderArgumentCaptor.capture());
 		assertThat(cryptoShieldHmacHolderArgumentCaptor.getValue()).hasSize(2)
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
-			.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN + TEST_USERNAME))
-			.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroup.TEST_GROUP_NAME))
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
-			.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN))
-			.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_PAN_FIELD_NAME));
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
+				.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN + TEST_USERNAME))
+				.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroup.TEST_GROUP_NAME))
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY))
+				.anyMatch(hmacHolder -> hmacHolder.getValue().equals(TEST_PAN))
+				.anyMatch(hmacHolder -> hmacHolder.getHmacAlias().equals(TEST_PAN_FIELD_NAME));
 	}
 
 	@Test
 	void hmacUniqueGroupWithOnlyClearTextGroupFields() {
 		assertThatThrownBy(() -> new ListHmacFieldStrategy(TestAnnotatedEntityForListHmacFieldStrategyWithClearTextOnlyUniqueGroup.class, mockStrategyHmacHelper))
-			.isInstanceOf(InvalidUniqueGroupDefinition.class)
-			.hasMessage("There are fields marked with UniqueGroup which only have plain text fields in the group but no corresponding HMAC field as part of the group. Each Unique Group must contain at least one field marked with Hmac");
+				.isInstanceOf(InvalidUniqueGroupDefinition.class)
+				.hasMessage("There are fields marked with UniqueGroup which only have plain text fields in the group but no corresponding HMAC field as part of the group. Each Unique Group must contain at least one field marked with Hmac");
 	}
 
 	@Test
 	void hmacUniqueGroupWithInvalidOrdering() {
 		assertThatThrownBy(() -> new ListHmacFieldStrategy(TestAnnotatedEntityForListHmacFieldStrategyWithUniqueGroupWithInvalidOrdering.class, mockStrategyHmacHelper))
-			.isInstanceOf(InvalidUniqueGroupDefinition.class)
-			.hasMessage("The fields in the unique group 'test-group-1' have invalid orderings");
+				.isInstanceOf(InvalidUniqueGroupDefinition.class)
+				.hasMessage("The fields in the unique group 'test-group-1' have invalid orderings");
 	}
 }

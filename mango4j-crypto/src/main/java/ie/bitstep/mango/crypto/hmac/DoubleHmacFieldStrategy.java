@@ -96,18 +96,20 @@ public class DoubleHmacFieldStrategy implements HmacStrategy {
 
 	private void setHmacKeyIdFields(Class<?> annotatedEntityClass) {
 		List<Field> hmacKeyIdFields = ReflectionUtils.getFieldsByAnnotation(annotatedEntityClass, HmacKeyId.class);
-		if (!hmacKeyIdFields.isEmpty()) {
-			hmacKeyIdFields.sort(Comparator.comparingInt(o -> o.getAnnotation(HmacKeyId.class).keyNumber()));
-			for (int i = 1; i <= hmacKeyIdFields.size(); i++) {
-				Field hmacKeyIdField = hmacKeyIdFields.get(i - 1);
-				if (hmacKeyIdField.getAnnotation(HmacKeyId.class).keyNumber() == i) {
-					hmacKeyIdField.setAccessible(true); // NOSONAR
-					entityHmacKeyIdFields.add(hmacKeyIdField);
-				} else {
-					throw new NonTransientCryptoException(String.format("Field '%1$s' in '%2$s' marked with @%3$s but did not have a valid " +
-							"keyNumber value. Entities using the Double HMAC strategy mush have keyNumbers from 1 to 2 " +
-							"on the %3$s annotation.", hmacKeyIdField.getName(), annotatedEntityClass.getSimpleName(), HmacKeyId.class.getSimpleName()));
-				}
+		if (hmacKeyIdFields.size() < 2) {
+			throw new NonTransientCryptoException(format("Class '%1$s' uses the Double HMAC Strategy but does not have 2 fields annotated with @%2$s. " +
+					"It's mandatory to have 2 String fields annotated with @%2$s when using the Double HMAC Strategy", annotatedEntityClass.getName(), HmacKeyId.class.getSimpleName()));
+		}
+		hmacKeyIdFields.sort(Comparator.comparingInt(o -> o.getAnnotation(HmacKeyId.class).keyNumber()));
+		for (int i = 1; i <= hmacKeyIdFields.size(); i++) {
+			Field hmacKeyIdField = hmacKeyIdFields.get(i - 1);
+			if (hmacKeyIdField.getAnnotation(HmacKeyId.class).keyNumber() == i) {
+				hmacKeyIdField.setAccessible(true); // NOSONAR
+				entityHmacKeyIdFields.add(hmacKeyIdField);
+			} else {
+				throw new NonTransientCryptoException(String.format("Field '%1$s' in '%2$s' marked with @%3$s but did not have a valid " +
+						"keyNumber value. Entities using the Double HMAC strategy must have keyNumbers from 1 to 2 " +
+						"on the %3$s annotation.", hmacKeyIdField.getName(), annotatedEntityClass.getSimpleName(), HmacKeyId.class.getSimpleName()));
 			}
 		}
 	}

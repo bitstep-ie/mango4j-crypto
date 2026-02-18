@@ -4,6 +4,7 @@ import ie.bitstep.mango.crypto.annotations.Encrypt;
 import ie.bitstep.mango.crypto.annotations.EncryptedData;
 import ie.bitstep.mango.crypto.annotations.EncryptionKeyId;
 import ie.bitstep.mango.crypto.annotations.Hmac;
+import ie.bitstep.mango.crypto.annotations.HmacKeyId;
 import ie.bitstep.mango.crypto.annotations.strategies.SingleHmacStrategy;
 
 @SingleHmacStrategy
@@ -31,6 +32,9 @@ public class TestAnnotatedEntityForSingleHmacFieldStrategyEncryptedDataField {
 	private String userNameHmac;
 
 	private String panHmac;
+
+	@HmacKeyId
+	private String hmacKeyId;
 
 	public String getPan() {
 		return pan;
@@ -94,5 +98,13 @@ public class TestAnnotatedEntityForSingleHmacFieldStrategyEncryptedDataField {
 
 	public void setEncryptionKeyId(String encryptionKeyId) {
 		this.encryptionKeyId = encryptionKeyId;
+	}
+
+	public String getHmacKeyId() {
+		return hmacKeyId;
+	}
+
+	public void setHmacKeyId(String hmacKeyId) {
+		this.hmacKeyId = hmacKeyId;
 	}
 }

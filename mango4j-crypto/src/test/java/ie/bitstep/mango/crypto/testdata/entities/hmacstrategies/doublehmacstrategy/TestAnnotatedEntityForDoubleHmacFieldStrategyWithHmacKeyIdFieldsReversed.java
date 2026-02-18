@@ -1,13 +1,14 @@
 package ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.doublehmacstrategy;
 
 import ie.bitstep.mango.crypto.annotations.Encrypt;
-import ie.bitstep.mango.crypto.annotations.EncryptedBlob;
+import ie.bitstep.mango.crypto.annotations.EncryptedData;
+import ie.bitstep.mango.crypto.annotations.EncryptionKeyId;
 import ie.bitstep.mango.crypto.annotations.Hmac;
 import ie.bitstep.mango.crypto.annotations.HmacKeyId;
 import ie.bitstep.mango.crypto.annotations.strategies.DoubleHmacStrategy;
 
 @DoubleHmacStrategy
-public class InvalidTestAnnotatedEntityForDoubleHmacFieldStrategyWithNoCorrespondingHmac1TargetField {
+public class TestAnnotatedEntityForDoubleHmacFieldStrategyWithHmacKeyIdFieldsReversed {
 
 	@Encrypt
 	@Hmac
@@ -17,10 +18,13 @@ public class InvalidTestAnnotatedEntityForDoubleHmacFieldStrategyWithNoCorrespon
 	@Hmac
 	private transient String userName;
 
+	@Hmac
+	private transient String someOtherHmacValue;
+
 	@Encrypt
 	private transient String ethnicity;
 
-	@EncryptedBlob
+	@EncryptedData
 	private String encryptedData;
 
 	private String favouriteColor;
@@ -29,13 +33,22 @@ public class InvalidTestAnnotatedEntityForDoubleHmacFieldStrategyWithNoCorrespon
 
 	private String userNameHmac2;
 
+	private String panHmac1;
+
 	private String panHmac2;
 
-	@HmacKeyId
-	private String hmacKeyId1;
+	private String someOtherHmacValueHmac1;
+
+	private String someOtherHmacValueHmac2;
+
+	@EncryptionKeyId
+	private String encryptionKeyId;
 
 	@HmacKeyId(keyNumber = 2)
 	private String hmacKeyId2;
+
+	@HmacKeyId(keyNumber = 1)
+	private String hmacKeyId1;
 
 	public String getPan() {
 		return pan;
@@ -85,6 +98,14 @@ public class InvalidTestAnnotatedEntityForDoubleHmacFieldStrategyWithNoCorrespon
 		this.userNameHmac2 = userNameHmac2;
 	}
 
+	public String getPanHmac1() {
+		return panHmac1;
+	}
+
+	public void setPanHmac1(String panHmac1) {
+		this.panHmac1 = panHmac1;
+	}
+
 	public String getPanHmac2() {
 		return panHmac2;
 	}
@@ -99,5 +120,29 @@ public class InvalidTestAnnotatedEntityForDoubleHmacFieldStrategyWithNoCorrespon
 
 	public String getEncryptedData() {
 		return encryptedData;
+	}
+
+	public String getEncryptionKeyId() {
+		return encryptionKeyId;
+	}
+
+	public void setEncryptionKeyId(String encryptionKeyId) {
+		this.encryptionKeyId = encryptionKeyId;
+	}
+
+	public String getHmacKeyId1() {
+		return hmacKeyId1;
+	}
+
+	public void setHmacKeyId1(String hmacKeyId1) {
+		this.hmacKeyId1 = hmacKeyId1;
+	}
+
+	public String getHmacKeyId2() {
+		return hmacKeyId2;
+	}
+
+	public void setHmacKeyId2(String hmacKeyId2) {
+		this.hmacKeyId2 = hmacKeyId2;
 	}
 }

@@ -84,18 +84,21 @@ public class SingleHmacFieldStrategy implements HmacStrategy {
 			targetHmacField.setAccessible(true); // NOSONAR
 			entityHmacFields.put(hmacSourceField, targetHmacField);
 		});
-		setHmacKeyIdField(annotatedEntityClass);
 		if (entityHmacFields.isEmpty()) {
 			throw new NoHmacFieldsFoundException(String.format("Class '%s' does not have any fields annotated with %s", annotatedEntityClass.getName(), Hmac.class.getSimpleName()));
 		}
+		setHmacKeyIdField(annotatedEntityClass);
 	}
 
 	private void setHmacKeyIdField(Class<?> annotatedEntityClass) {
 		List<Field> hmacKeyIdFields = ReflectionUtils.getFieldsByAnnotation(annotatedEntityClass, HmacKeyId.class);
-		if (!hmacKeyIdFields.isEmpty()) {
-			entityHmacKeyIdField = hmacKeyIdFields.get(0);
-			entityHmacKeyIdField.setAccessible(true);
+		if (hmacKeyIdFields.isEmpty()) {
+			throw new NonTransientCryptoException(format("Class '%1$s' uses the Single HMAC Strategy but does not have a field annotated with @%2$s. " +
+					"It's mandatory to have a single String field annotated with @%2$s when using the Single HMAC Strategy", annotatedEntityClass.getName(), HmacKeyId.class.getSimpleName()));
 		}
+
+		entityHmacKeyIdField = hmacKeyIdFields.get(0);
+		entityHmacKeyIdField.setAccessible(true);
 	}
 
 	/**
@@ -129,9 +132,7 @@ public class SingleHmacFieldStrategy implements HmacStrategy {
 	}
 
 	private void setHmacKeyId(Object entity, CryptoKey hmacKeyToUse) throws IllegalAccessException {
-		if (entityHmacKeyIdField != null) {
-			entityHmacKeyIdField.set(entity, hmacKeyToUse.getId());
-		}
+		entityHmacKeyIdField.set(entity, hmacKeyToUse.getId());
 	}
 
 	/**

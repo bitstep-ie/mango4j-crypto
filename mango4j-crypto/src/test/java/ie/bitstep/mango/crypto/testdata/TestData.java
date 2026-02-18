@@ -43,6 +43,7 @@ public class TestData {
 	}
 
 	public static final String ENTITY_HMAC_FIELDS_FIELD_NAME = "entityHmacFields";
+	public static final String ENTITY_HMAC_KEY_ID_FIELD_NAME = "entityHmacKeyIdField";
 	public static final String ENTITY_HMAC_TOKENIZERS_FIELD_NAME = "entityHmacTokenizers";
 
 	public static final String TEST_USER_NAME_FIELD_NAME = "userName";
@@ -52,6 +53,7 @@ public class TestData {
 	public static final String TEST_HIGHLY_CONFIDENTIAL_FIELD_NAME = "highlyConfidentialField";
 	public static final String TEST_ENCRYPTED_DATA_FIELD_NAME = "encryptedData";
 	public static final String PAN_FIELD_NAME = "pan";
+	public static final String HMAC_KEY_ID_FIELD_NAME = "hmacKeyId";
 	public static final String TEST_MOCK_SOURCE_CIPHERTEXT = "{\"" + PAN_FIELD_NAME + "\": \"" + TEST_PAN + "\"}";
 	public static final String TEST_CRYPTO_KEY_DATA_ATTRIBUTE = "TEST_CIPHER_TEXT_ATTRIBUTE";
 	public static final String TEST_MOCK_ENCRYPTED_DATA = String.format("{\"cryptoKeyId\" : \"%s\", \"ciphertext\":\"%s\"}", TEST_CRYPTO_KEY.getId(), TEST_MOCK_SOURCE_CIPHERTEXT.replaceAll("\"", "\\\\\""));

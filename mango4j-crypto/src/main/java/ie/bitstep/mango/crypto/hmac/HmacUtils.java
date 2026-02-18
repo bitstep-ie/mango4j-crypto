@@ -14,6 +14,10 @@ import static java.util.stream.Collectors.toCollection;
 
 class HmacUtils {
 
+	private HmacUtils() {
+		throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+	}
+
 	static List<CryptoKey> hmacKeysInCreationDateDescendingOrder(List<CryptoKey> currentHmacKeys) {
 		if (currentHmacKeys == null || currentHmacKeys.isEmpty()) {
 			throw new NoHmacKeysFoundException();

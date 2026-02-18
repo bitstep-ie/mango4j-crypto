@@ -2,19 +2,14 @@ package ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.doublehmacstrat
 
 import ie.bitstep.mango.crypto.annotations.Encrypt;
 import ie.bitstep.mango.crypto.annotations.EncryptedBlob;
-import ie.bitstep.mango.crypto.annotations.Hmac;
 import ie.bitstep.mango.crypto.annotations.HmacKeyId;
-import ie.bitstep.mango.crypto.annotations.strategies.DoubleHmacStrategy;
 
-@DoubleHmacStrategy
-public class InvalidTestAnnotatedEntityForDoubleHmacFieldStrategyWithNoCorrespondingHmac1TargetField {
+public class TestAnnotatedEntityDoubleHmacStrategyNoHmacFields {
 
 	@Encrypt
-	@Hmac
 	private transient String pan;
 
 	@Encrypt
-	@Hmac
 	private transient String userName;
 
 	@Encrypt
@@ -24,12 +19,6 @@ public class InvalidTestAnnotatedEntityForDoubleHmacFieldStrategyWithNoCorrespon
 	private String encryptedData;
 
 	private String favouriteColor;
-
-	private String userNameHmac1;
-
-	private String userNameHmac2;
-
-	private String panHmac2;
 
 	@HmacKeyId
 	private String hmacKeyId1;
@@ -67,30 +56,6 @@ public class InvalidTestAnnotatedEntityForDoubleHmacFieldStrategyWithNoCorrespon
 
 	public void setFavouriteColor(String favouriteColor) {
 		this.favouriteColor = favouriteColor;
-	}
-
-	public String getUserNameHmac1() {
-		return userNameHmac1;
-	}
-
-	public void setUserNameHmac1(String userNameHmac1) {
-		this.userNameHmac1 = userNameHmac1;
-	}
-
-	public String getUserNameHmac2() {
-		return userNameHmac2;
-	}
-
-	public void setUserNameHmac2(String userNameHmac2) {
-		this.userNameHmac2 = userNameHmac2;
-	}
-
-	public String getPanHmac2() {
-		return panHmac2;
-	}
-
-	public void setPanHmac2(String panHmac2) {
-		this.panHmac2 = panHmac2;
 	}
 
 	public void setEncryptedData(String encryptedData) {

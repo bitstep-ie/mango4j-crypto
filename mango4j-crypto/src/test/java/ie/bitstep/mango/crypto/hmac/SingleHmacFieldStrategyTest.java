@@ -11,6 +11,7 @@ import ie.bitstep.mango.crypto.core.exceptions.UnsupportedKeyTypeException;
 import ie.bitstep.mango.crypto.core.providers.CryptoKeyProvider;
 import ie.bitstep.mango.crypto.exceptions.NoHmacFieldsFoundException;
 import ie.bitstep.mango.crypto.testdata.TestData;
+import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.custom.TestAnnotatedEntityForSingleHmacFieldStrategyHmacKeyIdMissing;
 import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.custom.TestAnnotatedEntityNoHmacFields;
 import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.custom.TestAnnotatedEntityNoTargetHmacFields;
 import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.single.InvalidAnnotatedEntityForSingleHmacFieldStrategyNonTransientHmacField;
@@ -30,6 +31,9 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
+import static ie.bitstep.mango.crypto.testdata.TestData.ENTITY_HMAC_KEY_ID_FIELD_NAME;
+import static ie.bitstep.mango.crypto.testdata.TestData.HMAC_KEY_ID_FIELD_NAME;
+import static ie.bitstep.mango.crypto.testdata.TestData.TEST_CRYPTO_KEY_ID;
 import static ie.bitstep.mango.crypto.testdata.TestData.TEST_ETHNICITY;
 import static ie.bitstep.mango.crypto.testdata.TestData.TEST_FAVOURITE_COLOR;
 import static ie.bitstep.mango.crypto.testdata.TestData.TEST_PAN;
@@ -98,6 +102,13 @@ class SingleHmacFieldStrategyTest {
 
 		assertThat(expectedTargetUserNameField).isEqualTo(targetUserNameField);
 		assertThat(entityHmacFields).hasSize(2);
+
+		Field registeredHmacKeyIdField = (Field) getHmacKeyIdField().get(singleHmacFieldStrategy);
+		registeredHmacKeyIdField.setAccessible(true);
+		Field actualHmacKeyIdField = TestAnnotatedEntityForSingleHmacFieldStrategy.class.getDeclaredField(HMAC_KEY_ID_FIELD_NAME);
+		actualHmacKeyIdField.setAccessible(true);
+
+		assertThat(registeredHmacKeyIdField).isEqualTo(actualHmacKeyIdField);
 	}
 
 	@Test
@@ -121,11 +132,24 @@ class SingleHmacFieldStrategyTest {
 				.hasMessage("Field 'pan' does not have an associated field called 'panHmac'");
 	}
 
+	@Test
+	void registerHmacKeyIdFieldMissing() {
+		assertThatThrownBy(() -> new SingleHmacFieldStrategy(TestAnnotatedEntityForSingleHmacFieldStrategyHmacKeyIdMissing.class, mockHmacHelper))
+				.isInstanceOf(NonTransientCryptoException.class)
+				.hasMessage("Class 'ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.custom.TestAnnotatedEntityForSingleHmacFieldStrategyHmacKeyIdMissing' uses the Single HMAC Strategy but does not have a field annotated with @HmacKeyId. It's mandatory to have a single String field annotated with @HmacKeyId when using the Single HMAC Strategy");
+	}
+
 	@SuppressWarnings("unchecked")
 	private Map<Field, Field> getEntityHmacFieldsMap() throws NoSuchFieldException, IllegalAccessException {
 		Field entityHmacFieldsField = SingleHmacFieldStrategy.class.getDeclaredField(TestData.ENTITY_HMAC_FIELDS_FIELD_NAME);
 		entityHmacFieldsField.setAccessible(true);
 		return (Map<Field, Field>) entityHmacFieldsField.get(singleHmacFieldStrategy);
+	}
+
+	private Field getHmacKeyIdField() throws NoSuchFieldException {
+		Field entityHmacKeyIdField = SingleHmacFieldStrategy.class.getDeclaredField(ENTITY_HMAC_KEY_ID_FIELD_NAME);
+		entityHmacKeyIdField.setAccessible(true);
+		return entityHmacKeyIdField;
 	}
 
 	@Test
@@ -140,6 +164,7 @@ class SingleHmacFieldStrategyTest {
 		assertThat(testEntity.getFavouriteColor()).isEqualTo(TEST_FAVOURITE_COLOR);
 		assertThat(testEntity.getPanHmac()).isEqualTo(TEST_PAN);
 		assertThat(testEntity.getUserNameHmac()).isEqualTo(TEST_USERNAME);
+		assertThat(testEntity.getHmacKeyId()).isEqualTo(TEST_CRYPTO_KEY_ID);
 
 		then(mockEncryptionService).should(times(2)).hmac(hmacHolderArgumentCaptor.capture());
 		assertThat(hmacHolderArgumentCaptor.getAllValues()).hasSize(2);
@@ -166,6 +191,7 @@ class SingleHmacFieldStrategyTest {
 		assertThat(testEntity.getEthnicity()).isEqualTo(TEST_ETHNICITY);
 		assertThat(testEntity.getFavouriteColor()).isEqualTo(TEST_FAVOURITE_COLOR);
 		assertThat(testEntity.getPanHmac()).isNull();
+		assertThat(testEntity.getUserNameHmac()).isEqualTo(TEST_USERNAME);
 		assertThat(testEntity.getUserNameHmac()).isEqualTo(TEST_USERNAME);
 
 		assertThat(hmacHolderArgumentCaptor.getValue()).hasSize(1);

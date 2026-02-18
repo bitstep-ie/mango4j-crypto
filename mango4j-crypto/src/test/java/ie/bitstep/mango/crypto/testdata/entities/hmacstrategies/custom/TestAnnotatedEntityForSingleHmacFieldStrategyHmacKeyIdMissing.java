@@ -1,4 +1,4 @@
-package ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.single;
+package ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.custom;
 
 import ie.bitstep.mango.crypto.annotations.Encrypt;
 import ie.bitstep.mango.crypto.annotations.EncryptedBlob;
@@ -7,7 +7,7 @@ import ie.bitstep.mango.crypto.annotations.HmacKeyId;
 import ie.bitstep.mango.crypto.annotations.strategies.SingleHmacStrategy;
 
 @SingleHmacStrategy
-public class InvalidAnnotatedEntityForSingleHmacFieldStrategyNonTransientHmacField {
+public class TestAnnotatedEntityForSingleHmacFieldStrategyHmacKeyIdMissing {
 
 	@Encrypt
 	@Hmac
@@ -15,7 +15,7 @@ public class InvalidAnnotatedEntityForSingleHmacFieldStrategyNonTransientHmacFie
 
 	@Encrypt
 	@Hmac
-	private String userName;
+	private transient String userName;
 
 	@Encrypt
 	private transient String ethnicity;
@@ -23,15 +23,11 @@ public class InvalidAnnotatedEntityForSingleHmacFieldStrategyNonTransientHmacFie
 	@EncryptedBlob
 	private String encryptedData;
 
-
 	private String favouriteColor;
 
 	private String userNameHmac;
 
 	private String panHmac;
-
-	@HmacKeyId
-	private String hmacKeyId;
 
 	public String getPan() {
 		return pan;
@@ -87,13 +83,5 @@ public class InvalidAnnotatedEntityForSingleHmacFieldStrategyNonTransientHmacFie
 
 	public void setPanHmac(String panHmac) {
 		this.panHmac = panHmac;
-	}
-
-	public String getHmacKeyId() {
-		return hmacKeyId;
-	}
-
-	public void setHmacKeyId(String hmacKeyId) {
-		this.hmacKeyId = hmacKeyId;
 	}
 }
