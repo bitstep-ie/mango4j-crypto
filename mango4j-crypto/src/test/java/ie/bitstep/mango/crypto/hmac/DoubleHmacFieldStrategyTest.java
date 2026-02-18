@@ -36,7 +36,6 @@ import static ie.bitstep.mango.crypto.testdata.TestData.TEST_CRYPTO_KEY_2;
 import static ie.bitstep.mango.crypto.testdata.TestData.TEST_CRYPTO_KEY_ID;
 import static ie.bitstep.mango.crypto.testdata.TestData.TEST_ETHNICITY;
 import static ie.bitstep.mango.crypto.testdata.TestData.TEST_FAVOURITE_COLOR;
-import static ie.bitstep.mango.crypto.testdata.TestData.TEST_IDENTITY_CRYPTO_KEY_ID;
 import static ie.bitstep.mango.crypto.testdata.TestData.TEST_PAN;
 import static ie.bitstep.mango.crypto.testdata.TestData.TEST_USERNAME;
 import static org.assertj.core.api.Assertions.assertThat;

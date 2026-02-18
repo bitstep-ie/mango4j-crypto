@@ -1,7 +1,7 @@
 package ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.doublehmacstrategy;
 
 import ie.bitstep.mango.crypto.annotations.Encrypt;
-import ie.bitstep.mango.crypto.annotations.EncryptedBlob;
+import ie.bitstep.mango.crypto.annotations.EncryptedData;
 import ie.bitstep.mango.crypto.annotations.HmacKeyId;
 
 public class TestAnnotatedEntityDoubleHmacStrategyNoHmacFields {
@@ -15,7 +15,7 @@ public class TestAnnotatedEntityDoubleHmacStrategyNoHmacFields {
 	@Encrypt
 	private transient String ethnicity;
 
-	@EncryptedBlob
+	@EncryptedData
 	private String encryptedData;
 
 	private String favouriteColor;

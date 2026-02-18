@@ -182,7 +182,7 @@ encryption delegates in different regions without having to write any custom app
 
 When [CryptoShield.encrypt()](https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto/src/main/java/ie/bitstep/mango/crypto/CryptoShield.java#L202)
 is called on an object the library will set
-the [@EncryptedBlob](https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto/src/main/java/ie/bitstep/mango/crypto/annotations/EncryptedBlob.java)
+the [@EncryptedData](https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto/src/main/java/ie/bitstep/mango/crypto/annotations/EncryptedData.java)
 field in the object to the calculated ciphertext.
 This final ciphertext is represented in a standardised way for encryption (not HMACs). Instead of just returning the
 straight

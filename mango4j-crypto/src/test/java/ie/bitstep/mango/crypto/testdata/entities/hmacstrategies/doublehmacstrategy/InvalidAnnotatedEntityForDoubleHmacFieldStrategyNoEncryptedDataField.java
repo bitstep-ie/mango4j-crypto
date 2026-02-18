@@ -6,7 +6,7 @@ import ie.bitstep.mango.crypto.annotations.HmacKeyId;
 import ie.bitstep.mango.crypto.annotations.strategies.DoubleHmacStrategy;
 
 @DoubleHmacStrategy
-public class InvalidAnnotatedEntityForDoubleHmacFieldStrategyNoEncryptedBlobField {
+public class InvalidAnnotatedEntityForDoubleHmacFieldStrategyNoEncryptedDataField {
 
 	@Encrypt
 	@Hmac

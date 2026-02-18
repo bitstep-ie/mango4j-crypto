@@ -1,7 +1,7 @@
 package ie.bitstep.mango.crypto.testdata.entities.hmacstrategies;
 
 import ie.bitstep.mango.crypto.annotations.Encrypt;
-import ie.bitstep.mango.crypto.annotations.EncryptedBlob;
+import ie.bitstep.mango.crypto.annotations.EncryptedData;
 import ie.bitstep.mango.crypto.annotations.Hmac;
 import ie.bitstep.mango.crypto.annotations.strategies.HmacStrategyToUse;
 import ie.bitstep.mango.crypto.testdata.implementations.hmacstrategies.MockHmacStrategyImpl;
@@ -22,7 +22,7 @@ public class TestMockHmacEntityWithNoEncryptionKeyIdAnnotation {
 
 	private String favouriteColor;
 
-	@EncryptedBlob
+	@EncryptedData
 	private String encryptedData;
 
 	private String encryptionKeyId;

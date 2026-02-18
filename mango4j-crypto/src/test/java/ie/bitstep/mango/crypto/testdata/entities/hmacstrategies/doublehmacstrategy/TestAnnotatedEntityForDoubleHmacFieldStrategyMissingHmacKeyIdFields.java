@@ -4,7 +4,6 @@ import ie.bitstep.mango.crypto.annotations.Encrypt;
 import ie.bitstep.mango.crypto.annotations.EncryptedData;
 import ie.bitstep.mango.crypto.annotations.EncryptionKeyId;
 import ie.bitstep.mango.crypto.annotations.Hmac;
-import ie.bitstep.mango.crypto.annotations.HmacKeyId;
 import ie.bitstep.mango.crypto.annotations.strategies.DoubleHmacStrategy;
 
 @DoubleHmacStrategy
