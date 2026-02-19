@@ -51,8 +51,8 @@
 4. [HMAC](#hmac)
     1. [Single HMAC Strategy](#single-hmac-strategy)
     2. [List HMAC Strategy](#list-hmac-strategy)
-       3. [HMAC Tokenizers](#hmac-tokenizers)
-       4. [Compound Unique Constraints with the List HMAC Strategy](#compound-unique-constraints-with-the-list-hmac-strategy)
+       1. [HMAC Tokenizers](#hmac-tokenizers)
+       2. [Compound Unique Constraints with the List HMAC Strategy](#compound-unique-constraints-with-the-list-hmac-strategy)
     3. [Single HMAC Strategy With Key Start Time](#single-hmac-strategy-with-key-start-time)
     4. [Double HMAC Strategy](#double-hmac-strategy)
 5. [Key Rotation](#key-rotation)
@@ -65,6 +65,7 @@
       1. [PBKDF2EncryptionService](#pbkdf2-encryption-service-delegate)
       2. [WrappedKeyEncryptionService](#wrapped-key-encryption-service-delegate)
       3. [CachedWrappedKeyEncryptionService](#cached-wrapped-key-encryption-service-delegate)
+      3. [AWS Encryption Service](#aws-encryption-service-delegate)
 
 # Introduction
 
@@ -925,3 +926,7 @@ The relevant constructor parameters are:
 The CachedWrappedKeyEncryptionService is a good option to consider if you want to get the performance benefits of caching for wrapped keys but you also want to have some level of protection for the keys while in the cache. Unlike the WrappedKeyEncryptionService which generates a new Data Encryption Key for every encryption operation and subsequently encrypts that key with the WRAPPING key, the CachedWrappedKeyEncryptionService generates one, encrypts it with the WRAPPING key and stores it in the cache for subsequent encryption operations until it expires. So it can dramatically cut down on calls to the WRAPPING key service for encryption operations.
 <br>
 Likewise, for decryption operations, if the key needed for decryption is in the cache it can be used directly without needing to call the WRAPPING key service to unwrap it first. So this can also cut down on calls to the WRAPPING key service for decryption operations as well.
+
+
+## AWS Encryption Service Delegate
+Please see the [AWS Encryption Service Delegate README](./mango4j-crypto-aws-delegate/README.md) for details on this encryption service and how to configure it.
