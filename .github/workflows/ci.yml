@@ -41,7 +41,7 @@ jobs:
             -Dsonar.token=${SONAR_TOKEN} \
             -Dsonar.branch.name=${GITHUB_REF_NAME} \
             -Dsonar.coverage.exclusions=src/test/** \
-            -Dsonar.exclusions=src/test,ie/bitstep/mango/crypto/keyrotation/** \
+            -Dsonar.exclusions=src/test/**,**/keyrotation/** \
             -Dsonar.cpd.exclusions=**/CryptoShieldHmacHolder.java
 
   docs:
