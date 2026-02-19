@@ -75,7 +75,7 @@ public class RekeyScheduler {
 				}
 			}
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			logger.log(ERROR, "An error occurred trying to rekey records", e);
 		}
 	}
 
@@ -99,6 +99,8 @@ public class RekeyScheduler {
 		// encrypted data and HMACs
 		try {
 			reEncrypt(tenantId, justEncryptionKeys(tenantAllCryptoKeysSortedByDateDescending));
+		} catch (RekeySkipException e) {
+			logger.log(INFO, e.getMessage());
 		} catch (Exception e) {
 			logger.log(ERROR, "An error occurred trying to rekey encryption keys{0}", tenantLogString(tenantId));
 		}
@@ -114,20 +116,7 @@ public class RekeyScheduler {
 
 	private void reEncrypt(String tenantId, List<CryptoKey> tenantEncryptionKeysSortedByDateDescending) {
 		logger.log(TRACE, "Beginning re-encrypt for tenant {0}", tenantId);
-		if (tenantEncryptionKeysSortedByDateDescending.isEmpty() || tenantEncryptionKeysSortedByDateDescending.size() == 1) {
-			logger.log(INFO, "{0} encryption keys were found{1} (minimum of 2 needed).....skipping the currently scheduled encryption rekey tasks for this tenant ", tenantEncryptionKeysSortedByDateDescending.size(), tenantLogString(tenantId));
-			return;
-		}
-		CryptoKey tenantLatestEncryptionKey = tenantEncryptionKeysSortedByDateDescending.get(0);
-		if (tenantLatestEncryptionKey.getRekeyMode() == KEY_OFF) {
-			logger.log(ERROR, "RekeyMode is set to {0} on the latest encryption key{1}. This is a misconfiguration, the latest encryption key should not be set to {0}!!.....skipping the currently scheduled encryption rekey task for this tenant", KEY_OFF, tenantLogString(tenantId));
-			return;
-		}
-		if (tenantLatestEncryptionKey.getCreatedDate().plus(rekeySchedulerConfig.getCryptoKeyCacheDuration()).isAfter(now())) {
-			logger.log(DEBUG, "Some application instances might not be using the new encryption key yet{0}.....skipping the currently scheduled encryption rekey task for this tenant", tenantLogString(tenantId));
-			return;
-		}
-
+		CryptoKey tenantLatestEncryptionKey = getLatestEncryptionKey(tenantId, tenantEncryptionKeysSortedByDateDescending);
 		List<RekeyServiceTaskHolder> rekeyServiceTaskHolders = new ArrayList<>();
 		if (tenantLatestEncryptionKey.getRekeyMode() == KEY_ON) {
 			for (RekeyService<?> rekeyService : rekeySchedulerConfig.getRekeyServices()) {
@@ -148,14 +137,12 @@ public class RekeyScheduler {
 			logger.log(TRACE, "RekeyMode is set to {0} on {2} encryption keys{1}", KEY_OFF, tenantLogString(tenantId), tenantEncryptionKeysSortedByDateDescending.stream().filter(cryptoKey -> cryptoKey.getRekeyMode() == KEY_OFF).count());
 			for (CryptoKey cryptoKey : tenantEncryptionKeysSortedByDateDescending) {
 				for (RekeyService<?> rekeyService : rekeySchedulerConfig.getRekeyServices()) {
-					if (!rekeySchedulerConfig.getCryptoShield().getAnnotatedEntityManager().getFieldsToEncrypt(rekeyService.getEntityType()).isEmpty()) {
-						if (cryptoKey.getRekeyMode() == KEY_OFF) {
-							rekeyServiceTaskHolders.add(new RekeyServiceTaskHolder(keyOffRecordSupplier(cryptoKey),
-									rekeyService,
-									List.of(cryptoKey),
-									tenantLatestEncryptionKey,
-									null));
-						}
+					if (!rekeySchedulerConfig.getCryptoShield().getAnnotatedEntityManager().getFieldsToEncrypt(rekeyService.getEntityType()).isEmpty() && cryptoKey.getRekeyMode() == KEY_OFF) {
+						rekeyServiceTaskHolders.add(new RekeyServiceTaskHolder(keyOffRecordSupplier(cryptoKey),
+								rekeyService,
+								List.of(cryptoKey),
+								tenantLatestEncryptionKey,
+								null));
 					}
 				}
 				if (!rekeyServiceTaskHolders.isEmpty()) {
@@ -165,6 +152,20 @@ public class RekeyScheduler {
 		} else {
 			logger.log(TRACE, "No Re-keying needed{0}", tenantLogString(tenantId));
 		}
+	}
+
+	private CryptoKey getLatestEncryptionKey(String tenantId, List<CryptoKey> tenantEncryptionKeysSortedByDateDescending) {
+		if (tenantEncryptionKeysSortedByDateDescending.isEmpty() || tenantEncryptionKeysSortedByDateDescending.size() == 1) {
+			throw new RekeySkipException(String.format("%s encryption keys were found%s (minimum of 2 needed).....skipping the currently scheduled encryption rekey tasks for this tenant ", tenantEncryptionKeysSortedByDateDescending.size(), tenantLogString(tenantId)));
+		}
+		CryptoKey tenantLatestEncryptionKey = tenantEncryptionKeysSortedByDateDescending.get(0);
+		if (tenantLatestEncryptionKey.getRekeyMode() == KEY_OFF) {
+			throw new RekeySkipException(String.format("RekeyMode is set to %1$s on the latest encryption key%2$s. This is a misconfiguration, the latest encryption key should not be set to %1$s!!.....skipping the currently scheduled encryption rekey task for this tenant", KEY_OFF, tenantLogString(tenantId)));
+		}
+		if (tenantLatestEncryptionKey.getCreatedDate().plus(rekeySchedulerConfig.getCryptoKeyCacheDuration()).isAfter(now())) {
+			throw new RekeySkipException(String.format("Some application instances might not be using the new encryption key yet%s.....skipping the currently scheduled encryption rekey task for this tenant", tenantLogString(tenantId)));
+		}
+		return tenantLatestEncryptionKey;
 	}
 
 	private void keyOffOlderEncryptionKeys(List<RekeyServiceTaskHolder> rekeyServiceTaskHolders) {

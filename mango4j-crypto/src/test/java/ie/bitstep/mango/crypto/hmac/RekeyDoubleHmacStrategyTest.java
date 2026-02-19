@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.BDDMockito.then;
 
 @ExtendWith(MockitoExtension.class)
-public class RekeyDoubleHmacStrategyTest {
+class RekeyDoubleHmacStrategyTest {
 
 	@Mock
 	private DoubleHmacFieldStrategy mockDoubleHmacStrategy;
