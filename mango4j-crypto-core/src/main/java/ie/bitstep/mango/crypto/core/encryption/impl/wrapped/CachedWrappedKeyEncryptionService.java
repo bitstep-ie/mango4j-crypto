@@ -71,10 +71,10 @@ public class CachedWrappedKeyEncryptionService extends EncryptionServiceDelegate
 	/**
 	 * Creates a cached wrapped key encryption service with custom cache settings.
 	 *
-	 * @param entryTTL the entry TTL
-	 * @param currentEntryTTL the current entry TTL
-	 * @param cacheGracePeriod grace period before destruction
-	 * @param cryptoKeyProvider the key provider
+	 * @param entryTTL            the entry TTL
+	 * @param currentEntryTTL     the current entry TTL
+	 * @param cacheGracePeriod    grace period before destruction
+	 * @param cryptoKeyProvider   the key provider
 	 * @param ciphertextFormatter the ciphertext formatter
 	 */
 	@SuppressWarnings("java:S3010")
@@ -94,7 +94,7 @@ public class CachedWrappedKeyEncryptionService extends EncryptionServiceDelegate
 	/**
 	 * Creates a cached wrapped key encryption service with default cache settings.
 	 *
-	 * @param cryptoKeyProvider the key provider
+	 * @param cryptoKeyProvider   the key provider
 	 * @param ciphertextFormatter the ciphertext formatter
 	 */
 	public CachedWrappedKeyEncryptionService(CryptoKeyProvider cryptoKeyProvider, CiphertextFormatter ciphertextFormatter) {
@@ -111,7 +111,7 @@ public class CachedWrappedKeyEncryptionService extends EncryptionServiceDelegate
 	 * Encrypts payload using a cached wrapped data encryption key.
 	 *
 	 * @param cryptoKey the crypto key
-	 * @param payload the plaintext payload
+	 * @param payload   the plaintext payload
 	 * @return the ciphertext container
 	 */
 	@Override
@@ -159,7 +159,7 @@ public class CachedWrappedKeyEncryptionService extends EncryptionServiceDelegate
 	/**
 	 * Destroys the generated key material.
 	 *
-	 * @param dek the secret key
+	 * @param dek      the secret key
 	 * @param keyBytes the key bytes to wipe
 	 */
 	private static void destroyKey(SecretKey dek, byte[] keyBytes) {
@@ -279,7 +279,7 @@ public class CachedWrappedKeyEncryptionService extends EncryptionServiceDelegate
 	 * Returns a wrapped key holder for a ciphertext container.
 	 *
 	 * @param ciphertextContainer the ciphertext container
-	 * @param edc the encrypted data config
+	 * @param edc                 the encrypted data config
 	 * @return the cached key holder
 	 */
 	private CachedWrappedKeyHolder getWrappedKeyHolder(CiphertextContainer ciphertextContainer, EncryptedDataConfig edc) {
@@ -328,7 +328,7 @@ public class CachedWrappedKeyEncryptionService extends EncryptionServiceDelegate
 	/**
 	 * Generates a data encryption key from cached key bytes.
 	 *
-	 * @param key the key bytes
+	 * @param key          the key bytes
 	 * @param cipherConfig the cipher config
 	 * @return the secret key
 	 */
