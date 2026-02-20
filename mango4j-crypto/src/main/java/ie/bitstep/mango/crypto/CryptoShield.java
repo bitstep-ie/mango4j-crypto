@@ -352,6 +352,24 @@ public class CryptoShield {
 			}
 		}
 
+		ObjectNode rootNode = convertToJson(entity, encryptedFields);
+		try {
+			if (!rootNode.isEmpty()) {
+				String finalCipherText = ciphertextFormatter.format(doEncrypt(rootNode, cryptoShieldDelegate));
+				annotatedEntityManager.getEncryptedDataField(entity.getClass()).set(entity, finalCipherText); // NOSONAR - we set accessible to true on startup
+			}
+			Optional<Field> encryptionKeyIdFieldMaybe = annotatedEntityManager.getEncryptionKeyIdField(entity.getClass());
+			if (encryptionKeyIdFieldMaybe.isPresent()) {
+				encryptionKeyIdFieldMaybe.get().set(entity, cryptoShieldDelegate.getCurrentEncryptionKey().getId()); // NOSONAR - we set accessible to true on startup
+			}
+		} catch (NonTransientCryptoException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new NonTransientCryptoException(String.format("An error occurred trying to create the ciphertext:%s", e.getClass()), e);
+		}
+	}
+
+	private ObjectNode convertToJson(Object entity, List<Field> encryptedFields) {
 		ObjectNode rootNode = objectMapper.createObjectNode();
 		encryptedFields.forEach(sourceField -> {
 			try {
@@ -367,21 +385,7 @@ public class CryptoShield {
 				throw new NonTransientCryptoException(String.format(A_S_ERROR_OCCURRED_TRYING_TO_GET_THE_VALUE_OF_FIELD_S_ON_TYPE_S, e.getClass().getSimpleName(), sourceField.getName(), entity.getClass().getSimpleName()), e);
 			}
 		});
-
-		try {
-			if (!rootNode.isEmpty()) {
-				String finalCipherText = ciphertextFormatter.format(doEncrypt(rootNode, cryptoShieldDelegate));
-				annotatedEntityManager.getEncryptedDataField(entity.getClass()).set(entity, finalCipherText); // NOSONAR - we set accessible to true on startup
-			}
-			Optional<Field> encryptionKeyIdFieldMaybe = annotatedEntityManager.getEncryptionKeyIdField(entity.getClass());
-			if (encryptionKeyIdFieldMaybe.isPresent()) {
-				encryptionKeyIdFieldMaybe.get().set(entity, cryptoShieldDelegate.getCurrentEncryptionKey().getId()); // NOSONAR - we set accessible to true on startup
-			}
-		} catch (NonTransientCryptoException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new NonTransientCryptoException(String.format("An error occurred trying to create the ciphertext:%s", e.getClass()), e);
-		}
+		return rootNode;
 	}
 
 	private CiphertextContainer doEncrypt(ObjectNode rootNode, CryptoShieldDelegate cryptoShieldDelegate) throws JsonProcessingException {

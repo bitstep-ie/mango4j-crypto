@@ -125,7 +125,7 @@ public class CachedWrappedKeyEncryptionService extends EncryptionServiceDelegate
 			try {
 				key = wrappedKeyHolder.key();
 			} catch (KeyAlreadyDestroyedException e) {
-// race condition - just retry
+				// race condition - just retry
 				LOGGER.log(INFO, "The current key has been destroyed since a reference to it was obtained, this can happen.....trying to get it again");
 				wrappedKeyHolder = getCurrentWrappedKeyHolder(cep);
 				key = wrappedKeyHolder.key();
@@ -168,8 +168,8 @@ public class CachedWrappedKeyEncryptionService extends EncryptionServiceDelegate
 		} catch (DestroyFailedException e) {
 			LOGGER.log(DEBUG, "Error occurred calling SecretKey.destroy(). This is common enough and happens because the SecretKey implementation doesn't support it");
 		}
-// CachedWrappedKeyHolder.key() returns a new key byte array each time
-// so we still need to blast away this key byte array once we're done with it
+		// CachedWrappedKeyHolder.key() returns a new key byte array each time
+		// so we still need to blast away this key byte array once we're done with it
 		destroyKeyBytes(keyBytes);
 	}
 
@@ -206,7 +206,7 @@ public class CachedWrappedKeyEncryptionService extends EncryptionServiceDelegate
 	 * @return the new cached holder
 	 */
 	private CachedWrappedKeyHolder newCachedWrappedKeyHolder(CryptoKeyConfiguration cep) {
-// Current key not set or expired, create a new one and set as current
+		// Current key not set or expired, create a new one and set as current
 		final var keyId = UUID.randomUUID().toString();
 		final var dek = Generators.generateRandomBits(cep.keySize());
 		final var keyEncryptionKey = getWrappingKey(cep.keyEncryptionKey());
@@ -252,7 +252,7 @@ public class CachedWrappedKeyEncryptionService extends EncryptionServiceDelegate
 			try {
 				key = cachedWrappedKeyHolder.key();
 			} catch (KeyAlreadyDestroyedException e) {
-// race condition - just retry
+				// race condition - just retry
 				LOGGER.log(INFO, "The cached key has been destroyed since a reference to it was obtained, this can happen.....trying to get it again");
 				cachedWrappedKeyHolder = getWrappedKeyHolder(
 						ciphertextContainer,
@@ -290,7 +290,7 @@ public class CachedWrappedKeyEncryptionService extends EncryptionServiceDelegate
 			if (cachedWrappedKeyHolder != null) {
 				return cachedWrappedKeyHolder;
 			} else {
-// key not cached, create holder and put it in cache
+				// key not cached, create holder and put it in cache
 				final var encodedKey = super.encryptionService.decrypt(edc.dataEncryptionKey());
 				final var decodedKey = Base64.getDecoder().decode(encodedKey.getBytes(StandardCharsets.UTF_8));
 
