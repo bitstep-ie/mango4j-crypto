@@ -44,20 +44,22 @@ class CachedWrappedKeyHolderTest {
 
 	@Test
 	void constructorNullKeyBytes() {
+		CiphertextContainer cryptoKeyContainer = createCryptoKeyContainer();
 		assertThatThrownBy(() -> new CachedWrappedKeyHolder(
 				"TestKeyId",
 				null,
-				createCryptoKeyContainer()))
+				cryptoKeyContainer))
 				.isInstanceOf(CachedKeyInstantiationException.class)
 				.hasMessage("Key cannot be null or empty!");
 	}
 
 	@Test
 	void constructorEmptyKeyBytes() {
+		CiphertextContainer cryptoKeyContainer = createCryptoKeyContainer();
 		assertThatThrownBy(() -> new CachedWrappedKeyHolder(
 				"TestKeyId",
 				new byte[]{},
-				createCryptoKeyContainer()))
+				cryptoKeyContainer))
 				.isInstanceOf(CachedKeyInstantiationException.class)
 				.hasMessage("Key cannot be null or empty!");
 	}

@@ -1,7 +1,6 @@
 package ie.bitstep.mango.crypto.core.exceptions;
 
 
-import ie.bitstep.mango.crypto.core.exceptions.ActiveEncryptionKeyNotFoundException;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

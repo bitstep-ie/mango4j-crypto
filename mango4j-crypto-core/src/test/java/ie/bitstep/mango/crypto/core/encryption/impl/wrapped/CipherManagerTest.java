@@ -7,7 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CipherManagerTest {
+class CipherManagerTest {
 
 	@Test
 	void constructor() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
