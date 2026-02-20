@@ -2,7 +2,7 @@ package ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.custom;
 
 import ie.bitstep.mango.crypto.annotations.EnableMigrationSupport;
 import ie.bitstep.mango.crypto.annotations.Encrypt;
-import ie.bitstep.mango.crypto.annotations.EncryptedBlob;
+import ie.bitstep.mango.crypto.annotations.EncryptedData;
 
 public class ValidEntityWithEnableMigrationSupportBeforeDeadline {
 
@@ -14,7 +14,7 @@ public class ValidEntityWithEnableMigrationSupportBeforeDeadline {
 	)
 	private String email;
 
-	@EncryptedBlob
+	@EncryptedData
 	private String encryptedData;
 
 	public String getEmail() {

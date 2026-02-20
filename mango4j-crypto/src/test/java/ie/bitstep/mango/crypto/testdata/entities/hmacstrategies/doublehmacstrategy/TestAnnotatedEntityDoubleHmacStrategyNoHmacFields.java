@@ -1,20 +1,15 @@
-package ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.single;
+package ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.doublehmacstrategy;
 
 import ie.bitstep.mango.crypto.annotations.Encrypt;
 import ie.bitstep.mango.crypto.annotations.EncryptedData;
-import ie.bitstep.mango.crypto.annotations.EncryptionKeyId;
-import ie.bitstep.mango.crypto.annotations.Hmac;
-import ie.bitstep.mango.crypto.annotations.strategies.SingleHmacStrategy;
+import ie.bitstep.mango.crypto.annotations.HmacKeyId;
 
-@SingleHmacStrategy
-public class TestAnnotatedEntityForSingleHmacFieldStrategyEncryptedDataField {
+public class TestAnnotatedEntityDoubleHmacStrategyNoHmacFields {
 
 	@Encrypt
-	@Hmac
 	private transient String pan;
 
 	@Encrypt
-	@Hmac
 	private transient String userName;
 
 	@Encrypt
@@ -23,14 +18,13 @@ public class TestAnnotatedEntityForSingleHmacFieldStrategyEncryptedDataField {
 	@EncryptedData
 	private String encryptedData;
 
-	@EncryptionKeyId
-	private String encryptionKeyId;
-
 	private String favouriteColor;
 
-	private String userNameHmac;
+	@HmacKeyId
+	private String hmacKeyId1;
 
-	private String panHmac;
+	@HmacKeyId(keyNumber = 2)
+	private String hmacKeyId2;
 
 	public String getPan() {
 		return pan;
@@ -70,29 +64,5 @@ public class TestAnnotatedEntityForSingleHmacFieldStrategyEncryptedDataField {
 
 	public String getEncryptedData() {
 		return encryptedData;
-	}
-
-	public String getUserNameHmac() {
-		return userNameHmac;
-	}
-
-	public void setUserNameHmac(String userNameHmac) {
-		this.userNameHmac = userNameHmac;
-	}
-
-	public String getPanHmac() {
-		return panHmac;
-	}
-
-	public void setPanHmac(String panHmac) {
-		this.panHmac = panHmac;
-	}
-
-	public String getEncryptionKeyId() {
-		return encryptionKeyId;
-	}
-
-	public void setEncryptionKeyId(String encryptionKeyId) {
-		this.encryptionKeyId = encryptionKeyId;
 	}
 }

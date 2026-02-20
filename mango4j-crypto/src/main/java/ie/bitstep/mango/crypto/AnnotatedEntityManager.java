@@ -3,7 +3,6 @@ package ie.bitstep.mango.crypto;
 import ie.bitstep.mango.crypto.annotations.CascadeEncrypt;
 import ie.bitstep.mango.crypto.annotations.EnableMigrationSupport;
 import ie.bitstep.mango.crypto.annotations.Encrypt;
-import ie.bitstep.mango.crypto.annotations.EncryptedBlob;
 import ie.bitstep.mango.crypto.annotations.EncryptedData;
 import ie.bitstep.mango.crypto.annotations.EncryptionKeyId;
 import ie.bitstep.mango.crypto.annotations.Hmac;
@@ -198,7 +197,7 @@ public class AnnotatedEntityManager {
 	}
 
 	/**
-	 * Registers the field annotated with {@link EncryptedBlob} for the entity type.
+	 * Registers the field annotated with {@link EncryptedData} for the entity type.
 	 *
 	 * @param annotatedEntityClass the entity class to scan
 	 */
@@ -209,13 +208,9 @@ public class AnnotatedEntityManager {
 		}
 
 		List<Field> encryptedDataField = ReflectionUtils.getFieldsByAnnotation(annotatedEntityClass, EncryptedData.class);
-		if (encryptedDataField.isEmpty()) {
-			// for backwards compatibility
-			encryptedDataField = ReflectionUtils.getFieldsByAnnotation(annotatedEntityClass, EncryptedBlob.class);
-		}
 		if (encryptedDataField.size() != 1) {
-			throw new NonTransientCryptoException(String.format("%s has a field marked with @%s but without a corresponding field marked with @%s/@%s",
-					annotatedEntityClass.getSimpleName(), Encrypt.class.getSimpleName(), EncryptedData.class.getSimpleName(), EncryptedBlob.class.getSimpleName()));
+			throw new NonTransientCryptoException(String.format("%s has a field marked with @%s but without a corresponding field marked with @%s",
+					annotatedEntityClass.getSimpleName(), Encrypt.class.getSimpleName(), EncryptedData.class.getSimpleName()));
 		}
 
 		encryptedDataField.get(0).setAccessible(true); // NOSONAR
@@ -331,7 +326,7 @@ public class AnnotatedEntityManager {
 	}
 
 	/**
-	 * Returns the field annotated with {@link EncryptedBlob} for the entity type.
+	 * Returns the field annotated with {@link EncryptedData} for the entity type.
 	 *
 	 * @param annotatedEntityClass the entity class to look up
 	 * @return the encrypted blob field

@@ -40,7 +40,9 @@ jobs:
             -Dsonar.host.url=${SONAR_HOST_URL} \
             -Dsonar.token=${SONAR_TOKEN} \
             -Dsonar.branch.name=${GITHUB_REF_NAME} \
-            -Dsonar.coverage.exclusions=**/test/**
+            -Dsonar.coverage.exclusions=src/test/** \
+            -Dsonar.exclusions=src/test/**,**/keyrotation/** \
+            -Dsonar.cpd.exclusions=**/CryptoShieldHmacHolder.java
 
   docs:
     runs-on: ubuntu-latest

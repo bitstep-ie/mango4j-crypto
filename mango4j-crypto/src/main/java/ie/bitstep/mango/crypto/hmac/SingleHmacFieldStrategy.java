@@ -2,6 +2,7 @@ package ie.bitstep.mango.crypto.hmac;
 
 import ie.bitstep.mango.crypto.HmacStrategyHelper;
 import ie.bitstep.mango.crypto.annotations.Hmac;
+import ie.bitstep.mango.crypto.annotations.HmacKeyId;
 import ie.bitstep.mango.crypto.core.domain.CryptoKey;
 import ie.bitstep.mango.crypto.core.domain.HmacHolder;
 import ie.bitstep.mango.crypto.core.exceptions.ActiveHmacKeyNotFoundException;
@@ -14,28 +15,23 @@ import ie.bitstep.mango.crypto.exceptions.NoHmacFieldsFoundException;
 import ie.bitstep.mango.crypto.utils.ReflectionUtils;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import static ie.bitstep.mango.crypto.hmac.FieldValidator.validateSourceHmacField;
 import static ie.bitstep.mango.crypto.utils.ReflectionUtils.getFieldStringValue;
 import static java.lang.String.format;
 import static java.time.Instant.now;
-import static java.util.stream.Collectors.toCollection;
 
 /**
- * Applications should rarely (almost never) use this strategy.
  * An application should only use this strategy for an entity if the answer to the following 2 questions is <b>'NO!'</b>:
  *     <ol>
  *         <li>
  *             Does any encrypted field in this entity need to be guaranteed unique (has an associated unique constraint)?
  *         </li>
  *         <li>
- *             Would it have a negative impact on the business if the application experienced functional problems
- *             with search operations on this entity during a key rotation?
+ *             Am I using the {@link CryptoKey#getKeyStartTime() keyStartTime} feature on my {@link CryptoKey CryptoKeys}?
  *         </li>
  *     </ol>
  * <p>
@@ -57,6 +53,7 @@ public class SingleHmacFieldStrategy implements HmacStrategy {
 	public static final String HMAC_FIELD_NAME_SUFFIX = "Hmac";
 
 	private final Map<Field, Field> entityHmacFields = new HashMap<>();
+	private Field entityHmacKeyIdField;
 	private final HmacStrategyHelper hmacStrategyHelper;
 
 	/**
@@ -87,10 +84,21 @@ public class SingleHmacFieldStrategy implements HmacStrategy {
 			targetHmacField.setAccessible(true); // NOSONAR
 			entityHmacFields.put(hmacSourceField, targetHmacField);
 		});
-
 		if (entityHmacFields.isEmpty()) {
 			throw new NoHmacFieldsFoundException(String.format("Class '%s' does not have any fields annotated with %s", annotatedEntityClass.getName(), Hmac.class.getSimpleName()));
 		}
+		setHmacKeyIdField(annotatedEntityClass);
+	}
+
+	private void setHmacKeyIdField(Class<?> annotatedEntityClass) {
+		List<Field> hmacKeyIdFields = ReflectionUtils.getFieldsByAnnotation(annotatedEntityClass, HmacKeyId.class);
+		if (hmacKeyIdFields.isEmpty()) {
+			throw new NonTransientCryptoException(format("Class '%1$s' uses the Single HMAC Strategy but does not have a field annotated with @%2$s. " +
+					"It's mandatory to have a single String field annotated with @%2$s when using the Single HMAC Strategy", annotatedEntityClass.getName(), HmacKeyId.class.getSimpleName()));
+		}
+
+		entityHmacKeyIdField = hmacKeyIdFields.get(0);
+		entityHmacKeyIdField.setAccessible(true);
 	}
 
 	/**
@@ -113,6 +121,7 @@ public class SingleHmacFieldStrategy implements HmacStrategy {
 				List<HmacHolder> hmacHolders = List.of(new HmacHolder(hmacKeyToUse, fieldValue, sourceField.getName()));
 				hmacStrategyHelper.encryptionService().hmac(hmacHolders);
 				targetHmacField.set(entity, hmacHolders.get(0).getValue()); // NOSONAR
+				setHmacKeyId(entity, hmacKeyToUse);
 			}
 		} catch (TransientCryptoException | UnsupportedKeyTypeException |
 				 CryptoKeyNotFoundException | ActiveHmacKeyNotFoundException | NoHmacKeysFoundException e) {
@@ -122,6 +131,10 @@ public class SingleHmacFieldStrategy implements HmacStrategy {
 		}
 	}
 
+	private void setHmacKeyId(Object entity, CryptoKey hmacKeyToUse) throws IllegalAccessException {
+		entityHmacKeyIdField.set(entity, hmacKeyToUse.getId());
+	}
+
 	/**
 	 * Picks the most recent HMAC key from the supplied list whose getKeyStartTime is not set to a value in the future,
 	 * if none of the {@link CryptoKey HMAC keys} have a createdDate then this just returns the first one in the list.
@@ -129,16 +142,7 @@ public class SingleHmacFieldStrategy implements HmacStrategy {
 	 * @return the selected HMAC key
 	 */
 	private CryptoKey getHmacKeyToUse() {
-		List<CryptoKey> currentHmacKeys = hmacStrategyHelper.cryptoKeyProvider().getCurrentHmacKeys();
-		if (currentHmacKeys == null || currentHmacKeys.isEmpty()) {
-			throw new NoHmacKeysFoundException();
-		}
-
-		// existing list could be unmodifiable so create a new list to sort
-		ArrayList<CryptoKey> sortedCryptoKeys = currentHmacKeys.stream()
-				.filter(Objects::nonNull)
-				.sorted(SingleHmacFieldStrategy::compareCreatedDates)
-				.collect(toCollection(ArrayList::new));
+		List<CryptoKey> sortedCryptoKeys = HmacUtils.hmacKeysInCreationDateDescendingOrder(hmacStrategyHelper.cryptoKeyProvider().getCurrentHmacKeys());
 		for (CryptoKey cryptoKey : sortedCryptoKeys) {
 			if (cryptoKey.getKeyStartTime() != null && cryptoKey.getKeyStartTime().isAfter(now())) {
 				continue;
@@ -146,27 +150,5 @@ public class SingleHmacFieldStrategy implements HmacStrategy {
 			return cryptoKey;
 		}
 		throw new ActiveHmacKeyNotFoundException();
-	}
-
-	/**
-	 * Compares 2 {@link CryptoKey} objects by their createdDate in descending order (newest first).
-	 * <p>
-	 * If both createdDate values are null then they are considered equal.
-	 * If one createdDate is null then it is considered 'less than' the other.
-	 * </p>
-	 *
-	 * @param o1 the first {@link CryptoKey}
-	 * @param o2 the second {@link CryptoKey}
-	 * @return comparison result
-	 */
-	private static int compareCreatedDates(CryptoKey o1, CryptoKey o2) {
-		if (o1.getCreatedDate() == null && o2.getCreatedDate() == null) {
-			return 0;
-		} else if (o1.getCreatedDate() == null) {
-			return 1;
-		} else if (o2.getCreatedDate() == null) {
-			return -1;
-		}
-		return o2.getCreatedDate().compareTo(o1.getCreatedDate());
 	}
 }

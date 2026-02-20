@@ -14,6 +14,7 @@ class CryptoKeyTest {
 	private static final String TEST_ID = "TEST_ID";
 	private static final Map<String, Object> TEST_KEY_CONFIGURATION = Map.of();
 	private static final Instant TEST_KEY_CREATED_DATE = Instant.ofEpochSecond(100000000);
+	private static final Instant TEST_KEY_MODIFIED_DATE = Instant.ofEpochSecond(200000000);
 	private static final Instant TEST_KEY_START_TIME = Instant.ofEpochSecond(100000100);
 	private static final String TEST_TENANT_ID = "TestTenantId";
 
@@ -41,6 +42,7 @@ class CryptoKeyTest {
 		cryptoKey.setKeyStartTime(TEST_KEY_START_TIME);
 		cryptoKey.setTenantId(TEST_TENANT_ID);
 		cryptoKey.setCreatedDate(TEST_KEY_CREATED_DATE);
+		cryptoKey.setLastModifiedDate(TEST_KEY_MODIFIED_DATE);
 		cryptoKey.setRekeyMode(CryptoKey.RekeyMode.KEY_ON);
 
 		assertThat(cryptoKey.getId()).isEqualTo(TEST_ID);
@@ -50,6 +52,7 @@ class CryptoKeyTest {
 		assertThat(cryptoKey.getKeyStartTime()).isEqualTo(TEST_KEY_START_TIME);
 		assertThat(cryptoKey.getTenantId()).isEqualTo(TEST_TENANT_ID);
 		assertThat(cryptoKey.getCreatedDate()).isEqualTo(TEST_KEY_CREATED_DATE);
+		assertThat(cryptoKey.getLastModifiedDate()).isEqualTo(TEST_KEY_MODIFIED_DATE);
 		assertThat(cryptoKey.getRekeyMode()).isEqualTo(CryptoKey.RekeyMode.KEY_ON);
 	}
 

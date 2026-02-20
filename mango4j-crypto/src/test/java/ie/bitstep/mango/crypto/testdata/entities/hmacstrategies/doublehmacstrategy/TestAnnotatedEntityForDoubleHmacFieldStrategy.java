@@ -1,9 +1,10 @@
 package ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.doublehmacstrategy;
 
 import ie.bitstep.mango.crypto.annotations.Encrypt;
-import ie.bitstep.mango.crypto.annotations.EncryptedBlob;
+import ie.bitstep.mango.crypto.annotations.EncryptedData;
 import ie.bitstep.mango.crypto.annotations.EncryptionKeyId;
 import ie.bitstep.mango.crypto.annotations.Hmac;
+import ie.bitstep.mango.crypto.annotations.HmacKeyId;
 import ie.bitstep.mango.crypto.annotations.strategies.DoubleHmacStrategy;
 
 @DoubleHmacStrategy
@@ -23,7 +24,7 @@ public class TestAnnotatedEntityForDoubleHmacFieldStrategy {
 	@Encrypt
 	private transient String ethnicity;
 
-	@EncryptedBlob
+	@EncryptedData
 	private String encryptedData;
 
 	private String favouriteColor;
@@ -42,6 +43,12 @@ public class TestAnnotatedEntityForDoubleHmacFieldStrategy {
 
 	@EncryptionKeyId
 	private String encryptionKeyId;
+
+	@HmacKeyId(keyNumber = 1)
+	private String hmacKeyId1;
+
+	@HmacKeyId(keyNumber = 2)
+	private String hmacKeyId2;
 
 	public String getPan() {
 		return pan;
@@ -121,5 +128,21 @@ public class TestAnnotatedEntityForDoubleHmacFieldStrategy {
 
 	public void setEncryptionKeyId(String encryptionKeyId) {
 		this.encryptionKeyId = encryptionKeyId;
+	}
+
+	public String getHmacKeyId1() {
+		return hmacKeyId1;
+	}
+
+	public void setHmacKeyId1(String hmacKeyId1) {
+		this.hmacKeyId1 = hmacKeyId1;
+	}
+
+	public String getHmacKeyId2() {
+		return hmacKeyId2;
+	}
+
+	public void setHmacKeyId2(String hmacKeyId2) {
+		this.hmacKeyId2 = hmacKeyId2;
 	}
 }

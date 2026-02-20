@@ -3,6 +3,11 @@ package ie.bitstep.mango.crypto.keyrotation;
 import ie.bitstep.mango.crypto.RekeyCryptoShield;
 import ie.bitstep.mango.crypto.core.domain.CryptoKey;
 import ie.bitstep.mango.crypto.core.domain.CryptoKeyUsage;
+import ie.bitstep.mango.crypto.core.exceptions.NonTransientCryptoException;
+import ie.bitstep.mango.crypto.hmac.DoubleHmacFieldStrategy;
+import ie.bitstep.mango.crypto.hmac.HmacStrategy;
+import ie.bitstep.mango.crypto.hmac.ListHmacFieldStrategy;
+import ie.bitstep.mango.crypto.hmac.SingleHmacFieldStrategy;
 import ie.bitstep.mango.crypto.keyrotation.exceptions.TooManyFailuresException;
 
 import java.time.Duration;
@@ -11,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Executors;
@@ -45,23 +51,31 @@ public class RekeyScheduler {
 	}
 
 	private void rekeyTenants() {
-		logger.log(TRACE, "Beginning rekey job");
-		Map<String, List<CryptoKey>> allEncryptionKeys = new HashMap<>();
-		for (CryptoKey cryptoKey : rekeySchedulerConfig.getCryptoShield().getCryptoKeyProvider().getAllCryptoKeys()) {
-			// HashMap allows null keys so if the app doesn't have tenants then cryptokey.getTenantId() can return null and
-			// this functionality will still work fine
-			allEncryptionKeys.computeIfAbsent(cryptoKey.getTenantId(), tenantId -> new ArrayList<>()).add(cryptoKey);
-		}
-		if (allEncryptionKeys.isEmpty()) {
-			logger.log(TRACE, "No keys found to rekey");
-		}
-
-		for (Map.Entry<String, List<CryptoKey>> tenantsCryptoKeysEntry : allEncryptionKeys.entrySet()) {
-			try {
-				rekeyTenant(tenantsCryptoKeysEntry.getKey(), tenantsCryptoKeysEntry.getValue());
-			} catch (TooManyFailuresException e) {
-				logger.log(ERROR, "Too many failures occurred trying to rekey records", e);
+		try {
+			logger.log(TRACE, "Beginning rekey job");
+			Map<String, List<CryptoKey>> allEncryptionKeys = new HashMap<>();
+			for (CryptoKey cryptoKey : rekeySchedulerConfig.getCryptoShield().getCryptoKeyProvider().getAllCryptoKeys()) {
+				// HashMap allows null keys so if the app doesn't have tenants then cryptokey.getTenantId() can return null and
+				// this functionality will still work fine
+				allEncryptionKeys.computeIfAbsent(cryptoKey.getTenantId(), tenantId -> new ArrayList<>()).add(cryptoKey);
 			}
+			if (allEncryptionKeys.isEmpty()) {
+				logger.log(TRACE, "No keys found to rekey");
+			}
+
+			for (Map.Entry<String, List<CryptoKey>> tenantsCryptoKeysEntry : allEncryptionKeys.entrySet()) {
+				try {
+					if (tenantsCryptoKeysEntry.getValue().stream().anyMatch(cryptoKey -> cryptoKey.getRekeyMode() != null)) {
+						rekeyTenant(tenantsCryptoKeysEntry.getKey(), tenantsCryptoKeysEntry.getValue());
+					} else {
+						logger.log(DEBUG, "No keys need rekeying{0}", tenantLogString(tenantsCryptoKeysEntry.getKey()));
+					}
+				} catch (TooManyFailuresException e) {
+					logger.log(ERROR, "Too many failures occurred trying to rekey records", e);
+				}
+			}
+		} catch (Exception e) {
+			logger.log(ERROR, "An error occurred trying to rekey records", e);
 		}
 	}
 
@@ -84,65 +98,55 @@ public class RekeyScheduler {
 		// settled and out of beta we need to come back and make that these are done together, especially for entities that have both
 		// encrypted data and HMACs
 		try {
-			reEncrypt(tenantId, tenantAllCryptoKeysSortedByDateDescending);
+			reEncrypt(tenantId, justEncryptionKeys(tenantAllCryptoKeysSortedByDateDescending));
+		} catch (RekeySkipException e) {
+			logger.log(INFO, e.getMessage());
 		} catch (Exception e) {
 			logger.log(ERROR, "An error occurred trying to rekey encryption keys{0}", tenantLogString(tenantId));
 		}
 
 		try {
-			reHmac(tenantId, tenantAllCryptoKeysSortedByDateDescending);
+			reHmac(tenantId, justHmacKeys(tenantAllCryptoKeysSortedByDateDescending));
+		} catch (RekeySkipException e) {
+			logger.log(INFO, e.getMessage());
 		} catch (Exception e) {
 			logger.log(ERROR, "An error occurred trying to rekey HMAC keys{0}", tenantLogString(tenantId));
 		}
 	}
 
-	private void reEncrypt(String tenantId, List<CryptoKey> tenantAllCryptoKeysSortedByDateDescending) {
+	private void reEncrypt(String tenantId, List<CryptoKey> tenantEncryptionKeysSortedByDateDescending) {
 		logger.log(TRACE, "Beginning re-encrypt for tenant {0}", tenantId);
-		List<CryptoKey> tenantEncryptionKeysSortedByDateDescending = tenantAllCryptoKeysSortedByDateDescending.stream()
-				.filter(cryptoKey -> cryptoKey.getUsage() == CryptoKeyUsage.ENCRYPTION)
-				.toList();
-		CryptoKey tenantLatestEncryptionKey = tenantEncryptionKeysSortedByDateDescending.stream()
-				.findFirst()
-				.orElse(null);
-		if (tenantLatestEncryptionKey == null) {
-			logger.log(INFO, "No encryption key was found{0}.....skipping the currently scheduled encryption rekey tasks for this tenant ", tenantLogString(tenantId));
-			return;
-		} else if (tenantLatestEncryptionKey.getCreatedDate().plus(rekeySchedulerConfig.getCryptoKeyCacheDuration()).isAfter(now())) {
-			logger.log(DEBUG, "Some application instances might not be using the new encryption key yet{0}.....skipping the currently scheduled encryption rekey task for this tenant", tenantLogString(tenantId));
-			return;
-		}
-
+		CryptoKey tenantLatestEncryptionKey = getLatestEncryptionKey(tenantId, tenantEncryptionKeysSortedByDateDescending);
+		List<RekeyServiceTaskHolder> rekeyServiceTaskHolders = new ArrayList<>();
 		if (tenantLatestEncryptionKey.getRekeyMode() == KEY_ON) {
-			logger.log(TRACE, "RekeyMode is set to {0} on the latest encryption key{1}", KEY_ON, tenantLogString(tenantId));
-			if (doAnyEncryptedRecordsNeedRekeying(keyOnRecordSupplier(tenantLatestEncryptionKey))) {
-				logger.log(TRACE, "Some records need re-encrypted{0}", tenantLogString(tenantId));
-				RekeyCryptoShield rekeyCryptoShield = new RekeyCryptoShield(rekeySchedulerConfig.getCryptoShield(), tenantLatestEncryptionKey, null);
-				long totalEncryptedRecordsRekeyedForTenant = rekey(tenantLatestEncryptionKey, rekeyCryptoShield, keyOnRecordSupplier(tenantLatestEncryptionKey));
-				logger.log(INFO, "Full re-key of all records has been completed{0}. Total of {1} records rekeyed to {2} by this job", tenantLogString(tenantId), totalEncryptedRecordsRekeyedForTenant, tenantLatestEncryptionKey);
-			} else {
-				logger.log(TRACE, "No records need re-encrypted{0}", tenantLogString(tenantId));
+			for (RekeyService<?> rekeyService : rekeySchedulerConfig.getRekeyServices()) {
+				if (!rekeySchedulerConfig.getCryptoShield().getAnnotatedEntityManager().getFieldsToEncrypt(rekeyService.getEntityType()).isEmpty()) {
+					logger.log(DEBUG, "Entity {0} does not have encrypted fields, so nothing to rekey for it", rekeyService.getEntityType().getSimpleName());
+					continue;
+				}
+				rekeyServiceTaskHolders.add(new RekeyServiceTaskHolder(keyOnRecordSupplier(tenantLatestEncryptionKey),
+						rekeyService,
+						List.of(tenantLatestEncryptionKey),
+						tenantLatestEncryptionKey,
+						null));
 			}
-			removeUnusedEncryptionKeys(tenantEncryptionKeysSortedByDateDescending);
+			if (!rekeyServiceTaskHolders.isEmpty()) {
+				keyOnLatestEncryptionKey(tenantId, tenantEncryptionKeysSortedByDateDescending, rekeyServiceTaskHolders);
+			}
 		} else if (tenantEncryptionKeysSortedByDateDescending.stream().anyMatch(cryptoKey -> cryptoKey.getRekeyMode() == KEY_OFF)) {
 			logger.log(TRACE, "RekeyMode is set to {0} on {2} encryption keys{1}", KEY_OFF, tenantLogString(tenantId), tenantEncryptionKeysSortedByDateDescending.stream().filter(cryptoKey -> cryptoKey.getRekeyMode() == KEY_OFF).count());
-			if (tenantLatestEncryptionKey.getRekeyMode() == KEY_OFF) {
-				logger.log(ERROR, "RekeyMode is set to {0} on the latest encryption key{1}. This is a misconfiguration, the latest encryption key should not be set to KEY_OFF!!.....skipping the currently scheduled encryption rekey task for this tenant", KEY_OFF, tenantLogString(tenantId));
-				return;
-			}
-			for (CryptoKey encryptionKey : tenantEncryptionKeysSortedByDateDescending.subList(1, tenantEncryptionKeysSortedByDateDescending.size())) {
-				if (encryptionKey.getRekeyMode() == KEY_OFF && encryptionKey.getCreatedDate().plus(rekeySchedulerConfig.getCryptoKeyCacheDuration()).isBefore(now())) {
-					logger.log(TRACE, "Checking if there are any records using {0} to rekey", encryptionKey);
-					if (doAnyEncryptedRecordsNeedRekeying(keyOffRecordSupplier(encryptionKey))) {
-						logger.log(TRACE, "Some records need rekeyed{0}", tenantLogString(tenantId));
-						RekeyCryptoShield rekeyCryptoShield = new RekeyCryptoShield(rekeySchedulerConfig.getCryptoShield(), tenantLatestEncryptionKey, null);
-						long totalEncryptedRecordsRekeyedForTenant = rekey(tenantLatestEncryptionKey, rekeyCryptoShield, keyOffRecordSupplier(encryptionKey));
-						logger.log(INFO, "All records ({0}) using deprecated encryption key {1} have been keyed onto the current encryption key {2}",
-								totalEncryptedRecordsRekeyedForTenant, encryptionKey, tenantLatestEncryptionKey);
-					} else {
-						logger.log(TRACE, "No records need keyed off {0}", encryptionKey);
+			for (CryptoKey cryptoKey : tenantEncryptionKeysSortedByDateDescending) {
+				for (RekeyService<?> rekeyService : rekeySchedulerConfig.getRekeyServices()) {
+					if (!rekeySchedulerConfig.getCryptoShield().getAnnotatedEntityManager().getFieldsToEncrypt(rekeyService.getEntityType()).isEmpty() && cryptoKey.getRekeyMode() == KEY_OFF) {
+						rekeyServiceTaskHolders.add(new RekeyServiceTaskHolder(keyOffRecordSupplier(cryptoKey),
+								rekeyService,
+								List.of(cryptoKey),
+								tenantLatestEncryptionKey,
+								null));
 					}
-					logger.log(DEBUG, "No application instances are using the following deprecated encryption key anymore (and any records which previously used it have been re-keyed to the latest encryption key), so we''ll delete it: {0}", encryptionKey);
-					removeKey(encryptionKey);
+				}
+				if (!rekeyServiceTaskHolders.isEmpty()) {
+					keyOffOlderEncryptionKeys(rekeyServiceTaskHolders);
 				}
 			}
 		} else {
@@ -150,82 +154,167 @@ public class RekeyScheduler {
 		}
 	}
 
+	private CryptoKey getLatestEncryptionKey(String tenantId, List<CryptoKey> tenantEncryptionKeysSortedByDateDescending) {
+		if (tenantEncryptionKeysSortedByDateDescending.isEmpty() || tenantEncryptionKeysSortedByDateDescending.size() == 1) {
+			throw new RekeySkipException(String.format("%s encryption keys were found%s (minimum of 2 needed).....skipping the currently scheduled encryption rekey tasks for this tenant ", tenantEncryptionKeysSortedByDateDescending.size(), tenantLogString(tenantId)));
+		}
+		CryptoKey tenantLatestEncryptionKey = tenantEncryptionKeysSortedByDateDescending.get(0);
+		if (tenantLatestEncryptionKey.getRekeyMode() == KEY_OFF) {
+			throw new RekeySkipException(String.format("RekeyMode is set to %1$s on the latest encryption key%2$s. This is a misconfiguration, the latest encryption key should not be set to %1$s!!.....skipping the currently scheduled encryption rekey task for this tenant", KEY_OFF, tenantLogString(tenantId)));
+		}
+		if (tenantLatestEncryptionKey.getCreatedDate().plus(rekeySchedulerConfig.getCryptoKeyCacheDuration()).isAfter(now())) {
+			throw new RekeySkipException(String.format("Some application instances might not be using the new encryption key yet%s.....skipping the currently scheduled encryption rekey task for this tenant", tenantLogString(tenantId)));
+		}
+		return tenantLatestEncryptionKey;
+	}
+
+	private void keyOffOlderEncryptionKeys(List<RekeyServiceTaskHolder> rekeyServiceTaskHolders) {
+		long totalEncryptedRecordsRekeyedForTenant = rekey(rekeyServiceTaskHolders);
+		logger.log(INFO, "All records ({0}) using deprecated encryption key {1} have been keyed onto the current encryption key {2}",
+				totalEncryptedRecordsRekeyedForTenant, rekeyServiceTaskHolders.get(0).keysThatTriggeredTheRekey.get(0), rekeyServiceTaskHolders.get(0).encryptionKeyToKeyOnto);
+		logger.log(DEBUG, "No application instances are using the following deprecated encryption key anymore (and any records which previously used it have been re-keyed to the latest encryption key), so we''ll delete it: {0}", rekeyServiceTaskHolders.get(0).keysThatTriggeredTheRekey.get(0));
+		removeKey(rekeyServiceTaskHolders.get(0).keysThatTriggeredTheRekey.get(0));
+	}
+
+	private void keyOnLatestEncryptionKey(String tenantId, List<CryptoKey> tenantEncryptionKeysSortedByDateDescending, List<RekeyServiceTaskHolder> rekeyServiceTaskHolders) {
+		logger.log(TRACE, "RekeyMode is set to {0} on the latest encryption key{1}", KEY_ON, tenantLogString(tenantId));
+		long totalEncryptedRecordsRekeyedForTenant = rekey(rekeyServiceTaskHolders);
+		logger.log(INFO, "Full re-key of all records has been completed{0}. Total of {1} records rekeyed to {2} by this job", tenantLogString(tenantId), totalEncryptedRecordsRekeyedForTenant, rekeyServiceTaskHolders.get(0).encryptionKeyToKeyOnto);
+		for (CryptoKey tenantEncryptionKey : olderKeys(tenantEncryptionKeysSortedByDateDescending)) {
+			removeKey(tenantEncryptionKey);
+		}
+	}
+
+	private static List<CryptoKey> olderKeys(List<CryptoKey> tenantEncryptionKeysSortedByDateDescending) {
+		return tenantEncryptionKeysSortedByDateDescending.subList(1, tenantEncryptionKeysSortedByDateDescending.size());
+	}
+
+	private static <T> T last(List<T> list) {
+		return list.get(list.size() - 1);
+	}
+
+	private static List<CryptoKey> justEncryptionKeys(List<CryptoKey> tenantAllCryptoKeysSortedByDateDescending) {
+		return getKeysByUsage(tenantAllCryptoKeysSortedByDateDescending, CryptoKeyUsage.ENCRYPTION);
+	}
+
+	private static List<CryptoKey> justHmacKeys(List<CryptoKey> tenantAllCryptoKeysSortedByDateDescending) {
+		return getKeysByUsage(tenantAllCryptoKeysSortedByDateDescending, CryptoKeyUsage.HMAC);
+	}
+
+	private static List<CryptoKey> getKeysByUsage(List<CryptoKey> tenantAllCryptoKeysSortedByDateDescending, CryptoKeyUsage cryptoKeyUsage) {
+		return tenantAllCryptoKeysSortedByDateDescending.stream()
+				.filter(cryptoKey -> cryptoKey.getUsage() == cryptoKeyUsage)
+				.toList();
+	}
+
 	private static String tenantLogString(String tenantId) {
 		return tenantId == null ? "" : " for tenant " + tenantId;
 	}
 
-	/**
-	 * There's only ever 1 active encryption key at one time, so we can delete any keys that aren't that key
-	 *
-	 * @param tenantEncryptionKeysSortedByDateDescending All of a tenants encryption keys in order of latest to oldest
-	 */
-	private void removeUnusedEncryptionKeys(List<CryptoKey> tenantEncryptionKeysSortedByDateDescending) {
-		String tenantId = tenantEncryptionKeysSortedByDateDescending.get(0).getTenantId();
-		logger.log(TRACE, "Attempting to remove any deprecated encryption keys{0}", tenantLogString(tenantId));
-		if (tenantEncryptionKeysSortedByDateDescending.size() > 1) {
-			// only remove the older keys, the first key in the list is the latest key (so don't touch that)
-			tenantEncryptionKeysSortedByDateDescending.subList(1, tenantEncryptionKeysSortedByDateDescending.size()).clear();
-			for (CryptoKey tenantEncryptionKey : tenantEncryptionKeysSortedByDateDescending.subList(1, tenantEncryptionKeysSortedByDateDescending.size())) {
-				logger.log(DEBUG, "All application instances are now using only the latest encryption key{0} and are no longer using the following encryption key so we''ll mark it for deletion: {1}", tenantLogString(tenantId), tenantEncryptionKey);
-				removeKey(tenantEncryptionKey);
-			}
-		} else {
-			logger.log(DEBUG, "{0} only has a single encryption key, there''s no old encryption keys to delete", tenantLogString(tenantId));
-		}
-	}
-
-	private void reHmac(String tenantId, List<CryptoKey> tenantAllCryptoKeysSortedByDateDescending) {
-		Optional<CryptoKey> hmacKeyToRekeyTo = getHmacKeyToRekeyTo(tenantAllCryptoKeysSortedByDateDescending);
-		if (hmacKeyToRekeyTo.isEmpty()) {
-			logger.log(ERROR, "No valid HMAC key found to rekey to{0}.....skipping HMAC rekey for this tenant", tenantLogString(tenantId));
-			return;
-		} else if (hmacKeyToRekeyTo.get().getCreatedDate().plus(rekeySchedulerConfig.getCryptoKeyCacheDuration()).isAfter(now())) {
-			logger.log(DEBUG, "Some application instances might not be using some of the HMAC keys yet{0}....." +
-							"skipping the currently scheduled HMAC rekey tasks{0}",
-					tenantLogString(tenantId));
-			return;
-		}
-
-		List<CryptoKey> tenantHmacKeysSortedByDateDescending = getTenantHmacKeysSortedByDateDescending(tenantAllCryptoKeysSortedByDateDescending);
-		if (tenantHmacKeysSortedByDateDescending.isEmpty()) {
-			logger.log(INFO, "No HMACs to rekey{0}", tenantLogString(tenantId));
-			return;
-		} else if (hmacKeyToRekeyTo.get().getCreatedDate().plus(rekeySchedulerConfig.getCryptoKeyCacheDuration()).isAfter(now())) {
-			logger.log(DEBUG, "Some application instances might not be using some of the HMAC keys yet{0}....." +
-							"skipping the currently scheduled HMAC rekey tasks{0}",
-					tenantLogString(tenantId));
-			return;
-		}
-
-		if (doAnyRecordsWithHmacsNeedRekeying(tenantHmacKeysSortedByDateDescending)) {
-			if (tenantHmacKeysSortedByDateDescending.get(0).getRekeyMode() == KEY_ON) {
-				RekeyCryptoShield rekeyCryptoShield = new RekeyCryptoShield(rekeySchedulerConfig.getCryptoShield(), null, hmacKeyToRekeyTo.get());
-				long totalHmacRecordsRekeyedToTheCurrentKey = rekey(hmacKeyToRekeyTo.get(), rekeyCryptoShield, keyOnRecordSupplier(hmacKeyToRekeyTo.get()));
-				logger.log(INFO, "Full HMAC re-key of all ({0}) records has been completed{1}", totalHmacRecordsRekeyedToTheCurrentKey, tenantLogString(tenantId));
-				for (CryptoKey tenantHmacKey : tenantHmacKeysSortedByDateDescending) {
-					if (canBeRemoved(tenantHmacKey)) {
-						removeKey(tenantHmacKey);
-					} else {
-						logger.log(INFO, "The following HMAC key is not yet ready to be marked as deleted: {0}", tenantHmacKey);
+	private void reHmac(String tenantId, List<CryptoKey> tenantHmacKeysSortedByDateDescending) {
+		logger.log(TRACE, "Beginning re-hmac for tenant {0}", tenantId);
+		validateHmacKeys(tenantId, tenantHmacKeysSortedByDateDescending);
+		List<RekeyServiceTaskHolder> rekeyServiceTaskHolders = generateRekeyServiceTasks(tenantHmacKeysSortedByDateDescending);
+		if (!rekeyServiceTaskHolders.isEmpty()) {
+			long totalHmacRecordsRekeyedToTheCurrentKey = rekey(rekeyServiceTaskHolders);
+			logger.log(INFO, "Full HMAC re-key of all ({0}) records has been completed{1}", totalHmacRecordsRekeyedToTheCurrentKey, tenantLogString(tenantId));
+			if (rekeyServiceTaskHolders.get(0).keysThatTriggeredTheRekey.get(0).getRekeyMode() == KEY_OFF) {
+				rekeyServiceTaskHolders.get(0).keysThatTriggeredTheRekey.forEach(this::removeKey);
+			} else if (rekeyServiceTaskHolders.get(0).keysThatTriggeredTheRekey.get(0).getRekeyMode() == KEY_ON) {
+				tenantHmacKeysSortedByDateDescending.forEach(cryptoKey -> {
+					if (cryptoKey.getRekeyMode() != KEY_ON) {
+						removeKey(cryptoKey);
 					}
-				}
-			} else {
-				// TODO: Update to find records which are using the KEY_OFF key but not all the keys after that
-				tenantHmacKeysSortedByDateDescending.stream()
-						.filter(hmacKey -> hmacKey.getRekeyMode() == KEY_OFF)
-						.forEach(deprecatedHmacKey -> {
-							RekeyCryptoShield rekeyCryptoShield = new RekeyCryptoShield(rekeySchedulerConfig.getCryptoShield(), null, hmacKeyToRekeyTo.get());
-							long totalHmacRecordsRekeyedForThisKey = rekey(deprecatedHmacKey, rekeyCryptoShield, keyOffRecordSupplier(deprecatedHmacKey));
-							logger.log(INFO, "HMAC re-key of all ({0}) records using deprecated HMAC key {1} has been completed{2}",
-									totalHmacRecordsRekeyedForThisKey, deprecatedHmacKey, tenantLogString(tenantId));
-							removeKey(deprecatedHmacKey);
-						});
+				});
 			}
 		}
 	}
 
-	private boolean canBeRemoved(CryptoKey tenantHmacKey) {
-		return tenantHmacKey.getCreatedDate().plus(rekeySchedulerConfig.getCryptoKeyCacheDuration()).isBefore(now());
+	private void validateHmacKeys(String tenantId, List<CryptoKey> tenantHmacKeysSortedByDateDescending) {
+		if (tenantHmacKeysSortedByDateDescending.isEmpty() || tenantHmacKeysSortedByDateDescending.size() == 1) {
+			throw new RekeySkipException(String.format("%s HMAC keys were found%s (minimum of 2 needed).....skipping the currently scheduled HMAC rekey tasks for this tenant ", tenantHmacKeysSortedByDateDescending.size(), tenantLogString(tenantId)));
+		} else if (tenantHmacKeysSortedByDateDescending.subList(1, tenantHmacKeysSortedByDateDescending.size() - 1).stream().anyMatch(cryptoKey -> cryptoKey.getRekeyMode() == KEY_ON)) {
+			throw new RekeySkipException(String.format("Some older HMAC keys have a rekey mode of %1$s. Only the latest key can be %1$s.....skipping the currently scheduled HMAC rekey tasks for this tenant", KEY_ON));
+		} else if (tenantHmacKeysSortedByDateDescending.get(0).getRekeyMode() == KEY_OFF) {
+			// can't key off the latest key
+			throw new RekeySkipException(String.format("The latest HMAC key has a rekey mode of %1$s. You cannot set the latest key to %1$s.....skipping the currently scheduled HMAC rekey tasks for this tenant", KEY_OFF));
+		} else if (tenantHmacKeysSortedByDateDescending.stream()
+				.anyMatch(cryptoKey -> cryptoKey.getCreatedDate().plus(rekeySchedulerConfig.getCryptoKeyCacheDuration()).isAfter(now()))) {
+			throw new RekeySkipException(String.format("Some application instances might not be using some of the HMAC keys yet{0}....." +
+							"skipping the currently scheduled HMAC rekey tasks%s",
+					tenantLogString(tenantId)));
+		}
+	}
+
+	private List<RekeyServiceTaskHolder> generateRekeyServiceTasks(List<CryptoKey> tenantHmacKeysSortedByDateDescending) {
+		List<RekeyServiceTaskHolder> rekeyServiceTaskHolders = new ArrayList<>();
+		CryptoKey keyThatTriggeredTheRekey;
+		for (RekeyService<?> rekeyService : rekeySchedulerConfig.getRekeyServices()) {
+			CryptoKey latestHmacKey = tenantHmacKeysSortedByDateDescending.get(0);
+			CryptoKey oldestHmacKey = last(tenantHmacKeysSortedByDateDescending);
+			if (latestHmacKey.getRekeyMode() == KEY_ON) {
+				keyThatTriggeredTheRekey = latestHmacKey;
+			} else if (oldestHmacKey.getRekeyMode() == KEY_OFF) {
+				keyThatTriggeredTheRekey = oldestHmacKey;
+			} else {
+				throw new RekeySkipException("No HMAC keys found to trigger HMAC rekey job");
+			}
+
+			Optional<HmacStrategy> hmacStrategy = rekeySchedulerConfig.getCryptoShield().getAnnotatedEntityManager().getHmacStrategy(rekeyService.getEntityType());
+			if (hmacStrategy.isEmpty()) {
+				throw new RekeySkipException(String.format("No HMAC strategy found for %s.", rekeyService.getEntityType().getSimpleName()));
+			}
+
+			if (SingleHmacFieldStrategy.class.isAssignableFrom(hmacStrategy.get().getClass())) {
+				if (keyThatTriggeredTheRekey.getRekeyMode() == KEY_OFF) {
+					rekeyServiceTaskHolders.add(new RekeyServiceTaskHolder(keyOffRecordSupplier(keyThatTriggeredTheRekey),
+							rekeyService,
+							List.of(keyThatTriggeredTheRekey),
+							null,
+							latestHmacKey));
+				} else if (keyThatTriggeredTheRekey.getRekeyMode() == KEY_ON) {
+					rekeyServiceTaskHolders.add(new RekeyServiceTaskHolder(keyOnRecordSupplier(keyThatTriggeredTheRekey),
+							rekeyService,
+							List.of(keyThatTriggeredTheRekey),
+							null,
+							latestHmacKey));
+				}
+			} else if (DoubleHmacFieldStrategy.class.isAssignableFrom(hmacStrategy.get().getClass())) {
+				rekeyServiceTaskHolders.add(new RekeyServiceTaskHolder(keyOnRecordSupplier(latestHmacKey),
+						rekeyService,
+						List.of(keyThatTriggeredTheRekey),
+						null,
+						latestHmacKey));
+			} else if (ListHmacFieldStrategy.class.isAssignableFrom(hmacStrategy.get().getClass())) {
+				if (keyThatTriggeredTheRekey.getRekeyMode() == KEY_OFF) {
+					CryptoKey mostRecentNonKeyOffHmacKey = getMostRecentNonKeyOffHmacKey(tenantHmacKeysSortedByDateDescending);
+					rekeyServiceTaskHolders.add(new RekeyServiceTaskHolder(keyOnRecordSupplier(mostRecentNonKeyOffHmacKey),
+							rekeyService,
+							List.of(keyThatTriggeredTheRekey),
+							null,
+							mostRecentNonKeyOffHmacKey));
+				} else if (keyThatTriggeredTheRekey.getRekeyMode() == KEY_ON) {
+					rekeyServiceTaskHolders.add(new RekeyServiceTaskHolder(keyOnRecordSupplier(keyThatTriggeredTheRekey),
+							rekeyService,
+							List.of(keyThatTriggeredTheRekey),
+							null,
+							keyThatTriggeredTheRekey));
+				}
+			}
+		}
+		return rekeyServiceTaskHolders;
+	}
+
+	private static CryptoKey getMostRecentNonKeyOffHmacKey(List<CryptoKey> tenantHmacKeysSortedByDateDescending) {
+		ListIterator<CryptoKey> listIterator = tenantHmacKeysSortedByDateDescending.listIterator(tenantHmacKeysSortedByDateDescending.size());
+		while (listIterator.hasPrevious()) {
+			CryptoKey cryptoKey = listIterator.previous();
+			if (cryptoKey.getRekeyMode() != KEY_OFF) {
+				return cryptoKey;
+			}
+		}
+		// shouldn't be possible to get here
+		throw new NonTransientCryptoException("There were no keys to key onto!");
 	}
 
 	private boolean doAnyEncryptedRecordsNeedRekeying(Function<RekeyService<?>, List<?>> recordsNeedingRekeyedFunction) {
@@ -245,27 +334,13 @@ public class RekeyScheduler {
 		return doAnyRecordsNeedRekeying;
 	}
 
-	private boolean doAnyRecordsWithHmacsNeedRekeying(List<CryptoKey> tenantHmacKeys) {
+	private boolean doAnyRecordsNotHaveAHmacWithThisKey(CryptoKey tenantHmacKey) {
 		boolean doAnyRecordsNeedRekeying = false;
-		for (CryptoKey tenantHmacKey : tenantHmacKeys) {
-			if (doAnyRecordsNeedRekeying) {
+		for (RekeyService<?> rekeyService : rekeySchedulerConfig.getRekeyServices()) {
+			List<?> recordsNeedingRekeyed = getRecords(rekeyService, keyOnRecordSupplier(tenantHmacKey));
+			if (recordsNeedingRekeyed != null && !recordsNeedingRekeyed.isEmpty()) {
+				doAnyRecordsNeedRekeying = true;
 				break;
-			}
-
-			Function<RekeyService<?>, List<?>> recordsNeedingRekeyedFunction = null;
-			if (tenantHmacKey.getRekeyMode() == KEY_ON) {
-				recordsNeedingRekeyedFunction = keyOnRecordSupplier(tenantHmacKey);
-			} else if (tenantHmacKey.getRekeyMode() == KEY_OFF) {
-				recordsNeedingRekeyedFunction = keyOffRecordSupplier(tenantHmacKey);
-			}
-			if (recordsNeedingRekeyedFunction != null) {
-				for (RekeyService<?> rekeyService : rekeySchedulerConfig.getRekeyServices()) {
-					List<?> recordsNeedingRekeyed = getRecords(rekeyService, recordsNeedingRekeyedFunction);
-					if (recordsNeedingRekeyed != null && !recordsNeedingRekeyed.isEmpty()) {
-						doAnyRecordsNeedRekeying = true;
-						break;
-					}
-				}
 			}
 		}
 		return doAnyRecordsNeedRekeying;
@@ -281,46 +356,6 @@ public class RekeyScheduler {
 		return recordsNeedingRekeyed;
 	}
 
-	private Optional<CryptoKey> getHmacKeyToRekeyTo(List<CryptoKey> tenantAllCryptoKeysSortedByDateDescending) {
-		List<CryptoKey> tenantHmacKeysSortedByDateDescending = getTenantHmacKeysSortedByDateDescending(tenantAllCryptoKeysSortedByDateDescending);
-		if (tenantHmacKeysSortedByDateDescending.isEmpty()) {
-			logger.log(DEBUG, "No HMAC keys exist{0}", tenantLogString(tenantAllCryptoKeysSortedByDateDescending.get(0).getTenantId()));
-			return Optional.empty();
-		} else if (tenantHmacKeysSortedByDateDescending.stream().anyMatch(cryptoKey -> cryptoKey.getCreatedDate().plus(rekeySchedulerConfig.getCryptoKeyCacheDuration()).isAfter(now()))) {
-			logger.log(DEBUG, "Some application instances might not be using some of the HMAC keys yet{0}....." +
-							"so we''ll skip rekeying any HMACs{0}",
-					tenantLogString(tenantHmacKeysSortedByDateDescending.get(0).getTenantId()));
-			return Optional.empty();
-		}
-
-		Optional<CryptoKey> tenantHmacKeyToRekeyToMaybe = Optional.empty();
-
-		if (tenantHmacKeysSortedByDateDescending.get(0).getRekeyMode() == KEY_ON) {
-			// KEY_ON means rekey all HMACs to this key
-			tenantHmacKeyToRekeyToMaybe = Optional.of(tenantHmacKeysSortedByDateDescending.get(0));
-		} else if (tenantHmacKeysSortedByDateDescending.stream()
-				.anyMatch(tenantHmacKey -> tenantHmacKey.getRekeyMode() == KEY_OFF)) {
-			// if the oldest key is key off then we just need to key on to the next most recent key that is not KEY_OFF
-			// if a KEY_OFF key is not the oldest key the just delete the key without a rekey
-			int newestDeprecatedKeyFromStart = 0;
-			for (int i = 0; i < tenantHmacKeysSortedByDateDescending.size(); i++) {
-				if (i == newestDeprecatedKeyFromStart
-						&& tenantHmacKeysSortedByDateDescending.get(i).getRekeyMode() == KEY_OFF) {
-					++newestDeprecatedKeyFromStart;
-					continue;
-				}
-				tenantHmacKeyToRekeyToMaybe = Optional.of(tenantHmacKeysSortedByDateDescending.get(newestDeprecatedKeyFromStart + 1));
-			}
-		}
-		return tenantHmacKeyToRekeyToMaybe;
-	}
-
-	private static List<CryptoKey> getTenantHmacKeysSortedByDateDescending(List<CryptoKey> tenantAllCryptoKeysSortedByDateDescending) {
-		return tenantAllCryptoKeysSortedByDateDescending.stream()
-				.filter(cryptoKey -> cryptoKey.getUsage() == CryptoKeyUsage.HMAC)
-				.toList();
-	}
-
 	private static Function<RekeyService<?>, List<?>> keyOnRecordSupplier(CryptoKey cryptoKey) {
 		return (rekeyService) -> rekeyService.findRecordsNotUsingCryptoKey(cryptoKey);
 	}
@@ -330,20 +365,19 @@ public class RekeyScheduler {
 	}
 
 	@SuppressWarnings("BusyWait")
-	private long rekey(CryptoKey keyThatTriggeredTheRekey, RekeyCryptoShield rekeyCryptoShield, Function<RekeyService<?>, List<?>> recordsSupplier) {
-		logger.log(DEBUG, "Running re-key job. Keying {0} CryptoKey: {1}",
-				keyThatTriggeredTheRekey.getRekeyMode() == KEY_OFF ? "off" : "on", keyThatTriggeredTheRekey);
+	private long rekey(List<RekeyServiceTaskHolder> rekeyServiceTaskHolders) {
 		AtomicLong count = new AtomicLong();
-		rekeySchedulerConfig.getRekeyServices().forEach((rekeyService) -> {
-			logger.log(DEBUG, "Checking for records to re-key for entity {0}", rekeyService.getEntityType().getName());
+		rekeyServiceTaskHolders.forEach((rekeyServiceTaskHolder) -> {
+			logger.log(DEBUG, "Checking for records to re-key for entity {0}", rekeyServiceTaskHolder.rekeyService.getEntityType().getName());
 			ProgressTracker entityRekeyProgressTracker = new ProgressTracker(rekeySchedulerConfig.getMaximumToleratedFailuresPerExecution());
-			while (!rekeyBatch(rekeyService.getEntityType(), rekeyService, entityRekeyProgressTracker, rekeyCryptoShield, recordsSupplier)) {
+			RekeyCryptoShield rekeyCryptoShield = new RekeyCryptoShield(rekeySchedulerConfig.getCryptoShield(), rekeyServiceTaskHolder.encryptionKeyToKeyOnto, rekeyServiceTaskHolder.hmacKeyToKeyOnto);
+			while (!rekeyBatch(rekeyServiceTaskHolder.rekeyService.getEntityType(), rekeyServiceTaskHolder.rekeyService, entityRekeyProgressTracker, rekeyCryptoShield, rekeyServiceTaskHolder.recordsSupplier)) {
 				if (!Duration.ZERO.equals(rekeySchedulerConfig.getBatchInterval())) {
 					try {
-						logger.log(DEBUG, "Waiting for {0} milliseconds before re-keying another batch of records for entity {1}", rekeySchedulerConfig.getBatchInterval(), rekeyService.getEntityType().getName());
+						logger.log(DEBUG, "Waiting for {0} milliseconds before re-keying another batch of records for entity {1}", rekeySchedulerConfig.getBatchInterval(), rekeyServiceTaskHolder.rekeyService.getEntityType().getName());
 						Thread.sleep(rekeySchedulerConfig.getBatchInterval().toMillis());
 					} catch (InterruptedException e) {
-						logger.log(ERROR, String.format("An error occurred waiting to re-key the next batch of records for entity %s....cancelling this re-key task", rekeyService.getEntityType().getName()), e);
+						logger.log(ERROR, String.format("An error occurred waiting to re-key the next batch of records for entity %s....cancelling this re-key task", rekeyServiceTaskHolder.rekeyService.getEntityType().getName()), e);
 						Thread.currentThread().interrupt();
 						return;
 					}
@@ -351,13 +385,13 @@ public class RekeyScheduler {
 			}
 
 			if (entityRekeyProgressTracker.getNumberOfRecordsProcessed() > 0) {
-				logger.log(INFO, "Re-key complete for {0}.", rekeyService.getEntityType().getName());
+				logger.log(INFO, "Re-key complete for {0}.", rekeyServiceTaskHolder.rekeyService.getEntityType().getName());
 				RekeyEvent rekeyFinishedEvent = new RekeyEvent();
-				rekeyFinishedEvent.setRekeyServiceClass(rekeyService.getClass());
-				rekeyFinishedEvent.setCryptoKey(keyThatTriggeredTheRekey);
+				rekeyFinishedEvent.setRekeyServiceClass(rekeyServiceTaskHolder.getClass());
+				rekeyFinishedEvent.setCryptoKeysThatTriggeredTheRekey(rekeyServiceTaskHolder.keysThatTriggeredTheRekey);
 				rekeyFinishedEvent.setType(REKEY_FINISHED);
 				rekeyFinishedEvent.setProgressTracker(entityRekeyProgressTracker);
-				rekeyService.notify(rekeyFinishedEvent);
+				rekeyServiceTaskHolder.rekeyService.notify(rekeyFinishedEvent);
 			}
 			count.addAndGet(entityRekeyProgressTracker.getNumberOfRecordsProcessed());
 		});
@@ -424,7 +458,7 @@ public class RekeyScheduler {
 
 	private void removeKey(CryptoKey tenantsDeprecatedCryptoKey) {
 		try {
-			logger.log(INFO, "Notifying the application to mark the following Crypto key as deleted {1}", tenantsDeprecatedCryptoKey);
+			logger.log(INFO, "Notifying the application to mark the following Crypto key as deleted {0}", tenantsDeprecatedCryptoKey);
 			rekeySchedulerConfig.getRekeyCryptoKeyManager().markKeyForDeletion(tenantsDeprecatedCryptoKey);
 		} catch (Exception e) {
 			logger.log(ERROR, "An error occurred trying to mark the Crypto key for deletion {}", tenantsDeprecatedCryptoKey);
@@ -441,4 +475,27 @@ public class RekeyScheduler {
 	private Instant now() {
 		return rekeySchedulerConfig.getClock().instant();
 	}
+
+	private record RekeyServiceTaskHolder(
+			Function<RekeyService<?>, List<?>> recordsSupplier,
+			RekeyService<?> rekeyService,
+			List<CryptoKey> keysThatTriggeredTheRekey,
+			CryptoKey encryptionKeyToKeyOnto,
+			// All HMAC rekeys seem to essentially be single key KEY_ON processes so this probably doesn't need to be a list
+			CryptoKey hmacKeyToKeyOnto) {
+	}
+
+	private static class RekeySkipException extends RuntimeException {
+		public RekeySkipException(String message) {
+			super(message);
+		}
+	}
 }
+
+
+
+
+
+
+
+

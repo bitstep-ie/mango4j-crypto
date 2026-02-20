@@ -1,8 +1,9 @@
 package ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.single;
 
 import ie.bitstep.mango.crypto.annotations.Encrypt;
-import ie.bitstep.mango.crypto.annotations.EncryptedBlob;
+import ie.bitstep.mango.crypto.annotations.EncryptedData;
 import ie.bitstep.mango.crypto.annotations.Hmac;
+import ie.bitstep.mango.crypto.annotations.HmacKeyId;
 import ie.bitstep.mango.crypto.annotations.strategies.SingleHmacStrategy;
 
 @SingleHmacStrategy
@@ -19,7 +20,7 @@ public class TestAnnotatedEntityForSingleHmacFieldStrategy {
 	@Encrypt
 	private transient String ethnicity;
 
-	@EncryptedBlob
+	@EncryptedData
 	private String encryptedData;
 
 	private String favouriteColor;
@@ -27,6 +28,9 @@ public class TestAnnotatedEntityForSingleHmacFieldStrategy {
 	private String userNameHmac;
 
 	private String panHmac;
+
+	@HmacKeyId
+	private String hmacKeyId;
 
 	public String getPan() {
 		return pan;
@@ -82,5 +86,13 @@ public class TestAnnotatedEntityForSingleHmacFieldStrategy {
 
 	public void setPanHmac(String panHmac) {
 		this.panHmac = panHmac;
+	}
+
+	public String getHmacKeyId() {
+		return hmacKeyId;
+	}
+
+	public void setHmacKeyId(String hmacKeyId) {
+		this.hmacKeyId = hmacKeyId;
 	}
 }
