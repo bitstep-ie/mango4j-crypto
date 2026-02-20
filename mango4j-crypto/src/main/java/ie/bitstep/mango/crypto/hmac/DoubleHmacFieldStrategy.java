@@ -2,6 +2,7 @@ package ie.bitstep.mango.crypto.hmac;
 
 import ie.bitstep.mango.crypto.HmacStrategyHelper;
 import ie.bitstep.mango.crypto.annotations.Hmac;
+import ie.bitstep.mango.crypto.annotations.HmacKeyId;
 import ie.bitstep.mango.crypto.core.domain.CryptoKey;
 import ie.bitstep.mango.crypto.core.domain.HmacHolder;
 import ie.bitstep.mango.crypto.core.exceptions.NonTransientCryptoException;
@@ -9,6 +10,8 @@ import ie.bitstep.mango.crypto.core.exceptions.TransientCryptoException;
 import ie.bitstep.mango.crypto.utils.ReflectionUtils;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +55,9 @@ public class DoubleHmacFieldStrategy implements HmacStrategy {
 	public static final String HMAC_2_FIELD_NAME_SUFFIX = "Hmac2";
 
 	private final Map<Field, List<Field>> entityHmacFields = new HashMap<>();
+	private final List<Field> entityHmacKeyIdFields = new ArrayList<>();
 	private final HmacStrategyHelper hmacStrategyHelper;
+	private final DoubleHmacFieldStrategyDelegate defaultDoubleHmacFieldStrategyDelegate;
 
 	/**
 	 * Creates a double-HMAC strategy for the supplied entity class.
@@ -63,6 +68,30 @@ public class DoubleHmacFieldStrategy implements HmacStrategy {
 	public DoubleHmacFieldStrategy(Class<?> annotatedEntityClass, HmacStrategyHelper hmacStrategyHelper) {
 		this.hmacStrategyHelper = hmacStrategyHelper;
 		this.register(annotatedEntityClass);
+		this.defaultDoubleHmacFieldStrategyDelegate = new DoubleHmacFieldStrategyDelegate() {
+
+			@Override
+			public List<CryptoKey> getCurrentHmacKeys() {
+				return hmacStrategyHelper.cryptoKeyProvider().getCurrentHmacKeys();
+			}
+
+			@Override
+			public void setFieldForOlderHmacKey(Object entity, List<HmacHolder> hmacHolders, List<Field> targetHmacFields) {
+				try {
+					if (hmacHolders.size() == 1) {
+						// if there's only 1 HMAC key then just put the same HMAC value into the 1st field too
+						targetHmacFields.get(0).set(entity, hmacHolders.get(0).getValue()); // NOSONAR
+						entityHmacKeyIdFields.get(0).set(entity, hmacHolders.get(0).getCryptoKey().getId());
+					} else {
+						// if there's 2 HMAC keys then put the 2nd HMAC value (the one with the old key) into the 1st field
+						targetHmacFields.get(0).set(entity, hmacHolders.get(1).getValue()); // NOSONAR
+						entityHmacKeyIdFields.get(0).set(entity, hmacHolders.get(1).getCryptoKey().getId());
+					}
+				} catch (Exception e) {
+					throw new NonTransientCryptoException(String.format("An error occurred trying to set the HMAC field on entity %s: %s", entity.getClass().getSimpleName(), e.getClass().getSimpleName()), e);
+				}
+			}
+		};
 	}
 
 	/**
@@ -87,6 +116,27 @@ public class DoubleHmacFieldStrategy implements HmacStrategy {
 			targetHmacField2.setAccessible(true); // NOSONAR
 			entityHmacFields.put(hmacSourceField, List.of(targetHmacField1, targetHmacField2));
 		});
+		setHmacKeyIdFields(annotatedEntityClass);
+	}
+
+	private void setHmacKeyIdFields(Class<?> annotatedEntityClass) {
+		List<Field> hmacKeyIdFields = ReflectionUtils.getFieldsByAnnotation(annotatedEntityClass, HmacKeyId.class);
+		if (hmacKeyIdFields.size() < 2) {
+			throw new NonTransientCryptoException(format("Class '%1$s' uses the Double HMAC Strategy but does not have 2 fields annotated with @%2$s. " +
+					"It's mandatory to have 2 String fields annotated with @%2$s when using the Double HMAC Strategy", annotatedEntityClass.getName(), HmacKeyId.class.getSimpleName()));
+		}
+		hmacKeyIdFields.sort(Comparator.comparingInt(o -> o.getAnnotation(HmacKeyId.class).keyNumber()));
+		for (int i = 1; i <= hmacKeyIdFields.size(); i++) {
+			Field hmacKeyIdField = hmacKeyIdFields.get(i - 1);
+			if (hmacKeyIdField.getAnnotation(HmacKeyId.class).keyNumber() == i) {
+				hmacKeyIdField.setAccessible(true); // NOSONAR
+				entityHmacKeyIdFields.add(hmacKeyIdField);
+			} else {
+				throw new NonTransientCryptoException(String.format("Field '%1$s' in '%2$s' marked with @%3$s but did not have a valid " +
+						"keyNumber value. Entities using the Double HMAC strategy must have keyNumbers from 1 to 2 " +
+						"on the %3$s annotation.", hmacKeyIdField.getName(), annotatedEntityClass.getSimpleName(), HmacKeyId.class.getSimpleName()));
+			}
+		}
 	}
 
 	/**
@@ -96,6 +146,15 @@ public class DoubleHmacFieldStrategy implements HmacStrategy {
 	 */
 	@Override
 	public void hmac(Object entity) {
+		hmac(entity, defaultDoubleHmacFieldStrategyDelegate);
+	}
+
+	/**
+	 * Calculates HMAC values for all configured fields and sets the corresponding HMAC targets.
+	 *
+	 * @param entity the entity to process
+	 */
+	void hmac(Object entity, DoubleHmacFieldStrategyDelegate doubleHmacFieldStrategyDelegate) {
 		for (Map.Entry<Field, List<Field>> entry : entityHmacFields.entrySet()) {
 			Field sourceField = entry.getKey();
 			List<Field> targetHmacFields = entry.getValue();
@@ -105,7 +164,7 @@ public class DoubleHmacFieldStrategy implements HmacStrategy {
 				continue;
 			}
 			try {
-				List<CryptoKey> sortedCryptoKeys = HmacUtils.hmacKeysInCreationDateDescendingOrder(hmacStrategyHelper.cryptoKeyProvider().getCurrentHmacKeys());
+				List<CryptoKey> sortedCryptoKeys = HmacUtils.hmacKeysInCreationDateDescendingOrder(doubleHmacFieldStrategyDelegate.getCurrentHmacKeys());
 				if (sortedCryptoKeys.size() > 2) {
 					throw new NonTransientCryptoException(format("More than 2 current HMAC keys were found for entity " +
 									"class '%s' and field '%s'. This strategy only supports up to 2 HMAC keys.",
@@ -118,13 +177,8 @@ public class DoubleHmacFieldStrategy implements HmacStrategy {
 				hmacStrategyHelper.encryptionService().hmac(hmacHolders);
 				// Put the 1st HMAC value (the one with the most recent key) into the 2nd field
 				targetHmacFields.get(1).set(entity, hmacHolders.get(0).getValue()); // NOSONAR
-				if (hmacHolders.size() == 1) {
-					// if there's only 1 HMAC key then just put the same HMAC value into the 1st field too
-					targetHmacFields.get(0).set(entity, hmacHolders.get(0).getValue()); // NOSONAR
-				} else {
-					// if there's 2 HMAC keys then put the 2nd HMAC value (the one with the old key) into the 1st field
-					targetHmacFields.get(0).set(entity, hmacHolders.get(1).getValue()); // NOSONAR
-				}
+				entityHmacKeyIdFields.get(1).set(entity, hmacHolders.get(0).getCryptoKey().getId());
+				doubleHmacFieldStrategyDelegate.setFieldForOlderHmacKey(entity, hmacHolders, targetHmacFields);
 			} catch (TransientCryptoException | NonTransientCryptoException e) {
 				throw e;
 			} catch (Exception e) {

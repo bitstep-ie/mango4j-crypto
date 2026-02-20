@@ -1,8 +1,9 @@
 package ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.doublehmacstrategy;
 
 import ie.bitstep.mango.crypto.annotations.Encrypt;
-import ie.bitstep.mango.crypto.annotations.EncryptedBlob;
+import ie.bitstep.mango.crypto.annotations.EncryptedData;
 import ie.bitstep.mango.crypto.annotations.Hmac;
+import ie.bitstep.mango.crypto.annotations.HmacKeyId;
 import ie.bitstep.mango.crypto.annotations.strategies.DoubleHmacStrategy;
 
 @DoubleHmacStrategy
@@ -19,7 +20,7 @@ public class InvalidTestAnnotatedEntityForDoubleHmacFieldStrategyWithNonTransien
 	@Encrypt
 	private transient String ethnicity;
 
-	@EncryptedBlob
+	@EncryptedData
 	private String encryptedData;
 
 	private String favouriteColor;
@@ -31,6 +32,12 @@ public class InvalidTestAnnotatedEntityForDoubleHmacFieldStrategyWithNonTransien
 	private String panHmac1;
 
 	private String panHmac2;
+
+	@HmacKeyId
+	private String hmacKeyId1;
+
+	@HmacKeyId(keyNumber = 2)
+	private String hmacKeyId2;
 
 	public String getPan() {
 		return pan;

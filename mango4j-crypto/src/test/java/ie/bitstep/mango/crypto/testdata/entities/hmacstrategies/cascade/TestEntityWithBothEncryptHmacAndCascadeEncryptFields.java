@@ -2,7 +2,7 @@ package ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.cascade;
 
 import ie.bitstep.mango.crypto.annotations.CascadeEncrypt;
 import ie.bitstep.mango.crypto.annotations.Encrypt;
-import ie.bitstep.mango.crypto.annotations.EncryptedBlob;
+import ie.bitstep.mango.crypto.annotations.EncryptedData;
 import ie.bitstep.mango.crypto.annotations.EncryptionKeyId;
 import ie.bitstep.mango.crypto.annotations.Hmac;
 import ie.bitstep.mango.crypto.annotations.strategies.HmacStrategyToUse;
@@ -37,7 +37,7 @@ public class TestEntityWithBothEncryptHmacAndCascadeEncryptFields {
 
 	private String favouriteColor;
 
-	@EncryptedBlob
+	@EncryptedData
 	private String encryptedData;
 
 	@EncryptionKeyId

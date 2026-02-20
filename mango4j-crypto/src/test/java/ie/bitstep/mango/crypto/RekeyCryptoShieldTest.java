@@ -25,6 +25,9 @@ class RekeyCryptoShieldTest {
 	private CryptoShield mockCryptoShield;
 
 	@Mock
+	private AnnotatedEntityManager mockAnnotatedEntityManager;
+
+	@Mock
 	private CryptoKey mockEncryptionKey;
 
 	@Mock
@@ -45,7 +48,8 @@ class RekeyCryptoShieldTest {
 
 	@Test
 	void constructorNonListHmacStrategy() {
-		given(mockCryptoShield.getHmacStrategy(testEntity)).willReturn(Optional.of(mockHmacStrategy));
+		given(mockAnnotatedEntityManager.getHmacStrategy(testEntity.getClass())).willReturn(Optional.of(mockHmacStrategy));
+		given(mockCryptoShield.getAnnotatedEntityManager()).willReturn(mockAnnotatedEntityManager);
 		CryptoShieldDelegate cryptoShieldDelegate = getRekeyCryptoShieldDelegate();
 
 		assertThat(cryptoShieldDelegate.getCurrentEncryptionKey()).isEqualTo(mockEncryptionKey);
@@ -55,7 +59,8 @@ class RekeyCryptoShieldTest {
 	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	@Test
 	void constructorListHmacStrategy() {
-		given(mockCryptoShield.getHmacStrategy(testEntity)).willReturn(Optional.of(mockListHmacFieldStrategy));
+		given(mockAnnotatedEntityManager.getHmacStrategy(testEntity.getClass())).willReturn(Optional.of(mockListHmacFieldStrategy));
+		given(mockCryptoShield.getAnnotatedEntityManager()).willReturn(mockAnnotatedEntityManager);
 		CryptoShieldDelegate cryptoShieldDelegate = getRekeyCryptoShieldDelegate();
 
 		assertThat(cryptoShieldDelegate.getCurrentEncryptionKey()).isEqualTo(mockEncryptionKey);
@@ -65,7 +70,8 @@ class RekeyCryptoShieldTest {
 	@Test
 	void constructorListHmacStrategyButNoHMACKey() {
 		rekeyCryptoShield = new RekeyCryptoShield(mockCryptoShield, mockEncryptionKey, null);
-		given(mockCryptoShield.getHmacStrategy(testEntity)).willReturn(Optional.of(mockListHmacFieldStrategy));
+		given(mockAnnotatedEntityManager.getHmacStrategy(testEntity.getClass())).willReturn(Optional.of(mockListHmacFieldStrategy));
+		given(mockCryptoShield.getAnnotatedEntityManager()).willReturn(mockAnnotatedEntityManager);
 		CryptoShieldDelegate cryptoShieldDelegate = getRekeyCryptoShieldDelegate();
 
 		assertThat(cryptoShieldDelegate.getCurrentEncryptionKey()).isEqualTo(mockEncryptionKey);
@@ -74,7 +80,8 @@ class RekeyCryptoShieldTest {
 
 	@Test
 	void constructorEmptyHmacStrategy() {
-		given(mockCryptoShield.getHmacStrategy(testEntity)).willReturn(Optional.empty());
+		given(mockAnnotatedEntityManager.getHmacStrategy(testEntity.getClass())).willReturn(Optional.empty());
+		given(mockCryptoShield.getAnnotatedEntityManager()).willReturn(mockAnnotatedEntityManager);
 		CryptoShieldDelegate cryptoShieldDelegate = getRekeyCryptoShieldDelegate();
 
 		assertThat(cryptoShieldDelegate.getCurrentEncryptionKey()).isEqualTo(mockEncryptionKey);
@@ -84,7 +91,8 @@ class RekeyCryptoShieldTest {
 	@Test
 	void constructorNoHmacKeys() {
 		rekeyCryptoShield = new RekeyCryptoShield(mockCryptoShield, mockEncryptionKey, null);
-		given(mockCryptoShield.getHmacStrategy(testEntity)).willReturn(Optional.empty());
+		given(mockAnnotatedEntityManager.getHmacStrategy(testEntity.getClass())).willReturn(Optional.empty());
+		given(mockCryptoShield.getAnnotatedEntityManager()).willReturn(mockAnnotatedEntityManager);
 		CryptoShieldDelegate cryptoShieldDelegate = getRekeyCryptoShieldDelegate();
 
 		assertThat(cryptoShieldDelegate.getCurrentEncryptionKey()).isEqualTo(mockEncryptionKey);

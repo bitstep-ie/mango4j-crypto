@@ -2,12 +2,12 @@ package ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.doublehmacstrat
 
 import ie.bitstep.mango.crypto.annotations.Encrypt;
 import ie.bitstep.mango.crypto.annotations.EncryptedData;
+import ie.bitstep.mango.crypto.annotations.EncryptionKeyId;
 import ie.bitstep.mango.crypto.annotations.Hmac;
-import ie.bitstep.mango.crypto.annotations.HmacKeyId;
 import ie.bitstep.mango.crypto.annotations.strategies.DoubleHmacStrategy;
 
 @DoubleHmacStrategy
-public class InvalidTestAnnotatedEntityForDoubleHmacFieldStrategyWithNoCorrespondingHmac1TargetField {
+public class TestAnnotatedEntityForDoubleHmacFieldStrategyMissingHmacKeyIdFields {
 
 	@Encrypt
 	@Hmac
@@ -16,6 +16,9 @@ public class InvalidTestAnnotatedEntityForDoubleHmacFieldStrategyWithNoCorrespon
 	@Encrypt
 	@Hmac
 	private transient String userName;
+
+	@Hmac
+	private transient String someOtherHmacValue;
 
 	@Encrypt
 	private transient String ethnicity;
@@ -29,13 +32,16 @@ public class InvalidTestAnnotatedEntityForDoubleHmacFieldStrategyWithNoCorrespon
 
 	private String userNameHmac2;
 
+	private String panHmac1;
+
 	private String panHmac2;
 
-	@HmacKeyId
-	private String hmacKeyId1;
+	private String someOtherHmacValueHmac1;
 
-	@HmacKeyId(keyNumber = 2)
-	private String hmacKeyId2;
+	private String someOtherHmacValueHmac2;
+
+	@EncryptionKeyId
+	private String encryptionKeyId;
 
 	public String getPan() {
 		return pan;
@@ -85,6 +91,14 @@ public class InvalidTestAnnotatedEntityForDoubleHmacFieldStrategyWithNoCorrespon
 		this.userNameHmac2 = userNameHmac2;
 	}
 
+	public String getPanHmac1() {
+		return panHmac1;
+	}
+
+	public void setPanHmac1(String panHmac1) {
+		this.panHmac1 = panHmac1;
+	}
+
 	public String getPanHmac2() {
 		return panHmac2;
 	}
@@ -99,5 +113,13 @@ public class InvalidTestAnnotatedEntityForDoubleHmacFieldStrategyWithNoCorrespon
 
 	public String getEncryptedData() {
 		return encryptedData;
+	}
+
+	public String getEncryptionKeyId() {
+		return encryptionKeyId;
+	}
+
+	public void setEncryptionKeyId(String encryptionKeyId) {
+		this.encryptionKeyId = encryptionKeyId;
 	}
 }

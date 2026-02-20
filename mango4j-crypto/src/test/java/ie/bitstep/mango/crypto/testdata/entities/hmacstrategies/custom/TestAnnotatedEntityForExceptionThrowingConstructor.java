@@ -1,7 +1,7 @@
 package ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.custom;
 
 import ie.bitstep.mango.crypto.annotations.Encrypt;
-import ie.bitstep.mango.crypto.annotations.EncryptedBlob;
+import ie.bitstep.mango.crypto.annotations.EncryptedData;
 import ie.bitstep.mango.crypto.annotations.EncryptionKeyId;
 import ie.bitstep.mango.crypto.annotations.Hmac;
 import ie.bitstep.mango.crypto.annotations.strategies.HmacStrategyToUse;
@@ -27,7 +27,7 @@ public class TestAnnotatedEntityForExceptionThrowingConstructor implements Looku
 	@Encrypt
 	private transient String ethnicity;
 
-	@EncryptedBlob
+	@EncryptedData
 	private String encryptedData;
 
 	@EncryptionKeyId

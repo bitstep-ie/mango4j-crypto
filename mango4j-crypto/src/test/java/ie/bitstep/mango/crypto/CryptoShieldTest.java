@@ -728,7 +728,7 @@ class CryptoShieldTest {
 	void getHmacStrategy() {
 		given(mockObjectMapperFactory.objectMapper()).willReturn(mockedObjectMapper);
 		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
-		assertThat(cryptoShield.getHmacStrategy(testEntity).orElseThrow()).isInstanceOf(MockHmacStrategyImpl.class);
+		assertThat(cryptoShield.getAnnotatedEntityManager().getHmacStrategy(testEntity.getClass()).orElseThrow()).isInstanceOf(MockHmacStrategyImpl.class);
 	}
 
 	@Test

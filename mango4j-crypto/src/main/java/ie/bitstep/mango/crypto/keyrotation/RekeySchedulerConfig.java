@@ -2,7 +2,7 @@ package ie.bitstep.mango.crypto.keyrotation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ie.bitstep.mango.crypto.CryptoShield;
-import ie.bitstep.mango.crypto.annotations.EncryptedBlob;
+import ie.bitstep.mango.crypto.annotations.EncryptedData;
 import ie.bitstep.mango.crypto.core.domain.CryptoKey;
 import ie.bitstep.mango.crypto.core.encryption.EncryptionService;
 import ie.bitstep.mango.crypto.core.providers.CryptoKeyProvider;
@@ -144,13 +144,13 @@ public class RekeySchedulerConfig {
 
 		/**
 		 * Mandatory method: The {@link ObjectMapper} to use for generating the final ciphertext for
-		 * &#64;{@link EncryptedBlob EncryptedBlob} fields.
+		 * &#64;{@link EncryptedData EncryptedData} fields.
 		 * This should be the same as the one supplied to {@link CryptoShield}.
 		 * We need it to be supplied here also because internally this class instantiates new {@link CryptoShield}
 		 * instances for each rekey.
 		 *
 		 * @param objectMapper {@link ObjectMapper} implementation to use for
-		 *                     &#64;{@link EncryptedBlob EncryptedBlob} ciphertext formatting
+		 *                     &#64;{@link EncryptedData EncryptedData} ciphertext formatting
 		 * @return this
 		 */
 		public Builder withObjectMapper(ObjectMapper objectMapper) {
@@ -240,7 +240,6 @@ public class RekeySchedulerConfig {
 		private void validateSettings() {
 			boolean isValid = areRekeyServicesValid()
 					&& isCryptoShieldValid()
-					&& isObjectMapperValid()
 					&& isClockValid()
 					&& isCryptoKeyCacheDurationValid()
 					&& isRekeyCryptoManagerValid()
@@ -296,14 +295,6 @@ public class RekeySchedulerConfig {
 		private boolean isClockValid() {
 			if (clock == null) {
 				LOGGER.log(ERROR, "Clock field was set to a null value. Please make sure to set it to a non-null value using the withClock() method");
-				return false;
-			}
-			return true;
-		}
-
-		private boolean isObjectMapperValid() {
-			if (objectMapper == null) {
-				LOGGER.log(ERROR, "ObjectMapper field was set to a null value. Please make sure to set it to a non-null value using the withObjectMapper() method");
 				return false;
 			}
 			return true;
