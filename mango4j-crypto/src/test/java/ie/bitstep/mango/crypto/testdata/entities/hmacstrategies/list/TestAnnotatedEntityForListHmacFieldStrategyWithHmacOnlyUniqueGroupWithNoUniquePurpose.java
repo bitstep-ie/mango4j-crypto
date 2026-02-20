@@ -112,7 +112,8 @@ public class TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroupW
 
 	@Override
 	public void setLookups(Collection<CryptoShieldHmacHolder> hmacHolders) {
-
+		// Only used for testing purposes, not a valid implementation as this entity is only intended to be used for
+		// testing the ListHmacStrategy when there is an Hmac field with Unique purpose but no fields with a Unique purpose, the setLookups method is not relevant for this test
 	}
 
 	@Override

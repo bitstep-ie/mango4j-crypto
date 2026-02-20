@@ -51,7 +51,8 @@ public class RetryConfigurationTest {
 
 	@Test
 	void retryConfigurationNegativeBackoffDelay() {
-		assertThatThrownBy(() -> new RetryConfiguration(TEST_POOL_SIZE, TEST_MAX_ATTEMPTS, Duration.ofSeconds(-2), TEST_BACK_OFF_MULTIPLIER))
+		Duration negativeBackoffDelay = Duration.ofSeconds(-2);
+		assertThatThrownBy(() -> new RetryConfiguration(TEST_POOL_SIZE, TEST_MAX_ATTEMPTS, negativeBackoffDelay, TEST_BACK_OFF_MULTIPLIER))
 				.isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("backoffDelay (PT-2S) must not be negative");
 	}

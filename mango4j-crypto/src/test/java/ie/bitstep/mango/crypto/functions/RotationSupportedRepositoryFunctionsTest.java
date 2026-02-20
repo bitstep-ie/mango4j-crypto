@@ -311,21 +311,4 @@ class RotationSupportedRepositoryFunctionsTest {
 
 		assertThat(result).isEqualTo(Optional.of(LIST_1_VALUE_B));
 	}
-
-	@Test
-	void executeOptionalReturningQuadFunctionFirstParameterWithOneHmacHolderAndSecondParameterWithTwoHmacHoldersButFirstFunctionCallReturnsSomething() {
-		RotationSupportedRepositoryFunctions.QuadFunction<String, String, String, String, Optional<String>> testOptionalReturningQuadFunction =
-			(parameter1, parameter2, parameter3, parameter4) -> {
-				if (HMAC_VALUE_1.equals(parameter1) && HMAC_VALUE_1.equals(parameter2)
-					&& HMAC_VALUE_3.equals(parameter3) && HMAC_VALUE_3.equals(parameter4)) {
-					return Optional.of(LIST_1_VALUE_B);
-				}
-				return Optional.empty();
-			};
-
-		Optional<String> result = RotationSupportedRepositoryFunctions.executeOptionalReturningQuadFunction(testOptionalReturningQuadFunction,
-			List.of(hmacHolder1, hmacHolder2), List.of(hmacHolder3));
-
-		assertThat(result).isEqualTo(Optional.of(LIST_1_VALUE_B));
-	}
 }

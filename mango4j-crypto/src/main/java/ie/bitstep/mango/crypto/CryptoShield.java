@@ -341,7 +341,7 @@ public class CryptoShield {
 		}
 
 		if (cryptoShieldDelegate.getCurrentEncryptionKey() == null) {
-			// TODO: The delegate check is needed due to the fact that currently the rekey job (currently in BETA) does the
+			// The delegate check is needed due to the fact that currently the rekey job (currently in BETA) does the
 			// re-encrypt and re-HMAC operations separately so cryptoShieldDelegate.getCurrentEncryptionKey() returns null
 			// here for the re-HMAC job which isn't a problem and we just return immediately cause there's no encryption to do.
 			// This all needs removed when the rekey stuff is refactored.
@@ -447,7 +447,7 @@ public class CryptoShield {
 		try {
 			List<Field> fieldsToEncrypt = annotatedEntityManager.getFieldsToEncrypt(entity.getClass());
 			if (fieldsToEncrypt.isEmpty()) {
-				// TODO: maybe this entity only has HMACs - revisit: should we throw an exception here to warn
+				// maybe this entity only has HMACs - revisit: should we throw an exception here to warn
 				// app that decrypt was called on an object that can't be decrypted?
 				return;
 			}

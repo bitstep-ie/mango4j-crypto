@@ -1,6 +1,5 @@
 package ie.bitstep.mango.crypto.keyrotation;
 
-import ie.bitstep.mango.crypto.keyrotation.ProgressTracker;
 import ie.bitstep.mango.crypto.keyrotation.exceptions.TooManyFailuresException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

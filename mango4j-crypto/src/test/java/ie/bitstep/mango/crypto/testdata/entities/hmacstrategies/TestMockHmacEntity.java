@@ -10,9 +10,6 @@ import ie.bitstep.mango.crypto.testdata.implementations.hmacstrategies.MockHmacS
 @HmacStrategyToUse(MockHmacStrategyImpl.class)
 public class TestMockHmacEntity {
 
-	public TestMockHmacEntity() {
-	}
-
 	@Encrypt
 	@Hmac
 	private transient String pan;

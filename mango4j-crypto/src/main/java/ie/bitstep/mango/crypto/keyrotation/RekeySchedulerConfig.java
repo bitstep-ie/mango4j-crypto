@@ -46,7 +46,7 @@ public class RekeySchedulerConfig {
 		return new Builder();
 	}
 
-	public Collection<RekeyService<?>> getRekeyServices() {
+	public Collection<RekeyService<?>> getRekeyServices() { // NOSONAR - this is not a raw type because RekeyService is a generic class and we don't want to specify the type parameter here since it can be different for each RekeyService in the collection
 		return rekeyServices;
 	}
 
