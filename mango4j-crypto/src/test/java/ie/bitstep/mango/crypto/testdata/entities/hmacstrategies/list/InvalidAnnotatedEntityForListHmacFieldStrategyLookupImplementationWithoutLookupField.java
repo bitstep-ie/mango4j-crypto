@@ -60,7 +60,9 @@ public class InvalidAnnotatedEntityForListHmacFieldStrategyLookupImplementationW
 
 	@Override
 	public void setLookups(Collection<CryptoShieldHmacHolder> hmacHolders) {
-
+		// Only used for testing purposes, not a valid implementation as this entity is only intended to be used for
+		// testing the ListHmacStrategy when it implements Lookup but does not have a field annotated with @Hmac that
+		// has the Lookup purpose, this method is not relevant for this test
 	}
 
 	@Override
@@ -70,7 +72,9 @@ public class InvalidAnnotatedEntityForListHmacFieldStrategyLookupImplementationW
 
 	@Override
 	public void setUniqueValues(Collection<CryptoShieldHmacHolder> hmacHolders) {
-
+		// Only used for testing purposes, not a valid implementation as this entity is only intended to be used for
+		// testing the ListHmacStrategy when it implements Lookup but does not have a field annotated with @Hmac that
+		// has the Lookup purpose, this method is not relevant for this test
 	}
 
 	@Override

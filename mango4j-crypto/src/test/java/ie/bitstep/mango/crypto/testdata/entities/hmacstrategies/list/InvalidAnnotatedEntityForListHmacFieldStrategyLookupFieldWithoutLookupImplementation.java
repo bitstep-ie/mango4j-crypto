@@ -59,7 +59,9 @@ public class InvalidAnnotatedEntityForListHmacFieldStrategyLookupFieldWithoutLoo
 
 	@Override
 	public void setUniqueValues(Collection<CryptoShieldHmacHolder> hmacHolder) {
-
+		// Only used for testing purposes, not a valid implementation as this entity is only intended to be used for
+		// testing the ListHmacStrategy when it has a field annotated with @Hmac but does not implement the Lookup interface,
+		// the setUniqueValues method is not relevant for this test
 	}
 
 	@Override

@@ -341,7 +341,7 @@ public class CryptoShield {
 		}
 
 		if (cryptoShieldDelegate.getCurrentEncryptionKey() == null) {
-			// TODO: The delegate check is needed due to the fact that currently the rekey job (currently in BETA) does the
+			// The delegate check is needed due to the fact that currently the rekey job (currently in BETA) does the
 			// re-encrypt and re-HMAC operations separately so cryptoShieldDelegate.getCurrentEncryptionKey() returns null
 			// here for the re-HMAC job which isn't a problem and we just return immediately cause there's no encryption to do.
 			// This all needs removed when the rekey stuff is refactored.
@@ -352,6 +352,24 @@ public class CryptoShield {
 			}
 		}
 
+		ObjectNode rootNode = convertToJson(entity, encryptedFields);
+		try {
+			if (!rootNode.isEmpty()) {
+				String finalCipherText = ciphertextFormatter.format(doEncrypt(rootNode, cryptoShieldDelegate));
+				annotatedEntityManager.getEncryptedDataField(entity.getClass()).set(entity, finalCipherText); // NOSONAR - we set accessible to true on startup
+			}
+			Optional<Field> encryptionKeyIdFieldMaybe = annotatedEntityManager.getEncryptionKeyIdField(entity.getClass());
+			if (encryptionKeyIdFieldMaybe.isPresent()) {
+				encryptionKeyIdFieldMaybe.get().set(entity, cryptoShieldDelegate.getCurrentEncryptionKey().getId()); // NOSONAR - we set accessible to true on startup
+			}
+		} catch (NonTransientCryptoException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new NonTransientCryptoException(String.format("An error occurred trying to create the ciphertext:%s", e.getClass()), e);
+		}
+	}
+
+	private ObjectNode convertToJson(Object entity, List<Field> encryptedFields) {
 		ObjectNode rootNode = objectMapper.createObjectNode();
 		encryptedFields.forEach(sourceField -> {
 			try {
@@ -367,21 +385,7 @@ public class CryptoShield {
 				throw new NonTransientCryptoException(String.format(A_S_ERROR_OCCURRED_TRYING_TO_GET_THE_VALUE_OF_FIELD_S_ON_TYPE_S, e.getClass().getSimpleName(), sourceField.getName(), entity.getClass().getSimpleName()), e);
 			}
 		});
-
-		try {
-			if (!rootNode.isEmpty()) {
-				String finalCipherText = ciphertextFormatter.format(doEncrypt(rootNode, cryptoShieldDelegate));
-				annotatedEntityManager.getEncryptedDataField(entity.getClass()).set(entity, finalCipherText); // NOSONAR - we set accessible to true on startup
-			}
-			Optional<Field> encryptionKeyIdFieldMaybe = annotatedEntityManager.getEncryptionKeyIdField(entity.getClass());
-			if (encryptionKeyIdFieldMaybe.isPresent()) {
-				encryptionKeyIdFieldMaybe.get().set(entity, cryptoShieldDelegate.getCurrentEncryptionKey().getId()); // NOSONAR - we set accessible to true on startup
-			}
-		} catch (NonTransientCryptoException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new NonTransientCryptoException(String.format("An error occurred trying to create the ciphertext:%s", e.getClass()), e);
-		}
+		return rootNode;
 	}
 
 	private CiphertextContainer doEncrypt(ObjectNode rootNode, CryptoShieldDelegate cryptoShieldDelegate) throws JsonProcessingException {
@@ -443,7 +447,7 @@ public class CryptoShield {
 		try {
 			List<Field> fieldsToEncrypt = annotatedEntityManager.getFieldsToEncrypt(entity.getClass());
 			if (fieldsToEncrypt.isEmpty()) {
-				// TODO: maybe this entity only has HMACs - revisit: should we throw an exception here to warn
+				// maybe this entity only has HMACs - revisit: should we throw an exception here to warn
 				// app that decrypt was called on an object that can't be decrypted?
 				return;
 			}

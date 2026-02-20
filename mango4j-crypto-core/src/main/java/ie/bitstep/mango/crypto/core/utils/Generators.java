@@ -3,6 +3,9 @@ package ie.bitstep.mango.crypto.core.utils;
 import java.security.SecureRandom;
 
 public class Generators {
+
+	private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+
 	/**
 	 * Prevents instantiation.
 	 */
@@ -18,8 +21,7 @@ public class Generators {
 	 */
 	public static byte[] generateRandomBytes(int size) {
 		final var secureRandomKeyBytes = new byte[size];
-		final var secureRandom = new SecureRandom();
-		secureRandom.nextBytes(secureRandomKeyBytes);
+		SECURE_RANDOM.nextBytes(secureRandomKeyBytes);
 
 		return secureRandomKeyBytes;
 	}
@@ -32,8 +34,7 @@ public class Generators {
 	 */
 	public static byte[] generateRandomBits(int size) {
 		final var secureRandomKeyBytes = new byte[size / 8];
-		final var secureRandom = new SecureRandom();
-		secureRandom.nextBytes(secureRandomKeyBytes);
+		SECURE_RANDOM.nextBytes(secureRandomKeyBytes);
 
 		return secureRandomKeyBytes;
 	}

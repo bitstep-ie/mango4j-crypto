@@ -1,7 +1,6 @@
 package ie.bitstep.mango.crypto.hmac;
 
 import ie.bitstep.mango.crypto.annotations.UniqueGroup;
-import ie.bitstep.mango.crypto.hmac.UniqueGroupSet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -10,7 +9,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class UniqueGroupSetTest {
+class UniqueGroupSetTest {
 	private static final String FIELD_NAME_1 = "field1";
 	private static final String FIELD_NAME_2 = "field2";
 	private static final String TEST_GROUP_NAME = "test-group";

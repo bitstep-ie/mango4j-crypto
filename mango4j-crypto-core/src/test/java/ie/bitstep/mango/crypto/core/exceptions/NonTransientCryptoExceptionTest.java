@@ -1,6 +1,5 @@
 package ie.bitstep.mango.crypto.core.exceptions;
 
-import ie.bitstep.mango.crypto.core.exceptions.NonTransientCryptoException;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

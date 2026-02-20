@@ -9,12 +9,13 @@ import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.list.TestAnnotat
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class FieldValidatorTest {
+class FieldValidatorTest {
 
 	@Test
 	void privateConstructor() throws Exception {
@@ -24,15 +25,17 @@ public class FieldValidatorTest {
 	}
 
 	@Test
-	void constructorNonTransientHmacFields() {
-		assertThatThrownBy(() -> FieldValidator.validateSourceHmacField(InvalidAnnotatedEntityForListHmacFieldStrategyNonTransientField.class.getDeclaredField("pan"), InvalidAnnotatedEntityForListHmacFieldStrategyNonTransientField.class))
+	void constructorNonTransientHmacFields() throws NoSuchFieldException {
+		Field panField = InvalidAnnotatedEntityForListHmacFieldStrategyNonTransientField.class.getDeclaredField("pan");
+		assertThatThrownBy(() -> FieldValidator.validateSourceHmacField(panField, InvalidAnnotatedEntityForListHmacFieldStrategyNonTransientField.class))
 				.isInstanceOf(NonTransientCryptoException.class)
 				.hasMessage("InvalidAnnotatedEntityForListHmacFieldStrategyNonTransientField has a field named pan marked with @Hmac but it is not transient. Please mark any fields annotated with @Hmac as transient");
 	}
 
 	@Test
-	void constructorUniqueGroupFieldWithUniquePurpose() {
-		assertThatNoException().isThrownBy(() -> FieldValidator.validateSourceHmacField(TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroup.class.getDeclaredField("pan"), TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroupWithNoUniquePurpose.class));
+	void constructorUniqueGroupFieldWithUniquePurpose() throws NoSuchFieldException {
+		Field panField = TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroup.class.getDeclaredField("pan");
+		assertThatNoException().isThrownBy(() -> FieldValidator.validateSourceHmacField(panField, TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroupWithNoUniquePurpose.class));
 	}
 
 	@Test
@@ -48,8 +51,9 @@ public class FieldValidatorTest {
 	}
 
 	@Test
-	void constructorNonStringHmacFields() {
-		assertThatThrownBy(() -> FieldValidator.validateSourceHmacField(InvalidAnnotatedEntityForListHmacFieldStrategyNonStringField.class.getDeclaredField("pan"), InvalidAnnotatedEntityForListHmacFieldStrategyNonStringField.class))
+	void constructorNonStringHmacFields() throws NoSuchFieldException {
+		Field panField = InvalidAnnotatedEntityForListHmacFieldStrategyNonStringField.class.getDeclaredField("pan");
+		assertThatThrownBy(() -> FieldValidator.validateSourceHmacField(panField, InvalidAnnotatedEntityForListHmacFieldStrategyNonStringField.class))
 				.isInstanceOf(NonTransientCryptoException.class)
 				.hasMessage("InvalidAnnotatedEntityForListHmacFieldStrategyNonStringField has a field named pan marked with @Hmac but it is of type of int. HMAC fields can only be of type String");
 	}

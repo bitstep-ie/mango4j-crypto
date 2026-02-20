@@ -21,7 +21,7 @@ import static java.lang.System.Logger.Level.DEBUG;
  * - Stores ciphertext + IV + vault key under a UUID.
  * - Provides dependency injection for testability.
  */
-enum InMemoryKeyVault {
+enum InMemoryKeyVault { // NOSONAR: Enum singleton is a valid pattern here
 	INSTANCE;
 
 	private static final System.Logger LOGGER = System.getLogger(InMemoryKeyVault.class.getName());

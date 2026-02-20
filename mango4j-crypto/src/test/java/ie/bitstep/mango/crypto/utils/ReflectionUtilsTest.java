@@ -3,7 +3,6 @@ package ie.bitstep.mango.crypto.utils;
 import ie.bitstep.mango.crypto.annotations.Encrypt;
 import ie.bitstep.mango.crypto.annotations.Hmac;
 import ie.bitstep.mango.crypto.core.exceptions.NonTransientCryptoException;
-import ie.bitstep.mango.crypto.utils.ReflectionUtils;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Constructor;

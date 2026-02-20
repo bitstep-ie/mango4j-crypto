@@ -99,9 +99,9 @@ public class AwsEncryptionServiceDelegateTest {
 		CiphertextContainer ciphertextContainer = awsEncryptionServiceDelegate.encrypt(testCryptoKey, TEST_PLAINTEXT_STRING);
 
 		assertThat(ciphertextContainer.getCryptoKey()).isEqualTo(testCryptoKey);
-		assertThat(ciphertextContainer.getData().get(AWS_KEY_ID_CONFIG_ATTRIBUTE)).isEqualTo(TEST_AWS_KEY_URN);
-		assertThat(ciphertextContainer.getData().get(ALGORITHM_CONFIG_ATTRIBUTE)).isEqualTo(TEST_ALGORITHM_VALUE);
-		assertThat(ciphertextContainer.getData().get(DATA_CONFIG_ATTRIBUTE)).isEqualTo(Base64.getEncoder().encodeToString(TEST_CIPHERTEXT.getBytes(UTF_8)));
+		assertThat(ciphertextContainer.getData()).containsEntry(AWS_KEY_ID_CONFIG_ATTRIBUTE, TEST_AWS_KEY_URN);
+		assertThat(ciphertextContainer.getData()).containsEntry(ALGORITHM_CONFIG_ATTRIBUTE, TEST_ALGORITHM_VALUE);
+		assertThat(ciphertextContainer.getData()).containsEntry(DATA_CONFIG_ATTRIBUTE, Base64.getEncoder().encodeToString(TEST_CIPHERTEXT.getBytes(UTF_8)));
 
 		then(mockAwsKmsClient).should().encrypt(encryptRequestCaptor.capture());
 		assertThat(encryptRequestCaptor.getValue().keyId()).isEqualTo(TEST_AWS_KEY_URN);

@@ -1,14 +1,13 @@
 package ie.bitstep.mango.crypto.hmac;
 
 import ie.bitstep.mango.crypto.annotations.UniqueGroup;
-import ie.bitstep.mango.crypto.hmac.UniqueGroupMember;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class UniqueGroupMemberTest {
+class UniqueGroupMemberTest {
 	private static final String SOME_TEST_FIELD_WITH_UNIQUE_GROUP_ANNOTATION_FIELD_NAME = "someTestFieldWithUniqueGroupAnnotation";
 	private static final String TEST_GROUP_NAME = "test-group";
 	private static final int TEST_GROUP_ORDER = 1;

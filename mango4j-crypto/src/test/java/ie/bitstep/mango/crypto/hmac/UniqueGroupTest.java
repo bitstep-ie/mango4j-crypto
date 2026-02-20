@@ -10,7 +10,7 @@ import java.lang.reflect.Field;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class UniqueGroupTest {
+class UniqueGroupTest {
 	private static final String SOME_TEST_FIELD_WITHOUT_UNIQUE_GROUP_ANNOTATION_FIELD_NAME = "someTestFieldWithoutUniqueGroupAnnotation";
 	private static final String SOME_TEST_FIELD_WITH_UNIQUE_GROUP_ANNOTATION_FIELD_NAME = "someTestFieldWithUniqueGroupAnnotation";
 	private static final String TEST_GROUP_NAME = "test-group";
