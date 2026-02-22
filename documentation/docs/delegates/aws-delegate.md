@@ -1,3 +1,5 @@
+# AWS Encryption Service Delegate
+
 # AWS KMS Encryption Service Delegate
 
 This delegate allows applications to use the [Amazon Web Services Key Management Service](https://aws.amazon.com/kms/) 
@@ -46,7 +48,7 @@ Add the following dependency to your pom
 <dependency>
     <groupId>ie.bitstep.mango</groupId>
     <artifactId>mango4j-crypto-aws-delegate</artifactId>
-    <version>3.0.0</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 
