@@ -122,7 +122,7 @@ public class CachedWrappedKeyEncryptionService extends EncryptionServiceDelegate
 			final var iv = Generators.generateIV(cep.ivSize());
 			var wrappedKeyHolder = getCurrentWrappedKeyHolder(cep);
 			byte[] key;
-			try {
+			try { // NOSONAR - not worth extracting a separate method since it returns multiple values
 				key = wrappedKeyHolder.key();
 			} catch (KeyAlreadyDestroyedException e) {
 				// race condition - just retry
@@ -249,7 +249,7 @@ public class CachedWrappedKeyEncryptionService extends EncryptionServiceDelegate
 					edc);
 
 			byte[] key;
-			try {
+			try { // NOSONAR - not worth extracting a separate method since it returns multiple values
 				key = cachedWrappedKeyHolder.key();
 			} catch (KeyAlreadyDestroyedException e) {
 				// race condition - just retry

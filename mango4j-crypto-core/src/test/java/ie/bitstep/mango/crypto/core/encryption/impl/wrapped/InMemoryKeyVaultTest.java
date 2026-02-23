@@ -162,7 +162,7 @@ class InMemoryKeyVaultTest {
 					.hasCause(testCause);
 
 			then(mockSecureRandom).should().nextBytes(byteCaptor.capture());
-			assertThat(byteCaptor.getValue().length).isEqualTo(12);
+			assertThat(byteCaptor.getValue()).hasSize(12);
 			then(mockCipher).shouldHaveNoInteractions();
 			then(mockStore).shouldHaveNoInteractions();
 		}

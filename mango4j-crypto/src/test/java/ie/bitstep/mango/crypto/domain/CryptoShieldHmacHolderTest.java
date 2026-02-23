@@ -1,6 +1,5 @@
 package ie.bitstep.mango.crypto.domain;
 
-import ie.bitstep.mango.crypto.domain.CryptoShieldHmacHolder;
 import org.junit.jupiter.api.Test;
 
 import static ie.bitstep.mango.crypto.testdata.TestData.TEST_CRYPTO_KEY_ID;

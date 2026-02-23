@@ -33,10 +33,6 @@ public class RekeyListHmacStrategyTest {
 
 	private RekeyListHmacFieldStrategy rekeyListHmacFieldStrategy;
 	private TestAnnotatedEntityForListHmacFieldStrategy testEntity;
-	private List<HmacHolder> newLookupHmacHolders;
-	private List<HmacHolder> newUniqueValuesHolders;
-	private HmacHolder newLookuphmacHolder;
-	private HmacHolder newUniqueValueshmacHolder;
 
 	@Mock
 	private ListHmacFieldStrategy mockListHmacStrategy;
@@ -114,9 +110,9 @@ public class RekeyListHmacStrategyTest {
 		newLookupHmacHolders.add(newLookuphmacHolder);
 		List<HmacHolder> newUniqueValuesHolders = new ArrayList<>();
 		newUniqueValuesHolders.add(newUniqueValueshmacHolder);
-		TestAnnotatedEntityForSingleHmacFieldStrategy testEntity = new TestAnnotatedEntityForSingleHmacFieldStrategy();
+		TestAnnotatedEntityForSingleHmacFieldStrategy testAnnotatedEntityForSingleHmacFieldStrategy = new TestAnnotatedEntityForSingleHmacFieldStrategy();
 
-		rekeyListHmacFieldStrategy.preProcessForRekey(testEntity, newLookupHmacHolders, newUniqueValuesHolders);
+		rekeyListHmacFieldStrategy.preProcessForRekey(testAnnotatedEntityForSingleHmacFieldStrategy, newLookupHmacHolders, newUniqueValuesHolders);
 		assertThat(newLookupHmacHolders).anyMatch(hmacHolder -> hmacHolder.equals(newLookuphmacHolder));
 		assertThat(newUniqueValuesHolders).anyMatch(hmacHolder -> hmacHolder.equals(newUniqueValueshmacHolder));
 	}

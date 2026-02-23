@@ -1,7 +1,6 @@
 package ie.bitstep.mango.crypto.exceptions;
 
 
-import ie.bitstep.mango.crypto.exceptions.DeserializationException;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 

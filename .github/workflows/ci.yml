@@ -3,6 +3,8 @@ name: CI Builds
 on:
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   build-scan:
@@ -20,16 +22,19 @@ jobs:
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: maven
+          distribution: temurin
+          java-version: 17
+
       - name: Build with Maven
-        run: mvn -B install --file pom.xml
+        run: mvn -e -X -B install --file pom.xml
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
       - name: Update dependency graph
         uses: advanced-security/maven-dependency-submission-action@b275d12641ac2d2108b2cbb7598b154ad2f2cee8 # v5.0.0 - Using full commit sha to avoid security hotspot
 
       - name: SonarQube Scan
+        if: github.event_name != 'pull_request'
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
@@ -40,9 +45,27 @@ jobs:
             -Dsonar.host.url=${SONAR_HOST_URL} \
             -Dsonar.token=${SONAR_TOKEN} \
             -Dsonar.branch.name=${GITHUB_REF_NAME} \
-            -Dsonar.coverage.exclusions=src/test/** \
-            -Dsonar.exclusions=src/test/**,**/keyrotation/** \
-            -Dsonar.cpd.exclusions=**/CryptoShieldHmacHolder.java
+            -Dsonar.coverage.exclusions=**/test/**
+
+      - name: SonarQube Scan-PRs
+        if: github.event_name == 'pull_request'
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          PR_BRANCH: ${{ github.head_ref }}
+          PR_BASE: ${{ github.base_ref }}
+          PR_ID: ${{ github.event.pull_request.number }}
+        run: |
+          mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+            -Dsonar.projectKey=bitstep-ie_mango4j-crypto \
+            -Dsonar.organization=bitstep-ie \
+            -Dsonar.host.url=${SONAR_HOST_URL} \
+            -Dsonar.token=${SONAR_TOKEN} \
+            -Dsonar.pullrequest.key=$PR_ID \
+            -Dsonar.pullrequest.branch=$PR_BRANCH \
+            -Dsonar.pullrequest.base=$PR_BASE \
+            -Dsonar.coverage.exclusions=**/test/**
+
 
   docs:
     runs-on: ubuntu-latest

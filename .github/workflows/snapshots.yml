@@ -1,0 +1,93 @@
+name: Snapshots
+
+on:
+  workflow_run:
+    workflows: ["Release Drafter"]
+    types:
+      - completed
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  snapshots:
+    if: ${{ !endsWith(github.event.workflow_run.head_commit.committer.name, '[bot]') }}
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+      
+      - name: Get draft release version
+        id: draft
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const releases = await github.rest.repos.listReleases({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+
+            const draft = releases.data.find(r => r.draft === true);
+
+            if (!draft) {
+              core.setFailed("No draft release found");
+              return;
+            }
+
+            const version = draft.tag_name.replace(/^v/, "");
+            core.setOutput("version", version);
+      
+      - name: Update pom versions
+        run: |
+          VERSION="${{ steps.draft.outputs.version }}-SNAPSHOT"
+          echo "Setting version to $VERSION"
+          mvn -B -q versions:set -DnewVersion=$VERSION -DgenerateBackupPoms=false
+
+      - name: Set Git User
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@bots.noreply.github.com"
+
+      - name: Commit updated pom versions
+        run: |
+          if git diff --quiet; then
+            echo "No version changes, skipping commit"
+            exit 0
+          fi
+          
+          git commit -am "chore: sync pom versions with release draft"
+
+          git push
+      
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          server-id: central
+          server-username: CENTRAL_USERNAME
+          server-password: CENTRAL_PASSWORD
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: GPG_PASSPHRASE
+
+      - name: Publish Snapshot
+        if: github.ref == 'refs/heads/main'
+        run: mvn -B deploy
+        env:
+          CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
+          CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}

@@ -1,6 +1,5 @@
-package ie.bitstep.mango.crypto.core.domain;
+	package ie.bitstep.mango.crypto.core.domain;
 
-import ie.bitstep.mango.crypto.core.domain.CryptoKeyUsage;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
