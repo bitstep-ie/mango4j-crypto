@@ -127,7 +127,7 @@ KMS key ID or key ARN for example) rather than key objects, but representing you
 provides much more flexibility with how your encryption works. For example, this library represents keys in the code
 with the following object:
 
-```java
+```
 public class CryptoKey {
 	private String id;
 	private CryptoKeyUsage usage;
@@ -182,7 +182,7 @@ This final ciphertext is represented in a standardised way for encryption (not H
 straight
 ciphertext output it will return it as a JSON String with the following definition:
 
-```json language=json
+```
 {
   "cryptoKeyId": "someKeyId",
   "iv": "someInitializationVector",
@@ -348,14 +348,14 @@ So the steps for converting your design approach to accommodate the above approa
 2. Modify your application search code in such a way that instead of looking for a HMAC field value equal to the
    generated HMAC (e.g. in JpaRepository):
 
-```java
+```
 findByUsernameHmac(String userNameHmac);
 ```
 
 Change it to generate a list of HMAC values (using the tenant's _list_ of HMAC keys) and look for a HMAC value which is
 in that list of HMACs (e.g. in JpaRepository):
 
-```java
+```
 findByUsernameHmacIn(Collection<String> userNameHmacs);
 ```
 
@@ -699,7 +699,7 @@ leads to messier search code.
    using the old HMAC key.
 9. Copy X_HMAC_2 column values into X_HMAC_1 columns for all fields in all records, something like:
 
-```sql language=sql
+```
 UPDATE table
 SET USERNAME_HMAC_1 = USERNAME_HMAC_2
 ```
