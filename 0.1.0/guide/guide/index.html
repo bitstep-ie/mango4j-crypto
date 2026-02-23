@@ -1,0 +1,1826 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Framework to help developers implement application level encryption, powered by Mango">
+      
+      
+      
+        <link rel="canonical" href="https://bitstep-ie.github.io/mango4j-crypto/0.1.0/guide/guide/">
+      
+      
+      
+        <link rel="next" href="../../delegates/test-delegates/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.2">
+    
+    
+      
+        <title>Guide - mango4j-crypto</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="orange" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#mango4j-crypto" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="mango4j-crypto" class="md-header__button md-logo" aria-label="mango4j-crypto" data-md-component="logo">
+      
+  <img src="../../assets/mango-black.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            mango4j-crypto
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Guide
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="orange" data-md-color-accent="amber"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="orange" data-md-color-accent="deep-orange"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/bitstep-ie/mango4j-crypto" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    bitstep-ie/mango4j-crypto
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Guide
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../delegates/test-delegates/" class="md-tabs__link">
+          
+  
+  
+  Delegates
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../general/general/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  General Documentation
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="mango4j-crypto" class="md-nav__button md-logo" aria-label="mango4j-crypto" data-md-component="logo">
+      
+  <img src="../../assets/mango-black.png" alt="logo">
+
+    </a>
+    mango4j-crypto
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/bitstep-ie/mango4j-crypto" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    bitstep-ie/mango4j-crypto
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Delegates
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Delegates
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../delegates/test-delegates/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Test Delegates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../delegates/core-delegates" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core Delegates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../delegates/aws-delegates.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AWS Delegate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../general/general/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    General Documentation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 class="hidden" id="mango4j-crypto">mango4j-crypto<a class="headerlink" href="#mango4j-crypto" title="Permanent link">&para;</a></h1>
+<figure>
+    <img alt="Logo" src="../../assets/mango-with-text-black.png#only-light" />
+    <img alt="Logo" src="./assets/mango-with-text-white.png#only-dark" />
+    <figcaption>mango4j-crypto</figcaption>
+</figure>
+<h1 id="table-of-contents">Table Of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link">&para;</a></h1>
+<ol>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#getting-started">Getting Started</a></li>
+<li><a href="#encryption">Encryption</a></li>
+<li><a href="#cryptokey-provider">CryptoKey Provider</a></li>
+<li><a href="#cryptoshield-setup">CryptoShield Setup</a></li>
+<li><a href="#hmac">HMAC</a><ol>
+<li><a href="#single-hmac-strategy">Single HMAC Strategy</a></li>
+<li><a href="#list-hmac-strategy">List HMAC Strategy</a></li>
+<li><a href="#hmac-tokenizers">HMAC Tokenizers</a></li>
+<li><a href="#compound-unique-constraints-with-the-list-hmac-strategy">Compound Unique Constraints with the List HMAC Strategy</a></li>
+<li><a href="#single-hmac-strategy-with-key-start-time">Single HMAC Strategy With Key Start Time</a></li>
+<li><a href="#double-hmac-strategy">Double HMAC Strategy</a></li>
+</ol>
+</li>
+<li><a href="#key-rotation">Key Rotation</a></li>
+<li><a href="#rekeying">Rekeying</a></li>
+<li><a href="#provided-encryption-service-delegates">Provided Encryption Service Delegates</a></li>
+<li><a href="#testing-delegates">Testing Delegates</a><ol>
+<li><a href="#base64-encryption-service-delegate">Base64EncryptionService</a></li>
+<li><a href="#identity-encryption-service-delegate">IdentityEncryptionService</a></li>
+</ol>
+</li>
+<li><a href="#production-delegates">Production Delegates</a><ol>
+<li><a href="#pbkdf2-encryption-service-delegate">PBKDF2EncryptionService</a></li>
+<li><a href="#wrapped-key-encryption-service-delegate">WrappedKeyEncryptionService</a></li>
+<li><a href="#cached-wrapped-key-encryption-service-delegate">CachedWrappedKeyEncryptionService</a></li>
+<li><a href="#aws-encryption-service-delegate">AWS Encryption Service</a></li>
+</ol>
+</li>
+</ol>
+<h2 id="annotations">Annotations<a class="headerlink" href="#annotations" title="Permanent link">&para;</a></h2>
+<p>The main annotations that developers will use are:</p>
+<h3 id="encrypt">@Encrypt<a class="headerlink" href="#encrypt" title="Permanent link">&para;</a></h3>
+<p>The @Encrypt annotation should be placed on fields which must be encrypted. This annotation also requires the
+@EncryptedData partner annotation to be placed on the (single) field
+where the library should put the resulting ciphertext (which is generated in one go for all fields), so you only need
+one @EncryptedData field regardless of the number of @Encrypt
+fields. This is shown in the example entity code below.</p>
+<blockquote>
+<p><strong>NOTE</strong>: All fields marked with @Encrypt must be transient or the library will throw an error on registration of the
+entity. The only exception to this is when also using the @EnabledMigrationSupport annotation during once off
+migration
+onto the library for existing applications (this will be explained further in this document).</p>
+</blockquote>
+<h3 id="hmac">@Hmac<a class="headerlink" href="#hmac" title="Permanent link">&para;</a></h3>
+<p>The @Hmac annotation should be placed on fields which must be HMACed for either lookup or unique constraint purposes.
+Depending on the HmacStrategy that your entity is using there needs to be corresponding fields where the library should 
+write the HMACs to. There are currently 3 HMAC strategies supported by the library and each one has slightly different 
+approaches related to the design of your entity. This will most certainly seem strange, but they will be
+discussed at length further in this documentation when it will make more sense. Also, if you're familiar with the
+challenges mentioned in the <a href="/documentation/docs/general/general.md">the official Mango4j-crypto general documentation</a>
+they will make more sense.</p>
+<blockquote>
+<p><strong>NOTE</strong>: All fields marked with @Hmac must be transient or the library will throw an error on registration of the
+entity. The only exception to this is when also using the @EnabledMigrationSupport annotation during once off
+migration onto the library for existing applications (this will be explained further in this document).</p>
+</blockquote>
+<h3 id="encrypteddata">@EncryptedData<a class="headerlink" href="#encrypteddata" title="Permanent link">&para;</a></h3>
+<p>As discussed above, if you have any fields marked with @Encrypt then you must have a single field marked with
+@EncryptedData where the library will store the ciphertext for all
+encrypted source fields. Underneath the hood, the library serializes all original fields into a single JSON structure 
+which it then encrypts in a single operation.   </p>
+<h3 id="encryptionkeyid">@EncryptionKeyId<a class="headerlink" href="#encryptionkeyid" title="Permanent link">&para;</a></h3>
+<p>This is an optional annotation which you can place on a (String) field in your entity and the library will set
+it to the ID of the crypto key that was used to perform the
+encryption. This is not necessary for decryption purposes (the CryptoKey.key ID is also stored inside the @EncryptedData
+anyway) but it is useful for more performant rekey query purposes so it's recommended to have this anyway
+as it won't hurt and can be useful later.
+It would basically be used to find the records which are (or aren't) using a certain encryption/HMAC key so that they can be
+rekeyed with the current encryption key.</p>
+<h1 id="getting-started">Getting Started<a class="headerlink" href="#getting-started" title="Permanent link">&para;</a></h1>
+<p>The following instructions detail how to use this library. We use Springboot for our examples but that's an arbitrary
+choice, you'll write your application however you want. Mango4j-crypto has very few dependencies and doesn't know what 
+you do with your entities after encryption/decryption.
+An example entity is as follows:</p>
+<h1 id="encryption">Encryption<a class="headerlink" href="#encryption" title="Permanent link">&para;</a></h1>
+<p>```java language=java
+import ie.bitstep.mango.crypto.annotations.Encrypt;
+import ie.bitstep.mango.crypto.annotations.EncryptedData;
+import ie.bitstep.mango.crypto.annotations.Hmac;</p>
+<p>import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;</p>
+<p>@Entity(name = "USER_PROFILE")
+public class UserProfileEntity {</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span></pre></div></td><td class="code"><div><pre><span></span><code>@Encrypt
+private transient String pan;
+
+@Encrypt
+private transient String userName;
+
+@Encrypt
+private transient String ethnicity;
+
+public String getPan() {
+    return pan;
+}
+
+public void setPan(String pan) {
+    this.pan = pan;
+}
+
+public String getUserName() {
+    return userName;
+}
+
+public void setUserName(String userName) {
+    this.userName = userName;
+}
+
+public String getEthnicity() {
+    return ethnicity;
+}
+
+public void setEthnicity(String ethnicity) {
+    this.ethnicity = ethnicity;
+}
+
+@Id
+@Column(name = &quot;ID&quot;)
+private String id;
+
+@Column(name = &quot;FAVOURITE_COLOR&quot;)
+private String favouriteColor;
+
+@Column(name = &quot;ENCRYPTED_DATA&quot;)
+@EncryptedData
+private String encryptedData;
+
+public String getId() {
+    return id;
+}
+
+public void setId(String id) {
+    this.id = id;
+}
+
+public String getFavouriteColor() {
+    return favouriteColor;
+}
+
+public void setFavouriteColor(String favouriteColor) {
+    this.favouriteColor = favouriteColor;
+}
+</code></pre></div></td></tr></table></div>
+<p>}
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-0-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-0-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-0-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-0-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-0-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-0-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-0-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-0-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-0-10">10</a></span>
+<span class="normal"><a href="#__codelineno-0-11">11</a></span>
+<span class="normal"><a href="#__codelineno-0-12">12</a></span>
+<span class="normal"><a href="#__codelineno-0-13">13</a></span>
+<span class="normal"><a href="#__codelineno-0-14">14</a></span>
+<span class="normal"><a href="#__codelineno-0-15">15</a></span>
+<span class="normal"><a href="#__codelineno-0-16">16</a></span>
+<span class="normal"><a href="#__codelineno-0-17">17</a></span>
+<span class="normal"><a href="#__codelineno-0-18">18</a></span>
+<span class="normal"><a href="#__codelineno-0-19">19</a></span>
+<span class="normal"><a href="#__codelineno-0-20">20</a></span>
+<span class="normal"><a href="#__codelineno-0-21">21</a></span>
+<span class="normal"><a href="#__codelineno-0-22">22</a></span>
+<span class="normal"><a href="#__codelineno-0-23">23</a></span>
+<span class="normal"><a href="#__codelineno-0-24">24</a></span>
+<span class="normal"><a href="#__codelineno-0-25">25</a></span>
+<span class="normal"><a href="#__codelineno-0-26">26</a></span>
+<span class="normal"><a href="#__codelineno-0-27">27</a></span>
+<span class="normal"><a href="#__codelineno-0-28">28</a></span>
+<span class="normal"><a href="#__codelineno-0-29">29</a></span>
+<span class="normal"><a href="#__codelineno-0-30">30</a></span>
+<span class="normal"><a href="#__codelineno-0-31">31</a></span>
+<span class="normal"><a href="#__codelineno-0-32">32</a></span>
+<span class="normal"><a href="#__codelineno-0-33">33</a></span>
+<span class="normal"><a href="#__codelineno-0-34">34</a></span>
+<span class="normal"><a href="#__codelineno-0-35">35</a></span>
+<span class="normal"><a href="#__codelineno-0-36">36</a></span>
+<span class="normal"><a href="#__codelineno-0-37">37</a></span>
+<span class="normal"><a href="#__codelineno-0-38">38</a></span>
+<span class="normal"><a href="#__codelineno-0-39">39</a></span>
+<span class="normal"><a href="#__codelineno-0-40">40</a></span>
+<span class="normal"><a href="#__codelineno-0-41">41</a></span>
+<span class="normal"><a href="#__codelineno-0-42">42</a></span>
+<span class="normal"><a href="#__codelineno-0-43">43</a></span>
+<span class="normal"><a href="#__codelineno-0-44">44</a></span>
+<span class="normal"><a href="#__codelineno-0-45">45</a></span>
+<span class="normal"><a href="#__codelineno-0-46">46</a></span>
+<span class="normal"><a href="#__codelineno-0-47">47</a></span>
+<span class="normal"><a href="#__codelineno-0-48">48</a></span>
+<span class="normal"><a href="#__codelineno-0-49">49</a></span>
+<span class="normal"><a href="#__codelineno-0-50">50</a></span>
+<span class="normal"><a href="#__codelineno-0-51">51</a></span>
+<span class="normal"><a href="#__codelineno-0-52">52</a></span>
+<span class="normal"><a href="#__codelineno-0-53">53</a></span>
+<span class="normal"><a href="#__codelineno-0-54">54</a></span>
+<span class="normal"><a href="#__codelineno-0-55">55</a></span>
+<span class="normal"><a href="#__codelineno-0-56">56</a></span>
+<span class="normal"><a href="#__codelineno-0-57">57</a></span>
+<span class="normal"><a href="#__codelineno-0-58">58</a></span>
+<span class="normal"><a href="#__codelineno-0-59">59</a></span>
+<span class="normal"><a href="#__codelineno-0-60">60</a></span>
+<span class="normal"><a href="#__codelineno-0-61">61</a></span>
+<span class="normal"><a href="#__codelineno-0-62">62</a></span>
+<span class="normal"><a href="#__codelineno-0-63">63</a></span>
+<span class="normal"><a href="#__codelineno-0-64">64</a></span>
+<span class="normal"><a href="#__codelineno-0-65">65</a></span>
+<span class="normal"><a href="#__codelineno-0-66">66</a></span>
+<span class="normal"><a href="#__codelineno-0-67">67</a></span>
+<span class="normal"><a href="#__codelineno-0-68">68</a></span>
+<span class="normal"><a href="#__codelineno-0-69">69</a></span>
+<span class="normal"><a href="#__codelineno-0-70">70</a></span>
+<span class="normal"><a href="#__codelineno-0-71">71</a></span>
+<span class="normal"><a href="#__codelineno-0-72">72</a></span>
+<span class="normal"><a href="#__codelineno-0-73">73</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a>&gt; NOTES:
+<a id="__codelineno-0-2" name="__codelineno-0-2"></a>&gt; * Fields marked with @Encrypt will be bundled up into a JSON map, encrypted all at once with the remaining ciphertext
+<a id="__codelineno-0-3" name="__codelineno-0-3"></a>    output set into the field marked with @EncryptedData (which is the only field that would then be persisted by the application)
+<a id="__codelineno-0-4" name="__codelineno-0-4"></a>&gt; * You&#39;ll notice that we didn&#39;t bother defining getters/setters for the ENCRYPTED_DATA field. 
+<a id="__codelineno-0-5" name="__codelineno-0-5"></a>&gt;   This keeps the entity clean from the perspective of the outside world. Code outside this class only has access to 
+<a id="__codelineno-0-6" name="__codelineno-0-6"></a>&gt;   the source fields which will contain the original values. There&#39;s usually not a need for outside code to see the actual encrypted values.
+<a id="__codelineno-0-7" name="__codelineno-0-7"></a>&gt; * Notice that the source fields are marked transient. This is a requirement and provides more safety to your application by 
+<a id="__codelineno-0-8" name="__codelineno-0-8"></a>&gt;   making sure that serialization frameworks (Jackson, Hibernate, etc.) discard these values during serialization. 
+<a id="__codelineno-0-9" name="__codelineno-0-9"></a>&gt;   The last thing you want is your ORM flushing confidential values in cleartext to the DB.
+<a id="__codelineno-0-10" name="__codelineno-0-10"></a>&gt; * The favouriteColour field isn&#39;t confidential so it&#39;s just a plain old field that we define normally, it gets its own 
+<a id="__codelineno-0-11" name="__codelineno-0-11"></a>&gt;   column in the DB, etc.
+<a id="__codelineno-0-12" name="__codelineno-0-12"></a>
+<a id="__codelineno-0-13" name="__codelineno-0-13"></a>
+<a id="__codelineno-0-14" name="__codelineno-0-14"></a>
+<a id="__codelineno-0-15" name="__codelineno-0-15"></a># CryptoKey Provider
+<a id="__codelineno-0-16" name="__codelineno-0-16"></a>
+<a id="__codelineno-0-17" name="__codelineno-0-17"></a>Before we enable mango4j-crypto to encrypt/decrypt our UserProfile entity we need to create our implementation of the 
+<a id="__codelineno-0-18" name="__codelineno-0-18"></a>[CryptoKeyProvider](/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/providers/CryptoKeyProvider.java) 
+<a id="__codelineno-0-19" name="__codelineno-0-19"></a>interface for our application. If you store your CryptoKey objects in a database it might look something like this:
+<a id="__codelineno-0-20" name="__codelineno-0-20"></a>
+<a id="__codelineno-0-21" name="__codelineno-0-21"></a>```java language=java
+<a id="__codelineno-0-22" name="__codelineno-0-22"></a>package ie.bitstep.mango.examples.crypto.example.common;
+<a id="__codelineno-0-23" name="__codelineno-0-23"></a>
+<a id="__codelineno-0-24" name="__codelineno-0-24"></a>import ie.bitstep.mango.crypto.core.domain.CryptoKey;
+<a id="__codelineno-0-25" name="__codelineno-0-25"></a>import ie.bitstep.mango.crypto.core.domain.CryptoKeyUsage;
+<a id="__codelineno-0-26" name="__codelineno-0-26"></a>import ie.bitstep.mango.crypto.core.providers.CryptoKeyProvider;
+<a id="__codelineno-0-27" name="__codelineno-0-27"></a>import ie.bitstep.mango.crypto.example.domain.entities.CryptoKeyEntity;
+<a id="__codelineno-0-28" name="__codelineno-0-28"></a>import ie.bitstep.mango.examples.crypto.example.repositories.CryptoKeyRepository;
+<a id="__codelineno-0-29" name="__codelineno-0-29"></a>import ie.bitstep.mango.examples.crypto.example.utils.CryptoKeyUtils;
+<a id="__codelineno-0-30" name="__codelineno-0-30"></a>import org.springframework.stereotype.Component;
+<a id="__codelineno-0-31" name="__codelineno-0-31"></a>
+<a id="__codelineno-0-32" name="__codelineno-0-32"></a>import java.util.List;
+<a id="__codelineno-0-33" name="__codelineno-0-33"></a>import java.util.stream.Collectors;
+<a id="__codelineno-0-34" name="__codelineno-0-34"></a>
+<a id="__codelineno-0-35" name="__codelineno-0-35"></a>@Component
+<a id="__codelineno-0-36" name="__codelineno-0-36"></a>public class ApplicationCryptoKeyProvider implements CryptoKeyProvider {
+<a id="__codelineno-0-37" name="__codelineno-0-37"></a>
+<a id="__codelineno-0-38" name="__codelineno-0-38"></a>    private final CryptoKeyRepository cryptoKeyRepository;
+<a id="__codelineno-0-39" name="__codelineno-0-39"></a>    private final CryptoKeyUtils cryptoKeyUtils;
+<a id="__codelineno-0-40" name="__codelineno-0-40"></a>
+<a id="__codelineno-0-41" name="__codelineno-0-41"></a>    public ApplicationCryptoKeyProvider(CryptoKeyRepository cryptoKeyRepository, CryptoKeyUtils cryptoKeyUtils) {
+<a id="__codelineno-0-42" name="__codelineno-0-42"></a>        this.cryptoKeyRepository = cryptoKeyRepository;
+<a id="__codelineno-0-43" name="__codelineno-0-43"></a>        this.cryptoKeyUtils = cryptoKeyUtils;
+<a id="__codelineno-0-44" name="__codelineno-0-44"></a>    }
+<a id="__codelineno-0-45" name="__codelineno-0-45"></a>
+<a id="__codelineno-0-46" name="__codelineno-0-46"></a>    @Override
+<a id="__codelineno-0-47" name="__codelineno-0-47"></a>    public CryptoKey getById(String id) {
+<a id="__codelineno-0-48" name="__codelineno-0-48"></a>        CryptoKeyEntity cryptoKeyEntity = cryptoKeyRepository.findById(id).orElseThrow(RuntimeException::new);
+<a id="__codelineno-0-49" name="__codelineno-0-49"></a>        return cryptoKeyUtils.convert(cryptoKeyEntity);
+<a id="__codelineno-0-50" name="__codelineno-0-50"></a>    }
+<a id="__codelineno-0-51" name="__codelineno-0-51"></a>
+<a id="__codelineno-0-52" name="__codelineno-0-52"></a>    @Override
+<a id="__codelineno-0-53" name="__codelineno-0-53"></a>    public CryptoKey getCurrentEncryptionKey() {
+<a id="__codelineno-0-54" name="__codelineno-0-54"></a>        return cryptoKeyUtils.convert(cryptoKeyRepository.findTopByUsageOrderByCreatedDateDesc(CryptoKeyUsage.ENCRYPTION));
+<a id="__codelineno-0-55" name="__codelineno-0-55"></a>    }
+<a id="__codelineno-0-56" name="__codelineno-0-56"></a>
+<a id="__codelineno-0-57" name="__codelineno-0-57"></a>    @Override
+<a id="__codelineno-0-58" name="__codelineno-0-58"></a>    public List&lt;CryptoKey&gt; getCurrentHmacKeys() {
+<a id="__codelineno-0-59" name="__codelineno-0-59"></a>        return cryptoKeyRepository.findAllByUsage(CryptoKeyUsage.HMAC).stream()
+<a id="__codelineno-0-60" name="__codelineno-0-60"></a>                .filter(cryptoKeyEntity -&gt; cryptoKeyEntity.getStatus() != DELETED)
+<a id="__codelineno-0-61" name="__codelineno-0-61"></a>                .map(cryptoKeyUtils::convert)
+<a id="__codelineno-0-62" name="__codelineno-0-62"></a>                .collect(Collectors.toList());
+<a id="__codelineno-0-63" name="__codelineno-0-63"></a>    }
+<a id="__codelineno-0-64" name="__codelineno-0-64"></a>
+<a id="__codelineno-0-65" name="__codelineno-0-65"></a>    @Override
+<a id="__codelineno-0-66" name="__codelineno-0-66"></a>    public List&lt;CryptoKey&gt; getAllCryptoKeys() {
+<a id="__codelineno-0-67" name="__codelineno-0-67"></a>        return cryptoKeyRepository.findAll().stream()
+<a id="__codelineno-0-68" name="__codelineno-0-68"></a>                .filter(cryptoKeyEntity -&gt; cryptoKeyEntity.getStatus() != DELETED)
+<a id="__codelineno-0-69" name="__codelineno-0-69"></a>                .map(cryptoKeyUtils::convert)
+<a id="__codelineno-0-70" name="__codelineno-0-70"></a>                .collect(Collectors.toList());
+<a id="__codelineno-0-71" name="__codelineno-0-71"></a>    }
+<a id="__codelineno-0-72" name="__codelineno-0-72"></a>
+<a id="__codelineno-0-73" name="__codelineno-0-73"></a>}
+</code></pre></div></td></tr></table></div></p>
+<blockquote>
+<p><strong>NOTES</strong>:
+* The getCurrentKey() method should return the currently active encryption key for your tenant/application. 
+  It is called from the CryptoShield.encrypt() method to get the key it should use for the encryption (if applicable).
+* The getCurrentHmacKeys() should return all HMAC keys which are currently in use for your tenant/application. 
+  This is called by CryptoShield.encrypt() and CryptoShield.generateHmacs() to get the key(s) it should use to 
+  calculate HMACs.
+* This example uses the concept of statuses on the keys to keep track of which ones have been deleted. 
+  This allows us to keep the key for a certain length of time after a rekey (and subsequent key deletion) and then 
+  manually clean them up when we're 100% sure we don't need them. Copying this approach is up to you.
+* The getById() method should return the CryptoKey regardless of its status. This method is called for the 
+  CryptoShield.decrypt() method to get the key needed to decrypt the entity.
+* Make sure the createdDate fields on your CryptoKeys are correctly populated.
+* Most CryptoKeys fields are read-only. The only fields that you should ever update are CryptoKey.lastModifiedDate and 
+  CryptoKey.rekeyMode. Don't update the other fields!</p>
+</blockquote>
+<h1 id="cryptoshield-setup">CryptoShield Setup<a class="headerlink" href="#cryptoshield-setup" title="Permanent link">&para;</a></h1>
+<ul>
+<li>Finally we just need to create an instance (bean) for CryptoShield in your application config, passing in a list of all your application
+  entities which use @Encrypt or @Hmac, like the following:</li>
+</ul>
+<p>```java language=java</p>
+<p>@Bean
+public CryptoShield cryptoShield(CryptoKeyProvider cryptoKeyProvider) {
+    return new CryptoShield.Builder()
+            .withCryptoKeyProvider(cryptoKeyProvider)
+            .withAnnotatedEntities(List.of(UserProfileEntity.class))
+            .withEncryptionServiceDelegates(List.of(new Base64EncryptionService(), new IdentityEncryptionService()))
+            .withObjectMapperFactory(new ConfigurableObjectMapperFactory())
+            .build();
+}
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-1-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-1-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-1-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-1-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-1-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-1-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-1-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-1-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-1-10">10</a></span>
+<span class="normal"><a href="#__codelineno-1-11">11</a></span>
+<span class="normal"><a href="#__codelineno-1-12">12</a></span>
+<span class="normal"><a href="#__codelineno-1-13">13</a></span>
+<span class="normal"><a href="#__codelineno-1-14">14</a></span>
+<span class="normal"><a href="#__codelineno-1-15">15</a></span>
+<span class="normal"><a href="#__codelineno-1-16">16</a></span>
+<span class="normal"><a href="#__codelineno-1-17">17</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a>&gt; **NOTES:** 
+<a id="__codelineno-1-2" name="__codelineno-1-2"></a>&gt; * In this example we&#39;re passing in instances of Base64EncryptionService and IdentityEncryptionService to make
+<a id="__codelineno-1-3" name="__codelineno-1-3"></a>&gt; them available to the library. These come with the library for test purposes and should never be available in a production deployment.
+<a id="__codelineno-1-4" name="__codelineno-1-4"></a>&gt; To minimise this risk it&#39;s advised to have separate config classes which run with &#39;prod&#39; and &#39;dev&#39;
+<a id="__codelineno-1-5" name="__codelineno-1-5"></a>&gt; profiles. You can create your own EncryptionService classes by creating your own subclass of EncryptionServiceDelegate
+<a id="__codelineno-1-6" name="__codelineno-1-6"></a>&gt; (just like Base64EncryptionService and IdentityEncryptionService do) which
+<a id="__codelineno-1-7" name="__codelineno-1-7"></a>&gt; carries out encryption operations using a cryptographic provider that you use in whatever way you need.
+<a id="__codelineno-1-8" name="__codelineno-1-8"></a>&gt; * We register our UserProfile entity (and any others) with the library using the withAnnotationEntities() method.
+<a id="__codelineno-1-9" name="__codelineno-1-9"></a>&gt; * ConfigurableObjectMapperFactory is a default implementation of
+<a id="__codelineno-1-10" name="__codelineno-1-10"></a>&gt;   [ObjectMapperFactory](/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/factories/ObjectMapperFactory.java) 
+<a id="__codelineno-1-11" name="__codelineno-1-11"></a>&gt;   that comes with the library to provide a Jackson ObjectMapper that it can use for formatting and parsing of the ciphertext. 
+<a id="__codelineno-1-12" name="__codelineno-1-12"></a>&gt;   You can supply your own ObjectMapperFactory implementation instead if needed.
+<a id="__codelineno-1-13" name="__codelineno-1-13"></a>
+<a id="__codelineno-1-14" name="__codelineno-1-14"></a>Then your application code can encrypt your entities by calling:
+<a id="__codelineno-1-15" name="__codelineno-1-15"></a>
+<a id="__codelineno-1-16" name="__codelineno-1-16"></a>```java language=java
+<a id="__codelineno-1-17" name="__codelineno-1-17"></a>        cryptoShield.encrypt(userProfile);
+</code></pre></div></td></tr></table></div>
+And this will encrypt all the confidential fields in your entity and set the resulting ciphertext into the field marked 
+with @EncryptedData. </p>
+<blockquote>
+<p><strong>NOTE:</strong> This encrypt operation doesn't affect the original values of the transient fields, they remain exactly as they 
+were (unencrypted). So you can continue working with them in your code after calling CryptoShield.encrypt(). </p>
+</blockquote>
+<p><br>
+Likewise, to decrypt an entity you can call:</p>
+<p>```java language=java
+        cryptoShield.decrypt(userProfile);
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">  1</a></span>
+<span class="normal"><a href="#__codelineno-2-2">  2</a></span>
+<span class="normal"><a href="#__codelineno-2-3">  3</a></span>
+<span class="normal"><a href="#__codelineno-2-4">  4</a></span>
+<span class="normal"><a href="#__codelineno-2-5">  5</a></span>
+<span class="normal"><a href="#__codelineno-2-6">  6</a></span>
+<span class="normal"><a href="#__codelineno-2-7">  7</a></span>
+<span class="normal"><a href="#__codelineno-2-8">  8</a></span>
+<span class="normal"><a href="#__codelineno-2-9">  9</a></span>
+<span class="normal"><a href="#__codelineno-2-10"> 10</a></span>
+<span class="normal"><a href="#__codelineno-2-11"> 11</a></span>
+<span class="normal"><a href="#__codelineno-2-12"> 12</a></span>
+<span class="normal"><a href="#__codelineno-2-13"> 13</a></span>
+<span class="normal"><a href="#__codelineno-2-14"> 14</a></span>
+<span class="normal"><a href="#__codelineno-2-15"> 15</a></span>
+<span class="normal"><a href="#__codelineno-2-16"> 16</a></span>
+<span class="normal"><a href="#__codelineno-2-17"> 17</a></span>
+<span class="normal"><a href="#__codelineno-2-18"> 18</a></span>
+<span class="normal"><a href="#__codelineno-2-19"> 19</a></span>
+<span class="normal"><a href="#__codelineno-2-20"> 20</a></span>
+<span class="normal"><a href="#__codelineno-2-21"> 21</a></span>
+<span class="normal"><a href="#__codelineno-2-22"> 22</a></span>
+<span class="normal"><a href="#__codelineno-2-23"> 23</a></span>
+<span class="normal"><a href="#__codelineno-2-24"> 24</a></span>
+<span class="normal"><a href="#__codelineno-2-25"> 25</a></span>
+<span class="normal"><a href="#__codelineno-2-26"> 26</a></span>
+<span class="normal"><a href="#__codelineno-2-27"> 27</a></span>
+<span class="normal"><a href="#__codelineno-2-28"> 28</a></span>
+<span class="normal"><a href="#__codelineno-2-29"> 29</a></span>
+<span class="normal"><a href="#__codelineno-2-30"> 30</a></span>
+<span class="normal"><a href="#__codelineno-2-31"> 31</a></span>
+<span class="normal"><a href="#__codelineno-2-32"> 32</a></span>
+<span class="normal"><a href="#__codelineno-2-33"> 33</a></span>
+<span class="normal"><a href="#__codelineno-2-34"> 34</a></span>
+<span class="normal"><a href="#__codelineno-2-35"> 35</a></span>
+<span class="normal"><a href="#__codelineno-2-36"> 36</a></span>
+<span class="normal"><a href="#__codelineno-2-37"> 37</a></span>
+<span class="normal"><a href="#__codelineno-2-38"> 38</a></span>
+<span class="normal"><a href="#__codelineno-2-39"> 39</a></span>
+<span class="normal"><a href="#__codelineno-2-40"> 40</a></span>
+<span class="normal"><a href="#__codelineno-2-41"> 41</a></span>
+<span class="normal"><a href="#__codelineno-2-42"> 42</a></span>
+<span class="normal"><a href="#__codelineno-2-43"> 43</a></span>
+<span class="normal"><a href="#__codelineno-2-44"> 44</a></span>
+<span class="normal"><a href="#__codelineno-2-45"> 45</a></span>
+<span class="normal"><a href="#__codelineno-2-46"> 46</a></span>
+<span class="normal"><a href="#__codelineno-2-47"> 47</a></span>
+<span class="normal"><a href="#__codelineno-2-48"> 48</a></span>
+<span class="normal"><a href="#__codelineno-2-49"> 49</a></span>
+<span class="normal"><a href="#__codelineno-2-50"> 50</a></span>
+<span class="normal"><a href="#__codelineno-2-51"> 51</a></span>
+<span class="normal"><a href="#__codelineno-2-52"> 52</a></span>
+<span class="normal"><a href="#__codelineno-2-53"> 53</a></span>
+<span class="normal"><a href="#__codelineno-2-54"> 54</a></span>
+<span class="normal"><a href="#__codelineno-2-55"> 55</a></span>
+<span class="normal"><a href="#__codelineno-2-56"> 56</a></span>
+<span class="normal"><a href="#__codelineno-2-57"> 57</a></span>
+<span class="normal"><a href="#__codelineno-2-58"> 58</a></span>
+<span class="normal"><a href="#__codelineno-2-59"> 59</a></span>
+<span class="normal"><a href="#__codelineno-2-60"> 60</a></span>
+<span class="normal"><a href="#__codelineno-2-61"> 61</a></span>
+<span class="normal"><a href="#__codelineno-2-62"> 62</a></span>
+<span class="normal"><a href="#__codelineno-2-63"> 63</a></span>
+<span class="normal"><a href="#__codelineno-2-64"> 64</a></span>
+<span class="normal"><a href="#__codelineno-2-65"> 65</a></span>
+<span class="normal"><a href="#__codelineno-2-66"> 66</a></span>
+<span class="normal"><a href="#__codelineno-2-67"> 67</a></span>
+<span class="normal"><a href="#__codelineno-2-68"> 68</a></span>
+<span class="normal"><a href="#__codelineno-2-69"> 69</a></span>
+<span class="normal"><a href="#__codelineno-2-70"> 70</a></span>
+<span class="normal"><a href="#__codelineno-2-71"> 71</a></span>
+<span class="normal"><a href="#__codelineno-2-72"> 72</a></span>
+<span class="normal"><a href="#__codelineno-2-73"> 73</a></span>
+<span class="normal"><a href="#__codelineno-2-74"> 74</a></span>
+<span class="normal"><a href="#__codelineno-2-75"> 75</a></span>
+<span class="normal"><a href="#__codelineno-2-76"> 76</a></span>
+<span class="normal"><a href="#__codelineno-2-77"> 77</a></span>
+<span class="normal"><a href="#__codelineno-2-78"> 78</a></span>
+<span class="normal"><a href="#__codelineno-2-79"> 79</a></span>
+<span class="normal"><a href="#__codelineno-2-80"> 80</a></span>
+<span class="normal"><a href="#__codelineno-2-81"> 81</a></span>
+<span class="normal"><a href="#__codelineno-2-82"> 82</a></span>
+<span class="normal"><a href="#__codelineno-2-83"> 83</a></span>
+<span class="normal"><a href="#__codelineno-2-84"> 84</a></span>
+<span class="normal"><a href="#__codelineno-2-85"> 85</a></span>
+<span class="normal"><a href="#__codelineno-2-86"> 86</a></span>
+<span class="normal"><a href="#__codelineno-2-87"> 87</a></span>
+<span class="normal"><a href="#__codelineno-2-88"> 88</a></span>
+<span class="normal"><a href="#__codelineno-2-89"> 89</a></span>
+<span class="normal"><a href="#__codelineno-2-90"> 90</a></span>
+<span class="normal"><a href="#__codelineno-2-91"> 91</a></span>
+<span class="normal"><a href="#__codelineno-2-92"> 92</a></span>
+<span class="normal"><a href="#__codelineno-2-93"> 93</a></span>
+<span class="normal"><a href="#__codelineno-2-94"> 94</a></span>
+<span class="normal"><a href="#__codelineno-2-95"> 95</a></span>
+<span class="normal"><a href="#__codelineno-2-96"> 96</a></span>
+<span class="normal"><a href="#__codelineno-2-97"> 97</a></span>
+<span class="normal"><a href="#__codelineno-2-98"> 98</a></span>
+<span class="normal"><a href="#__codelineno-2-99"> 99</a></span>
+<span class="normal"><a href="#__codelineno-2-100">100</a></span>
+<span class="normal"><a href="#__codelineno-2-101">101</a></span>
+<span class="normal"><a href="#__codelineno-2-102">102</a></span>
+<span class="normal"><a href="#__codelineno-2-103">103</a></span>
+<span class="normal"><a href="#__codelineno-2-104">104</a></span>
+<span class="normal"><a href="#__codelineno-2-105">105</a></span>
+<span class="normal"><a href="#__codelineno-2-106">106</a></span>
+<span class="normal"><a href="#__codelineno-2-107">107</a></span>
+<span class="normal"><a href="#__codelineno-2-108">108</a></span>
+<span class="normal"><a href="#__codelineno-2-109">109</a></span>
+<span class="normal"><a href="#__codelineno-2-110">110</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a>And this will reset all the confidential (transient) fields in your entity back to their original values.
+<a id="__codelineno-2-2" name="__codelineno-2-2"></a>
+<a id="__codelineno-2-3" name="__codelineno-2-3"></a># HMAC Strategies
+<a id="__codelineno-2-4" name="__codelineno-2-4"></a>
+<a id="__codelineno-2-5" name="__codelineno-2-5"></a>A core concept in the mango4j-crypto library is that of HMAC strategies. There are various ways that an application
+<a id="__codelineno-2-6" name="__codelineno-2-6"></a>could choose to implement key-rotation friendly HMAC functionality (please read the 
+<a id="__codelineno-2-7" name="__codelineno-2-7"></a>[general documentation](/documentation/docs/general/general.md#hmac-key-rotation-challenges) for a detailed
+<a id="__codelineno-2-8" name="__codelineno-2-8"></a>explanation of this material) and this library provides 3 
+<a id="__codelineno-2-9" name="__codelineno-2-9"></a>[HMAC Strategies](/documentation/docs/general/general.md#hmac-strategies) out of the box.
+<a id="__codelineno-2-10" name="__codelineno-2-10"></a>
+<a id="__codelineno-2-11" name="__codelineno-2-11"></a>You can choose which ones to apply to your application entities by using the corresponding class level annotation. The
+<a id="__codelineno-2-12" name="__codelineno-2-12"></a>library authors strongly advise application developers to consider
+<a id="__codelineno-2-13" name="__codelineno-2-13"></a>the @ListHmacStrategy unless there are strong reasons not to. Currently, the library supports the following (in
+<a id="__codelineno-2-14" name="__codelineno-2-14"></a>order of preference of the mango4j-crypto team):
+<a id="__codelineno-2-15" name="__codelineno-2-15"></a>&lt;br&gt;
+<a id="__codelineno-2-16" name="__codelineno-2-16"></a>@ListHmacStrategy
+<a id="__codelineno-2-17" name="__codelineno-2-17"></a>&lt;br&gt;
+<a id="__codelineno-2-18" name="__codelineno-2-18"></a>@SingleHmacStrategy
+<a id="__codelineno-2-19" name="__codelineno-2-19"></a>&lt;br&gt;
+<a id="__codelineno-2-20" name="__codelineno-2-20"></a>@DoubleHmacStrategy
+<a id="__codelineno-2-21" name="__codelineno-2-21"></a>&lt;br&gt;
+<a id="__codelineno-2-22" name="__codelineno-2-22"></a>
+<a id="__codelineno-2-23" name="__codelineno-2-23"></a>But we&#39;ll start with the Single HMAC Strategy as that&#39;s the easiest to understand. In this example we also need to 
+<a id="__codelineno-2-24" name="__codelineno-2-24"></a>generate HMACs for both the pan and username fields as they both need to be searchable and username needs to be unique 
+<a id="__codelineno-2-25" name="__codelineno-2-25"></a>in our application.
+<a id="__codelineno-2-26" name="__codelineno-2-26"></a>
+<a id="__codelineno-2-27" name="__codelineno-2-27"></a>## Single HMAC Strategy
+<a id="__codelineno-2-28" name="__codelineno-2-28"></a>
+<a id="__codelineno-2-29" name="__codelineno-2-29"></a>```java language=java
+<a id="__codelineno-2-30" name="__codelineno-2-30"></a>import ie.bitstep.mango.crypto.annotations.Encrypt;
+<a id="__codelineno-2-31" name="__codelineno-2-31"></a>import ie.bitstep.mango.crypto.annotations.EncryptedData;
+<a id="__codelineno-2-32" name="__codelineno-2-32"></a>import ie.bitstep.mango.crypto.annotations.Hmac;
+<a id="__codelineno-2-33" name="__codelineno-2-33"></a>
+<a id="__codelineno-2-34" name="__codelineno-2-34"></a>import jakarta.persistence.Column;
+<a id="__codelineno-2-35" name="__codelineno-2-35"></a>import jakarta.persistence.Entity;
+<a id="__codelineno-2-36" name="__codelineno-2-36"></a>import jakarta.persistence.Id;
+<a id="__codelineno-2-37" name="__codelineno-2-37"></a>
+<a id="__codelineno-2-38" name="__codelineno-2-38"></a>@Entity(name = &quot;USER_PROFILE&quot;)
+<a id="__codelineno-2-39" name="__codelineno-2-39"></a>@SingleHmacStrategy
+<a id="__codelineno-2-40" name="__codelineno-2-40"></a>public class UserProfileEntity {
+<a id="__codelineno-2-41" name="__codelineno-2-41"></a>
+<a id="__codelineno-2-42" name="__codelineno-2-42"></a>    @Encrypt
+<a id="__codelineno-2-43" name="__codelineno-2-43"></a>    @Hmac
+<a id="__codelineno-2-44" name="__codelineno-2-44"></a>    private transient String pan;
+<a id="__codelineno-2-45" name="__codelineno-2-45"></a>
+<a id="__codelineno-2-46" name="__codelineno-2-46"></a>    @Encrypt
+<a id="__codelineno-2-47" name="__codelineno-2-47"></a>    @Hmac
+<a id="__codelineno-2-48" name="__codelineno-2-48"></a>    private transient String userName;
+<a id="__codelineno-2-49" name="__codelineno-2-49"></a>
+<a id="__codelineno-2-50" name="__codelineno-2-50"></a>    @Encrypt
+<a id="__codelineno-2-51" name="__codelineno-2-51"></a>    private transient String ethnicity;
+<a id="__codelineno-2-52" name="__codelineno-2-52"></a>
+<a id="__codelineno-2-53" name="__codelineno-2-53"></a>    public String getPan() {
+<a id="__codelineno-2-54" name="__codelineno-2-54"></a>        return pan;
+<a id="__codelineno-2-55" name="__codelineno-2-55"></a>    }
+<a id="__codelineno-2-56" name="__codelineno-2-56"></a>
+<a id="__codelineno-2-57" name="__codelineno-2-57"></a>    public void setPan(String pan) {
+<a id="__codelineno-2-58" name="__codelineno-2-58"></a>        this.pan = pan;
+<a id="__codelineno-2-59" name="__codelineno-2-59"></a>    }
+<a id="__codelineno-2-60" name="__codelineno-2-60"></a>
+<a id="__codelineno-2-61" name="__codelineno-2-61"></a>    public String getUserName() {
+<a id="__codelineno-2-62" name="__codelineno-2-62"></a>        return userName;
+<a id="__codelineno-2-63" name="__codelineno-2-63"></a>    }
+<a id="__codelineno-2-64" name="__codelineno-2-64"></a>
+<a id="__codelineno-2-65" name="__codelineno-2-65"></a>    public void setUserName(String userName) {
+<a id="__codelineno-2-66" name="__codelineno-2-66"></a>        this.userName = userName;
+<a id="__codelineno-2-67" name="__codelineno-2-67"></a>    }
+<a id="__codelineno-2-68" name="__codelineno-2-68"></a>
+<a id="__codelineno-2-69" name="__codelineno-2-69"></a>    public String getEthnicity() {
+<a id="__codelineno-2-70" name="__codelineno-2-70"></a>        return ethnicity;
+<a id="__codelineno-2-71" name="__codelineno-2-71"></a>    }
+<a id="__codelineno-2-72" name="__codelineno-2-72"></a>
+<a id="__codelineno-2-73" name="__codelineno-2-73"></a>    public void setEthnicity(String ethnicity) {
+<a id="__codelineno-2-74" name="__codelineno-2-74"></a>        this.ethnicity = ethnicity;
+<a id="__codelineno-2-75" name="__codelineno-2-75"></a>    }
+<a id="__codelineno-2-76" name="__codelineno-2-76"></a>
+<a id="__codelineno-2-77" name="__codelineno-2-77"></a>    @Id
+<a id="__codelineno-2-78" name="__codelineno-2-78"></a>    @Column(name = &quot;ID&quot;)
+<a id="__codelineno-2-79" name="__codelineno-2-79"></a>    private String id;
+<a id="__codelineno-2-80" name="__codelineno-2-80"></a>
+<a id="__codelineno-2-81" name="__codelineno-2-81"></a>    @Column(name = &quot;FAVOURITE_COLOR&quot;)
+<a id="__codelineno-2-82" name="__codelineno-2-82"></a>    private String favouriteColor;
+<a id="__codelineno-2-83" name="__codelineno-2-83"></a>
+<a id="__codelineno-2-84" name="__codelineno-2-84"></a>    @Column(name = &quot;USERNAME_HMAC&quot;, unique = true)
+<a id="__codelineno-2-85" name="__codelineno-2-85"></a>    private String userNameHmac;
+<a id="__codelineno-2-86" name="__codelineno-2-86"></a>
+<a id="__codelineno-2-87" name="__codelineno-2-87"></a>    @Column(name = &quot;PAN_HMAC&quot;)
+<a id="__codelineno-2-88" name="__codelineno-2-88"></a>    private String panHmac;
+<a id="__codelineno-2-89" name="__codelineno-2-89"></a>
+<a id="__codelineno-2-90" name="__codelineno-2-90"></a>    @Column(name = &quot;ENCRYPTED_DATA&quot;)
+<a id="__codelineno-2-91" name="__codelineno-2-91"></a>    @EncryptedData
+<a id="__codelineno-2-92" name="__codelineno-2-92"></a>    private String encryptedData;
+<a id="__codelineno-2-93" name="__codelineno-2-93"></a>
+<a id="__codelineno-2-94" name="__codelineno-2-94"></a>    public String getId() {
+<a id="__codelineno-2-95" name="__codelineno-2-95"></a>        return id;
+<a id="__codelineno-2-96" name="__codelineno-2-96"></a>    }
+<a id="__codelineno-2-97" name="__codelineno-2-97"></a>
+<a id="__codelineno-2-98" name="__codelineno-2-98"></a>    public void setId(String id) {
+<a id="__codelineno-2-99" name="__codelineno-2-99"></a>        this.id = id;
+<a id="__codelineno-2-100" name="__codelineno-2-100"></a>    }
+<a id="__codelineno-2-101" name="__codelineno-2-101"></a>
+<a id="__codelineno-2-102" name="__codelineno-2-102"></a>    public String getFavouriteColor() {
+<a id="__codelineno-2-103" name="__codelineno-2-103"></a>        return favouriteColor;
+<a id="__codelineno-2-104" name="__codelineno-2-104"></a>    }
+<a id="__codelineno-2-105" name="__codelineno-2-105"></a>
+<a id="__codelineno-2-106" name="__codelineno-2-106"></a>    public void setFavouriteColor(String favouriteColor) {
+<a id="__codelineno-2-107" name="__codelineno-2-107"></a>        this.favouriteColor = favouriteColor;
+<a id="__codelineno-2-108" name="__codelineno-2-108"></a>    }
+<a id="__codelineno-2-109" name="__codelineno-2-109"></a>
+<a id="__codelineno-2-110" name="__codelineno-2-110"></a>}
+</code></pre></div></td></tr></table></div></p>
+<blockquote>
+<p><strong>NOTES</strong>:
+* We've added the @SingleHmacStrategy annotation to the class.
+* We've added 2 new fields 'panHmac' and 'userNameHmac' to the entity. This is because HMACs need to be stored separately, 
+  and the convention the SingleHmacStrategy uses is that the hmac fields must be named the same as the source fields 
+  with the suffix 'Hmac'. So the 'pan' field gets its HMAC calculated and set into the 'panHmac' field and same for userName.
+* Again, you'll notice that we didn't bother defining getters/setters for the USERNAME_HMAC, PAN_HMAC fields either, 
+  for the same reason that we didn't bother defining getters/setters for the ENCRYPTED_DATA field.
+* The panHmac and userNameHmac fields are persisted to the DB in our example and each have their own columns 
+  (we're using Hibernate here). 
+* The USERNAME_HMAC also has a unique constraint on it.</p>
+</blockquote>
+<p><br></p>
+<h2 id="list-hmac-strategy">List HMAC Strategy<a class="headerlink" href="#list-hmac-strategy" title="Permanent link">&para;</a></h2>
+<p>```java language=java
+import ie.bitstep.mango.crypto.annotations.Encrypt;
+import ie.bitstep.mango.crypto.annotations.EncryptedData;
+import ie.bitstep.mango.crypto.annotations.EncryptionKeyId;
+import ie.bitstep.mango.crypto.annotations.Hmac;
+import ie.bitstep.mango.crypto.annotations.strategies.ListHmacStrategy;
+import ie.bitstep.mango.crypto.domain.CryptoShieldHmacHolder;
+import ie.bitstep.mango.crypto.domain.Lookup;
+import ie.bitstep.mango.crypto.domain.Unique;
+import ie.bitstep.mango.crypto.tokenizers.PanTokenizer;
+import org.springframework.data.mongodb.core.mapping.Document;</p>
+<p>import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;</p>
+<p>@ListHmacStrategy
+@Document(collection = "UserProfile")
+public class UserProfileEntityForListHmacStrategy implements Lookup, Unique {</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span></pre></div></td><td class="code"><div><pre><span></span><code>@Encrypt
+@Hmac
+private transient String pan;
+
+@Encrypt
+@Hmac(purposes = {Hmac.Purposes.LOOKUP, Hmac.Purposes.UNIQUE})
+private transient String userName;
+
+@Encrypt
+private transient String ethnicity;
+
+private Collection&lt;CryptoShieldHmacHolder&gt; lookups;
+
+private Collection&lt;CryptoShieldHmacHolder&gt; uniqueValues;
+
+public String getPan() {
+    return pan;
+}
+
+public void setPan(String pan) {
+    this.pan = pan;
+}
+
+public String getUserName() {
+    return userName;
+}
+
+public void setUserName(String userName) {
+    this.userName = userName;
+}
+
+public String getEthnicity() {
+    return ethnicity;
+}
+
+public void setEthnicity(String ethnicity) {
+    this.ethnicity = ethnicity;
+}
+
+@Id
+private String id;
+
+private String favouriteColor;
+
+@EncryptedData
+private String encryptedData;
+
+@EncryptionKeyId
+private String encryptionKeyId;
+
+public String getId() {
+    return id;
+}
+
+public void setId(String id) {
+    this.id = id;
+}
+
+public String getFavouriteColor() {
+    return favouriteColor;
+}
+
+public void setFavouriteColor(String favouriteColor) {
+    this.favouriteColor = favouriteColor;
+}
+
+@Override
+public void setLookups(Collection&lt;CryptoShieldHmacHolder&gt; lookups) {
+    this.lookups = lookups;
+}
+
+@Override
+public List&lt;CryptoShieldHmacHolder&gt; getLookups() {
+    return lookups;
+}
+
+@Override
+public void setUniqueValues(Collection&lt;CryptoShieldHmacHolder&gt; uniqueValues) {
+    this.uniqueValues = uniqueValues;
+}
+
+@Override
+public List&lt;CryptoShieldHmacHolder&gt; getUniqueValues() {
+    return uniqueValues;
+}
+</code></pre></div></td></tr></table></div>
+<p>}
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-3-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-3-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-3-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-3-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-3-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-3-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-3-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-3-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-3-10">10</a></span>
+<span class="normal"><a href="#__codelineno-3-11">11</a></span>
+<span class="normal"><a href="#__codelineno-3-12">12</a></span>
+<span class="normal"><a href="#__codelineno-3-13">13</a></span>
+<span class="normal"><a href="#__codelineno-3-14">14</a></span>
+<span class="normal"><a href="#__codelineno-3-15">15</a></span>
+<span class="normal"><a href="#__codelineno-3-16">16</a></span>
+<span class="normal"><a href="#__codelineno-3-17">17</a></span>
+<span class="normal"><a href="#__codelineno-3-18">18</a></span>
+<span class="normal"><a href="#__codelineno-3-19">19</a></span>
+<span class="normal"><a href="#__codelineno-3-20">20</a></span>
+<span class="normal"><a href="#__codelineno-3-21">21</a></span>
+<span class="normal"><a href="#__codelineno-3-22">22</a></span>
+<span class="normal"><a href="#__codelineno-3-23">23</a></span>
+<span class="normal"><a href="#__codelineno-3-24">24</a></span>
+<span class="normal"><a href="#__codelineno-3-25">25</a></span>
+<span class="normal"><a href="#__codelineno-3-26">26</a></span>
+<span class="normal"><a href="#__codelineno-3-27">27</a></span>
+<span class="normal"><a href="#__codelineno-3-28">28</a></span>
+<span class="normal"><a href="#__codelineno-3-29">29</a></span>
+<span class="normal"><a href="#__codelineno-3-30">30</a></span>
+<span class="normal"><a href="#__codelineno-3-31">31</a></span>
+<span class="normal"><a href="#__codelineno-3-32">32</a></span>
+<span class="normal"><a href="#__codelineno-3-33">33</a></span>
+<span class="normal"><a href="#__codelineno-3-34">34</a></span>
+<span class="normal"><a href="#__codelineno-3-35">35</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a>&lt;br&gt;
+<a id="__codelineno-3-2" name="__codelineno-3-2"></a>
+<a id="__codelineno-3-3" name="__codelineno-3-3"></a>The above example entity is designed for MongoDB (as it&#39;s the most suitable DB for this HMAC strategy). If you are using
+<a id="__codelineno-3-4" name="__codelineno-3-4"></a>it with an SQL DB check out the [mango4j-crypto-example](https://github.com/bitstep-ie/mango4j-examples/tree/main/mango4j-crypto-example) demo application which does the exact same for an SQL DB.
+<a id="__codelineno-3-5" name="__codelineno-3-5"></a>
+<a id="__codelineno-3-6" name="__codelineno-3-6"></a>&gt; **NOTES:**
+<a id="__codelineno-3-7" name="__codelineno-3-7"></a>&gt; * Similar to the SingleHmacStrategy sample entity, the userName field is annotated with @Hmac but here it also has a 
+<a id="__codelineno-3-8" name="__codelineno-3-8"></a>&gt;   &#39;purposes&#39; definition. This can have the values of Purposes.LOOKUP, Purposes.UNIQUE, or both depending on what purpose that field 
+<a id="__codelineno-3-9" name="__codelineno-3-9"></a>&gt;   is being HMACed for. If no value is specified then it defaults to Purposes.LOOKUP.
+<a id="__codelineno-3-10" name="__codelineno-3-10"></a>&gt; * The pan field also has the @Hmac annotation but no purposes definition so it defaults to Purposes.LOOKUP
+<a id="__codelineno-3-11" name="__codelineno-3-11"></a>&gt; * Entities which use @ListHmacStrategy must implement either the Lookup interface, the Unique interface or both. Since this entity uses
+<a id="__codelineno-3-12" name="__codelineno-3-12"></a>    HMACs for both purposes it implements both interfaces. Having to implement these interfaces makes the List HMAC Strategy quite 
+<a id="__codelineno-3-13" name="__codelineno-3-13"></a>&gt;   different from other HMAC designs and that is shown in your entity definition. But it&#39;s also what makes it the most powerful strategy.
+<a id="__codelineno-3-14" name="__codelineno-3-14"></a>&gt; * Unlike the other HMAC strategies this one doesn&#39;t have associated target HMAC fields with the &#39;Hmac&#39; suffix. Instead,
+<a id="__codelineno-3-15" name="__codelineno-3-15"></a>    it implements the methods getLookups() and setLookups() from
+<a id="__codelineno-3-16" name="__codelineno-3-16"></a>    the Lookup interface and the getUniqueValues() and setUniqueValues() from the Unique interface. The library calls back
+<a id="__codelineno-3-17" name="__codelineno-3-17"></a>    to these methods to get and set the HMACs. This is what
+<a id="__codelineno-3-18" name="__codelineno-3-18"></a>    makes this the most powerful HMAC strategy, we can have as many HMACS for as many keys or tokenized values as needed.
+<a id="__codelineno-3-19" name="__codelineno-3-19"></a>&gt; * If you are using HMACs for unique constraint purposes, make sure to create the appropriate unique constraint definitions on your
+<a id="__codelineno-3-20" name="__codelineno-3-20"></a>    DB. Generally you would place a compound unique constraint on the columns representing CryptoShieldHmacHolder.alias 
+<a id="__codelineno-3-21" name="__codelineno-3-21"></a>    and CryptoShieldHmacHolder.value (and tenant ID if applicable).
+<a id="__codelineno-3-22" name="__codelineno-3-22"></a>
+<a id="__codelineno-3-23" name="__codelineno-3-23"></a>&gt; **Note:** When calling CryptoShield.encrypt() for entities which have been updated (as opposed to newly created),
+<a id="__codelineno-3-24" name="__codelineno-3-24"></a>&gt; make sure that the setLookup() and setUniqueValues() methods _completely replace_ the existing lists! Do not append to
+<a id="__codelineno-3-25" name="__codelineno-3-25"></a>&gt; the existing lists!!!
+<a id="__codelineno-3-26" name="__codelineno-3-26"></a>
+<a id="__codelineno-3-27" name="__codelineno-3-27"></a>### HMAC Tokenizers
+<a id="__codelineno-3-28" name="__codelineno-3-28"></a>
+<a id="__codelineno-3-29" name="__codelineno-3-29"></a>If using the ListHmacStrategy for an entity you can make use of HMAC Tokenizers by specifying them in the @Hmac
+<a id="__codelineno-3-30" name="__codelineno-3-30"></a>annotation&#39;s HmacTokenizers method. Like:
+<a id="__codelineno-3-31" name="__codelineno-3-31"></a>
+<a id="__codelineno-3-32" name="__codelineno-3-32"></a>```java language=java
+<a id="__codelineno-3-33" name="__codelineno-3-33"></a>
+<a id="__codelineno-3-34" name="__codelineno-3-34"></a>@Hmac(HmacTokenizers = {PanTokenizer.class})
+<a id="__codelineno-3-35" name="__codelineno-3-35"></a>private transient String pan;
+</code></pre></div></td></tr></table></div></p>
+<p>The library will then generate a series of alternative HMACs for that field using those HmacTokenizer classes. For
+example the PanTokenizer (which is included in the library) in
+the sample code above will result in the lookup HMAC list for that entity including the HMAC of the last 4 digit of the
+PAN, the HMAC of the first 6 digits of the PAN, the HMAC of
+the PAN without dashes or spaces (if there are any). These alternative representations will then be stored along with 
+the HMAC of the full original PAN that was supplied. The library has some standard HMAC tokenizers, please see the javadocs
+for each one to learn what HMAC representations they generate. Applications can supply their own HmacTokenizers with
+whatever tokenization logic they need by implementing the
+<a href="/mango4j-crypto/src/main/java/ie/bitstep/mango/crypto/tokenizers/HmacTokenizer.java">HmacTokenizer</a> interface. 
+If you have created a HmacTokenizer you think would be generally useful to others please let us
+know and we'll add it to the library. Using HMAC Tokenizers
+will help applications with more flexible searching functionality and is another reason that the ListHmacFieldStrategy
+is the most powerful of the 3 core HMAC strategies.</p>
+<h3 id="compound-unique-constraints-with-the-list-hmac-strategy">Compound Unique Constraints With The List HMAC Strategy<a class="headerlink" href="#compound-unique-constraints-with-the-list-hmac-strategy" title="Permanent link">&para;</a></h3>
+<p>One extra challenge when using the List HMAC strategy is that if you have a requirement of needing to create a compound 
+unique constraint on a group of fields that include a HMAC field then this cannot be done the normal way. You can 
+create these types of constraints using the 
+<a href="/mango4j-crypto/src/main/java/ie/bitstep/mango/crypto/annotations/UniqueGroup.java">@UniqueGroup</a> 
+annotation.  You can place this annotation on each field marked with @Hmac and give them all the same name and a unique 
+order number (which you must never change!) and the library will calculate a single unique HMAC for them all.</p>
+<blockquote>
+<p>NOTE: Mixing HMAC and cleartext fields in a unique group is fine. But at least one field in the group must be marked 
+with @Hmac otherwise the library will throw an error on startup.</p>
+</blockquote>
+<h2 id="double-hmac-strategy">Double HMAC Strategy<a class="headerlink" href="#double-hmac-strategy" title="Permanent link">&para;</a></h2>
+<p>Please read the <a href="/documentation/docs/general/general.md#double-hmac-strategy">the official general documentation</a> for a description 
+of the Double HMAC Strategy and for when you might want to use it. The entity definition when using it is similar to the 
+one for the Single HMAC Strategy. Below is an example entity definition.</p>
+<p>```java language=java
+import ie.bitstep.mango.crypto.annotations.Encrypt;
+import ie.bitstep.mango.crypto.annotations.EncryptedData;
+import ie.bitstep.mango.crypto.annotations.Hmac;
+import ie.bitstep.mango.crypto.annotations.strategies.DoubleHmacStrategy;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;</p>
+<p>@DoubleHmacStrategy
+@Entity(name = "USER_PROFILE_ENTITY_FOR_DOUBLE_HMAC_STRATEGY")
+public class UserProfileEntity {</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span></pre></div></td><td class="code"><div><pre><span></span><code>@Encrypt
+@Hmac
+private transient String pan;
+
+@Encrypt
+@Hmac
+private transient String userName;
+
+@Encrypt
+private transient String ethnicity;
+
+public String getPan() {
+    return pan;
+}
+
+public void setPan(String pan) {
+    this.pan = pan;
+}
+
+public String getUserName() {
+    return userName;
+}
+
+public void setUserName(String userName) {
+    this.userName = userName;
+}
+
+public String getEthnicity() {
+    return ethnicity;
+}
+
+public void setEthnicity(String ethnicity) {
+    this.ethnicity = ethnicity;
+}
+
+@Id
+@Column(name = &quot;ID&quot;)
+private String id;
+
+@Column(name = &quot;FAVOURITE_COLOR&quot;)
+private String favouriteColor;
+
+@Column(name = &quot;USERNAME_HMAC_1&quot;, unique = true)
+private String userNameHmac1;
+
+@Column(name = &quot;USERNAME_HMAC_2&quot;, unique = true)
+private String userNameHmac2;
+
+@Column(name = &quot;PAN_HMAC_1&quot;)
+private String panHmac1;
+
+@Column(name = &quot;PAN_HMAC_2&quot;)
+private String panHmac2;
+
+@Column(name = &quot;ENCRYPTED_DATA&quot;)
+@EncryptedData
+private String encryptedData;
+
+public String getId() {
+    return id;
+}
+
+public void setId(String id) {
+    this.id = id;
+}
+
+public String getFavouriteColor() {
+    return favouriteColor;
+}
+
+public void setFavouriteColor(String favouriteColor) {
+    this.favouriteColor = favouriteColor;
+}
+</code></pre></div></td></tr></table></div>
+<p>}
+```
+</p>
+<blockquote>
+<p><strong>NOTES</strong>:
+* We've added the @DoubleHmacStrategy annotation to the class.
+* This entity definition is almost the same as the one for SingleHmacStrategy except that each field annotated with 
+  @Hmac has 2 associated HMAC fields 'panHmac1'/'panHmac2' and 'userNameHmac1'/'userNameHmac2'. This is because 
+  with the Double HMAC Strategy we need 2 HMACs to be stored separately for each HMAC source field. 
+* Again, you'll notice that we didn't bother defining getters/setters for the USERNAME_HMAC_1, USERNAME_HMAC_2, 
+  PAN_HMAC_1 or PAN_HMAC_2 fields either, for the same reasons as mentioned before.
+* The panHmac1, panHmac2, userNameHmac1 and userNameHmac2 fields are persisted to the DB in our example and each have their own columns 
+  (we're using Hibernate here). 
+* The USERNAME_HMAC_1 and USERNAME_HMAC_2 each have a unique constraint on them also.
+* Application search code must look for matching HMACs in both of the HMAC columns associated with each HMAC source 
+    field. So those queries become OR queries in the case of multiple HMAC keys in use. You can see the 
+  <a href="https://github.com/bitstep-ie/mango4j-examples/blob/main/mango4j-crypto-example/src/main/java/ie/bitstep/mango/examples/crypto/example/doublehmacstrategy/service/UserProfileService.java#L62">mango4j-examples code</a> to see an example of what this might look like.</p>
+<p><br>
+</p>
+</blockquote>
+<h1 id="key-rotation">Key Rotation<a class="headerlink" href="#key-rotation" title="Permanent link">&para;</a></h1>
+<p>Key rotation is almost fairly straightforward when you just think of it as an additive process. A new encryption or HMAC key is 
+added to the system but the old keys are left as they are. Only when no more records are left which were encrypted, or 
+has had HMACs calculated, with an older key should that key be removed from the system. As long as your 
+CryptoKeyProvider implementation works as prescribed then things should be fine. 
+<a href="/documentation/docs/general/general.md#hmac-key-rotation-challenges">But make sure you understand how HMACs are different</a>...
+</p>
+<h1 id="rekeying">Rekeying<a class="headerlink" href="#rekeying" title="Permanent link">&para;</a></h1>
+<p>Mango4j-crypto has built in support for rekey jobs (currently in BETA). Encryption rekeying is supported for all 
+entities but for HMACs the RekeyScheduler currently only supports rekeying HMACs for entities which use the List HMAC 
+Strategy. The configuration is as follows:
+
+
+1. Implement the RekeyCryptoKeyManager interface and configure an instance of it.
+2. For each entity that uses this library create a corresponding implementation of the RekeyService interface.
+3. Configure a RekeyScheduler in your config class, like so:
+
+<code>java language=java
+
+@Bean
+public RekeyScheduler rekeyScheduler(CryptoShield cryptoShield,
+                                     List&lt;RekeyService&lt;?&gt;&gt; rekeyServices,
+                                     RekeyCryptoKeyManager rekeyCryptoKeyManager,
+                                     ObjectMapperFactory objectMapperFactory,
+                                     Clock clock) {
+    RekeySchedulerConfig rekeySchedulerConfig = RekeySchedulerConfig.builder()
+            // Mandatory configurations
+            .withCryptoShield(cryptoShield)
+            .withRekeyServices(rekeyServices)
+            .withRekeyCryptoKeyManager(rekeyCryptoKeyManager)
+            .withObjectMapper(objectMapperFactory.objectMapper())
+            .withClock(clock)
+            .withCryptoKeyCachePeriod(Duration.ofMinutes(60)) // IMPORTANT: Set to your key cache duration
+            .withRekeyCheckInterval(1, 24, TimeUnit.HOURS) // Check for re-key jobs once a day, starting after 1 hour
+
+            // Optional configurations
+            .withBatchInterval(Duration.ofSeconds(1)) // Pause 1 second between batches
+            .withMaximumToleratedFailuresPerExecution(50)
+            .build();
+    return new RekeyScheduler(rekeySchedulerConfig);
+}</code></p>
+<p>The above is a once off config. Once done, it allows the application to perform rekey jobs with no extra code and
+without
+restarting the application. In order to make this periodic RekeyScheduler start rekeying entities you need to make use
+of
+the CryptoKey.rekeyMode field. Mango4j-crypto supports 2 types of rekey modes: KEY_OFF and KEY_ON. Please see the
+<a href="/documentation/docs/general/general.md#rekeying-re-encrypting-existing-records-with-the-new-key">general documentation</a> 
+for an explanation of these values. Once the CryptoKey.rekeyMode field is set to either
+KEY_ON or KEY_OFF this RekeyScheduler will trigger the rekeying process the next time it runs (defined by
+<code>withRekeyCheckInterval()</code> as above).</p>
+<blockquote>
+<p>NOTE: You can still use the RekeyScheduler to configure a rekey for any entity that only has @Encrypt fields (and
+doesn't have HMACs). It's just that HMAC rekey is currently only supported for entities that use the List HMAC Strategy.</p>
+</blockquote>
+<h1 id="encryption-service-delegates">Encryption Service Delegates<a class="headerlink" href="#encryption-service-delegates" title="Permanent link">&para;</a></h1>
+<p>Mango4J Crypto uses pluggable Encryption Service Delegates to carry out cryptographic operations at runtime. There are several encryption service delegates currently supported (and more to come). Please see the 
+<a href="/documentation/docs/delegates">delegates section</a> for documentation on each. </p>
+<p>You can also create your own EncryptionServiceDelegate implementations by subclassing the
+<a href="/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/EncryptionServiceDelegate.java">EncryptionServiceDelegate</a> class and
+implementing the abstract methods with your own logic using your cryptographic provider of choice.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.top", "navigation.tabs", "navigation.instant", "content.code.annotate", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
