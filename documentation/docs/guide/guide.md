@@ -7,9 +7,6 @@
 </figure>
 
 
-
-[Back to root README](/README.md)
-
 # Table Of Contents
 
 1. [Introduction](#introduction)
@@ -36,27 +33,6 @@
       3. [CachedWrappedKeyEncryptionService](#cached-wrapped-key-encryption-service-delegate)
       3. [AWS Encryption Service](#aws-encryption-service-delegate)
 
-# Introduction
-
-Mango4j-crypto is a framework which aims to simplify the implementation of Application Level Encryption (focussing on
-data at rest) in Java applications, and ensure that applications follow a flexible and powerful design that can handle
-the many tricky scenarios that can occur when implementing the same. It's based on using simple annotations to mark
-fields on your entity which the library will then generate the appropriate ciphertext for (encrypted text, HMACs or
-both). 
-This library is not an encryption provider or standard, it's a framework. Just like Springboot isn't a web 
-application, Mango4j-crypto isn't encryption. Mango4j-crypto enables you to implement Application Level Encryption in 
-your applications quickly and effectively, just like Springboot enables you to build a web application quickly 
-and effectively. It allows you to use any cryptographic approaches you need and doesn't tie you into any particular 
-cryptographic provider. This will make more sense after you read [the official general documentation](/documentation/docs/general/general.md), so 
-please read that to get up to speed. The library has extensive javadocs also, so it's encouraged for developers to read 
-those.
-
-The following guide is specifically aimed at showing you how to use the mango4j-crypto library in your applications.
-
-You can also check out the mango4j-crypto-example demo module in the 
-[mango4j-examples](https://github.com/bitstep-ie/mango4j-examples) repository for a
-working Springboot application which shows how to use this library with each HMAC strategy (explained further in this
-document).
 
 ## Annotations
 
@@ -792,6 +768,12 @@ KEY_ON or KEY_OFF this RekeyScheduler will trigger the rekeying process the next
 > NOTE: You can still use the RekeyScheduler to configure a rekey for any entity that only has @Encrypt fields (and
 > doesn't have HMACs). It's just that HMAC rekey is currently only supported for entities that use the List HMAC Strategy.
 
+
+
 # Encryption Service Delegates
-There are several encryption service delegates currently supported (and more to come). Please see the 
-[delegates section](/documentation/docs/delegates/index.md) for documentation on each.
+Mango4J Crypto uses pluggable Encryption Service Delegates to carry out cryptographic operations at runtime. There are several encryption service delegates currently supported (and more to come). Please see the 
+[delegates section](/documentation/docs/delegates) for documentation on each. 
+
+You can also create your own EncryptionServiceDelegate implementations by subclassing the
+[EncryptionServiceDelegate](/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/EncryptionServiceDelegate.java) class and
+implementing the abstract methods with your own logic using your cryptographic provider of choice.

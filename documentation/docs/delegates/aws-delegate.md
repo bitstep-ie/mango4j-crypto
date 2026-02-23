@@ -1,6 +1,5 @@
 # AWS Encryption Service Delegate
 
-# AWS KMS Encryption Service Delegate
 
 This delegate allows applications to use the [Amazon Web Services Key Management Service](https://aws.amazon.com/kms/) 
 for cryptographic operations. It does this by providing a simple wrapper around the 
