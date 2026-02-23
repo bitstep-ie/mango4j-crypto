@@ -9,9 +9,9 @@ for cryptographic operations. It does this by providing a simple wrapper around 
   See [note about limitations below](#aws-kms-limitations)
 
 The key type for this delegate is "AWS_KMS", so associated CryptoKeys must have their 
-[type](https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/domain/CryptoKey.java#L43) set to that value.
+[type](/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/domain/CryptoKey.java#L43) set to that value.
 
-The following are the fields that must be included in your Cryptokey [configuration](https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/domain/CryptoKey.java#L62) 
+The following are the fields that must be included in your Cryptokey [configuration](/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/domain/CryptoKey.java#L62) 
 
 ```JSON
 {
@@ -34,10 +34,10 @@ operations. This client side approach includes creating Data Encryption Keys for
 _wrapping_ (encrypting) them with the AWS KMS master key. Since mango4j-crypto already has support for wrapped key 
 encryption we currently do not provide any delegate support for the AWS Encryption SDK. If you want to use the envelope 
 approach you can just use the 
-[Wrapped Key Encryption Service Delegate](../mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/wrapped/WrappedKeyEncryptionService.java) 
+[Wrapped Key Encryption Service Delegate](/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/wrapped/WrappedKeyEncryptionService.java) 
 with an AWS_KMS (this delegate) CryptoKey as the wrapping key. 
 For performance critical functionality you can also check out the 
-[Cache Wrapped Key Encryption Service Delegate](../mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/wrapped/CachedWrappedKeyEncryptionService.java) 
+[Cache Wrapped Key Encryption Service Delegate](/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/wrapped/CachedWrappedKeyEncryptionService.java) 
 with an AWS_KMS (this delegate) CryptoKey as the wrapping key
 
 # How to Use
@@ -52,7 +52,7 @@ Add the following dependency to your pom
 ```
 
 Then just create an instance of 
-[AwsEncryptionServiceDelegate](src/main/java/ie/bitstep/mango/crypto/core/aws/impl/service/encryption/AwsEncryptionServiceDelegate.java) 
+[AwsEncryptionServiceDelegate](/mango4j-crypto-aws-delegate/src/main/java/ie/bitstep/mango/crypto/delegates/aws/impl/service/encryption/AwsEncryptionServiceDelegate.java) 
 with a configured KmsClient and add it to the list of delegates you configure with your CryptoShield.
 For example a Spring configuration might look like this:
 
