@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://bitstep-ie.github.io/mango4j-crypto/0.1.0/general/general/">
       
       
-        <link rel="prev" href="../../delegates/test-delegates/">
+        <link rel="prev" href="../../delegates/aws-delegate/">
       
       
       
@@ -434,7 +434,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../delegates/core-delegates" class="md-nav__link">
+      <a href="../../delegates/core-delegates/" class="md-nav__link">
         
   
   
@@ -462,7 +462,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../delegates/aws-delegates.md" class="md-nav__link">
+      <a href="../../delegates/aws-delegate/" class="md-nav__link">
         
   
   
@@ -695,17 +695,6 @@ We often see applications representing their encryption/HMAC keys in their code 
 KMS key ID or key ARN for example) rather than key objects, but representing your key information with objects instead
 provides much more flexibility with how your encryption works. For example, this library represents keys in the code
 with the following object:</p>
-<p>```java language=java
-public class CryptoKey {
-    private String id;
-    private CryptoKeyUsage usage;
-    private String type;
-    private Map<String, Object> configuration;
-    private Instant keyStartTime;
-    private RekeyMode rekeyMode;
-    private Instant createdDate;
-    private Instant lastModifiedDate;
-}
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1"> 1</a></span>
 <span class="normal"><a href="#__codelineno-0-2"> 2</a></span>
 <span class="normal"><a href="#__codelineno-0-3"> 3</a></span>
@@ -715,93 +704,61 @@ public class CryptoKey {
 <span class="normal"><a href="#__codelineno-0-7"> 7</a></span>
 <span class="normal"><a href="#__codelineno-0-8"> 8</a></span>
 <span class="normal"><a href="#__codelineno-0-9"> 9</a></span>
-<span class="normal"><a href="#__codelineno-0-10">10</a></span>
-<span class="normal"><a href="#__codelineno-0-11">11</a></span>
-<span class="normal"><a href="#__codelineno-0-12">12</a></span>
-<span class="normal"><a href="#__codelineno-0-13">13</a></span>
-<span class="normal"><a href="#__codelineno-0-14">14</a></span>
-<span class="normal"><a href="#__codelineno-0-15">15</a></span>
-<span class="normal"><a href="#__codelineno-0-16">16</a></span>
-<span class="normal"><a href="#__codelineno-0-17">17</a></span>
-<span class="normal"><a href="#__codelineno-0-18">18</a></span>
-<span class="normal"><a href="#__codelineno-0-19">19</a></span>
-<span class="normal"><a href="#__codelineno-0-20">20</a></span>
-<span class="normal"><a href="#__codelineno-0-21">21</a></span>
-<span class="normal"><a href="#__codelineno-0-22">22</a></span>
-<span class="normal"><a href="#__codelineno-0-23">23</a></span>
-<span class="normal"><a href="#__codelineno-0-24">24</a></span>
-<span class="normal"><a href="#__codelineno-0-25">25</a></span>
-<span class="normal"><a href="#__codelineno-0-26">26</a></span>
-<span class="normal"><a href="#__codelineno-0-27">27</a></span>
-<span class="normal"><a href="#__codelineno-0-28">28</a></span>
-<span class="normal"><a href="#__codelineno-0-29">29</a></span>
-<span class="normal"><a href="#__codelineno-0-30">30</a></span>
-<span class="normal"><a href="#__codelineno-0-31">31</a></span>
-<span class="normal"><a href="#__codelineno-0-32">32</a></span>
-<span class="normal"><a href="#__codelineno-0-33">33</a></span>
-<span class="normal"><a href="#__codelineno-0-34">34</a></span>
-<span class="normal"><a href="#__codelineno-0-35">35</a></span>
-<span class="normal"><a href="#__codelineno-0-36">36</a></span>
-<span class="normal"><a href="#__codelineno-0-37">37</a></span>
-<span class="normal"><a href="#__codelineno-0-38">38</a></span>
-<span class="normal"><a href="#__codelineno-0-39">39</a></span>
-<span class="normal"><a href="#__codelineno-0-40">40</a></span>
-<span class="normal"><a href="#__codelineno-0-41">41</a></span>
-<span class="normal"><a href="#__codelineno-0-42">42</a></span>
-<span class="normal"><a href="#__codelineno-0-43">43</a></span>
-<span class="normal"><a href="#__codelineno-0-44">44</a></span>
-<span class="normal"><a href="#__codelineno-0-45">45</a></span>
-<span class="normal"><a href="#__codelineno-0-46">46</a></span>
-<span class="normal"><a href="#__codelineno-0-47">47</a></span>
-<span class="normal"><a href="#__codelineno-0-48">48</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a>*id:* Just a plain old random GUID
-<a id="__codelineno-0-2" name="__codelineno-0-2"></a>
-<a id="__codelineno-0-3" name="__codelineno-0-3"></a>*usage:* What this key will be used for (either encryption or HMAC)
-<a id="__codelineno-0-4" name="__codelineno-0-4"></a>
-<a id="__codelineno-0-5" name="__codelineno-0-5"></a>*type:* The type of the Encryption Service Delegate that this key will use to carry out its cryptographic operations.
-<a id="__codelineno-0-6" name="__codelineno-0-6"></a>This must match the value returned from the
-<a id="__codelineno-0-7" name="__codelineno-0-7"></a>desired [EncryptionServiceDelegate.supportedCryptoKeyType()](/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/EncryptionServiceDelegate.java#L17)
-<a id="__codelineno-0-8" name="__codelineno-0-8"></a>implementation.
-<a id="__codelineno-0-9" name="__codelineno-0-9"></a>&lt;br&gt;
-<a id="__codelineno-0-10" name="__codelineno-0-10"></a>For example: The
-<a id="__codelineno-0-11" name="__codelineno-0-11"></a>included [CacheWrappedKeyEncryptionService.supportedCryptoKeyType()](/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/wrapped/CachedWrappedKeyEncryptionService.java#251)
-<a id="__codelineno-0-12" name="__codelineno-0-12"></a>returns the value &quot;CACHED_WRAPPED&quot;, so if you wanted to use that Encryption Service Delegate implementation then you
-<a id="__codelineno-0-13" name="__codelineno-0-13"></a>would have a CryptoKey object with this &#39;type&#39; field set to &quot;CACHED_WRAPPED&quot;. At runtime the library matches the
-<a id="__codelineno-0-14" name="__codelineno-0-14"></a>CryptoKeys with their corresponding EncryptionServiceDelegates by comparing this &#39;type&#39; field. If you create you own
-<a id="__codelineno-0-15" name="__codelineno-0-15"></a>Encryption Service Delegate implementation, you can define this field however you like.
-<a id="__codelineno-0-16" name="__codelineno-0-16"></a>
-<a id="__codelineno-0-17" name="__codelineno-0-17"></a>*Configuration:* This field stores the information about the key that the Encryption Service Delegates use to carry out
-<a id="__codelineno-0-18" name="__codelineno-0-18"></a>their operations. It would never contain the actual
-<a id="__codelineno-0-19" name="__codelineno-0-19"></a>bytes of the key or related confidential information (at least not in the clear). Instead, it would usually contain a
-<a id="__codelineno-0-20" name="__codelineno-0-20"></a>reference to the key. For example: if the &#39;type&#39; of this key was AWS_KMS then this map would have an entry called &quot;
-<a id="__codelineno-0-21" name="__codelineno-0-21"></a>keyArn&quot; with the value of the AWS Key ID or Key ARN. Each Encryption Service Delegate implementation will know what
-<a id="__codelineno-0-22" name="__codelineno-0-22"></a>configuration information it needs to carry out its operations so the application just needs to make sure that the right
-<a id="__codelineno-0-23" name="__codelineno-0-23"></a>information is present in this map for the given key type.
-<a id="__codelineno-0-24" name="__codelineno-0-24"></a>
-<a id="__codelineno-0-25" name="__codelineno-0-25"></a>*keyStartTime:* Optional field which is only used for HMAC CryptoKeys. When used this can alleviate some of the shortcomings with the [Single HMAC Strategy](#single-hmac-strategy) that are described further in this document. If you are using this field it should be set when the CryptoKey is created in your application. It&#39;s very important to set this to some time in the future which is greater than the key cache time. i.e. by the time this ketStartTime date passes, all application instances should know about this key. 
-<a id="__codelineno-0-26" name="__codelineno-0-26"></a>
-<a id="__codelineno-0-27" name="__codelineno-0-27"></a>&lt;br&gt;
-<a id="__codelineno-0-28" name="__codelineno-0-28"></a>&lt;br&gt;
-<a id="__codelineno-0-29" name="__codelineno-0-29"></a>A big advantage of using CryptoKey objects to represent cryptographic key information is that it allows applications to easily support multiple cryptographic providers while keeping code clean and encryption code
-<a id="__codelineno-0-30" name="__codelineno-0-30"></a>abstracted. It could also allow you to rotate from one type of key to another (e.g. AWS_KMS to AZURE_DEDICATED_HSM) with no application code changes. Or you could support different
-<a id="__codelineno-0-31" name="__codelineno-0-31"></a>encryption delegates in different regions without having to write any custom application code to support that.
-<a id="__codelineno-0-32" name="__codelineno-0-32"></a>
-<a id="__codelineno-0-33" name="__codelineno-0-33"></a>## Ciphertext representation
-<a id="__codelineno-0-34" name="__codelineno-0-34"></a>
-<a id="__codelineno-0-35" name="__codelineno-0-35"></a>When [CryptoShield.encrypt()](/mango4j-crypto/src/main/java/ie/bitstep/mango/crypto/CryptoShield.java#L202)
-<a id="__codelineno-0-36" name="__codelineno-0-36"></a>is called on an object the library will set
-<a id="__codelineno-0-37" name="__codelineno-0-37"></a>the [@EncryptedData](/mango4j-crypto/src/main/java/ie/bitstep/mango/crypto/annotations/EncryptedData.java)
-<a id="__codelineno-0-38" name="__codelineno-0-38"></a>field in the object to the calculated ciphertext.
-<a id="__codelineno-0-39" name="__codelineno-0-39"></a>This final ciphertext is represented in a standardised way for encryption (not HMACs). Instead of just returning the
-<a id="__codelineno-0-40" name="__codelineno-0-40"></a>straight
-<a id="__codelineno-0-41" name="__codelineno-0-41"></a>ciphertext output it will return it as a JSON String with the following definition:
-<a id="__codelineno-0-42" name="__codelineno-0-42"></a>
-<a id="__codelineno-0-43" name="__codelineno-0-43"></a>```json language=json
-<a id="__codelineno-0-44" name="__codelineno-0-44"></a>{
-<a id="__codelineno-0-45" name="__codelineno-0-45"></a>  &quot;cryptoKeyId&quot;: &quot;someKeyId&quot;,
-<a id="__codelineno-0-46" name="__codelineno-0-46"></a>  &quot;iv&quot;: &quot;someInitializationVector&quot;,
-<a id="__codelineno-0-47" name="__codelineno-0-47"></a>  &quot;data&quot;: {}
-<a id="__codelineno-0-48" name="__codelineno-0-48"></a>}
-</code></pre></div></td></tr></table></div></p>
+<span class="normal"><a href="#__codelineno-0-10">10</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a>public class CryptoKey {
+<a id="__codelineno-0-2" name="__codelineno-0-2"></a>    private String id;
+<a id="__codelineno-0-3" name="__codelineno-0-3"></a>    private CryptoKeyUsage usage;
+<a id="__codelineno-0-4" name="__codelineno-0-4"></a>    private String type;
+<a id="__codelineno-0-5" name="__codelineno-0-5"></a>    private Map&lt;String, Object&gt; configuration;
+<a id="__codelineno-0-6" name="__codelineno-0-6"></a>    private Instant keyStartTime;
+<a id="__codelineno-0-7" name="__codelineno-0-7"></a>    private RekeyMode rekeyMode;
+<a id="__codelineno-0-8" name="__codelineno-0-8"></a>    private Instant createdDate;
+<a id="__codelineno-0-9" name="__codelineno-0-9"></a>    private Instant lastModifiedDate;
+<a id="__codelineno-0-10" name="__codelineno-0-10"></a>}
+</code></pre></div></td></tr></table></div>
+<p><em>id:</em> Just a plain old random GUID</p>
+<p><em>usage:</em> What this key will be used for (either encryption or HMAC)</p>
+<p><em>type:</em> The type of the Encryption Service Delegate that this key will use to carry out its cryptographic operations.
+This must match the value returned from the
+desired <a href="/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/EncryptionServiceDelegate.java#L17">EncryptionServiceDelegate.supportedCryptoKeyType()</a>
+implementation.
+<br>
+For example: The
+included <a href="/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/wrapped/CachedWrappedKeyEncryptionService.java#251">CacheWrappedKeyEncryptionService.supportedCryptoKeyType()</a>
+returns the value "CACHED_WRAPPED", so if you wanted to use that Encryption Service Delegate implementation then you
+would have a CryptoKey object with this 'type' field set to "CACHED_WRAPPED". At runtime the library matches the
+CryptoKeys with their corresponding EncryptionServiceDelegates by comparing this 'type' field. If you create you own
+Encryption Service Delegate implementation, you can define this field however you like.</p>
+<p><em>Configuration:</em> This field stores the information about the key that the Encryption Service Delegates use to carry out
+their operations. It would never contain the actual
+bytes of the key or related confidential information (at least not in the clear). Instead, it would usually contain a
+reference to the key. For example: if the 'type' of this key was AWS_KMS then this map would have an entry called "
+keyArn" with the value of the AWS Key ID or Key ARN. Each Encryption Service Delegate implementation will know what
+configuration information it needs to carry out its operations so the application just needs to make sure that the right
+information is present in this map for the given key type.</p>
+<p><em>keyStartTime:</em> Optional field which is only used for HMAC CryptoKeys. When used this can alleviate some of the shortcomings with the <a href="#single-hmac-strategy">Single HMAC Strategy</a> that are described further in this document. If you are using this field it should be set when the CryptoKey is created in your application. It's very important to set this to some time in the future which is greater than the key cache time. i.e. by the time this ketStartTime date passes, all application instances should know about this key. </p>
+<p><br>
+<br>
+A big advantage of using CryptoKey objects to represent cryptographic key information is that it allows applications to easily support multiple cryptographic providers while keeping code clean and encryption code
+abstracted. It could also allow you to rotate from one type of key to another (e.g. AWS_KMS to AZURE_DEDICATED_HSM) with no application code changes. Or you could support different
+encryption delegates in different regions without having to write any custom application code to support that.</p>
+<h2 id="ciphertext-representation">Ciphertext representation<a class="headerlink" href="#ciphertext-representation" title="Permanent link">&para;</a></h2>
+<p>When <a href="/mango4j-crypto/src/main/java/ie/bitstep/mango/crypto/CryptoShield.java#L202">CryptoShield.encrypt()</a>
+is called on an object the library will set
+the <a href="/mango4j-crypto/src/main/java/ie/bitstep/mango/crypto/annotations/EncryptedData.java">@EncryptedData</a>
+field in the object to the calculated ciphertext.
+This final ciphertext is represented in a standardised way for encryption (not HMACs). Instead of just returning the
+straight
+ciphertext output it will return it as a JSON String with the following definition:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
+<span class="normal"><a href="#__codelineno-1-2">2</a></span>
+<span class="normal"><a href="#__codelineno-1-3">3</a></span>
+<span class="normal"><a href="#__codelineno-1-4">4</a></span>
+<span class="normal"><a href="#__codelineno-1-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a>{
+<a id="__codelineno-1-2" name="__codelineno-1-2"></a>  &quot;cryptoKeyId&quot;: &quot;someKeyId&quot;,
+<a id="__codelineno-1-3" name="__codelineno-1-3"></a>  &quot;iv&quot;: &quot;someInitializationVector&quot;,
+<a id="__codelineno-1-4" name="__codelineno-1-4"></a>  &quot;data&quot;: {}
+<a id="__codelineno-1-5" name="__codelineno-1-5"></a>}
+</code></pre></div></td></tr></table></div>
 <p>where:</p>
 <ul>
 <li><em>cryptoKeyId</em> is the identifier of the crypto key object (e.g. the CryptoKey.id field) in your system that was used to
@@ -943,18 +900,12 @@ finished and you change the tenants HMAC key to the new one.</p>
 <li>Modify your application search code in such a way that instead of looking for a HMAC field value equal to the
    generated HMAC (e.g. in JpaRepository):</li>
 </ol>
-<p>```java language=java
-findByUsernameHmac(String userNameHmac);
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
-<span class="normal"><a href="#__codelineno-1-2">2</a></span>
-<span class="normal"><a href="#__codelineno-1-3">3</a></span>
-<span class="normal"><a href="#__codelineno-1-4">4</a></span>
-<span class="normal"><a href="#__codelineno-1-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a>Change it to generate a list of HMAC values (using the tenant&#39;s _list_ of HMAC keys) and look for a HMAC value which is
-<a id="__codelineno-1-2" name="__codelineno-1-2"></a>in that list of HMACs (e.g. in JpaRepository):
-<a id="__codelineno-1-3" name="__codelineno-1-3"></a>
-<a id="__codelineno-1-4" name="__codelineno-1-4"></a>```java language=java
-<a id="__codelineno-1-5" name="__codelineno-1-5"></a>findByUsernameHmacIn(Collection&lt;String&gt; userNameHmacs);
-</code></pre></div></td></tr></table></div></p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a>findByUsernameHmac(String userNameHmac);
+</code></pre></div></td></tr></table></div>
+<p>Change it to generate a list of HMAC values (using the tenant's <em>list</em> of HMAC keys) and look for a HMAC value which is
+in that list of HMACs (e.g. in JpaRepository):</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a>findByUsernameHmacIn(Collection&lt;String&gt; userNameHmacs);
+</code></pre></div></td></tr></table></div>
 <ol>
 <li>Modify your normal application HMAC code for <em><em>write</em></em> operations to choose the active HMAC key for the HMAC
    operations from the tenant's HMAC key list (that would be the HMAC key with the most recent CryptoKey.createdDate
@@ -1360,9 +1311,10 @@ leads to messier search code.</p>
    using the old HMAC key.</li>
 <li>Copy X_HMAC_2 column values into X_HMAC_1 columns for all fields in all records, something like:</li>
 </ol>
-<p><code>sql language=sql
-UPDATE table
-SET USERNAME_HMAC_1 = USERNAME_HMAC_2</code></p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1">1</a></span>
+<span class="normal"><a href="#__codelineno-4-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a>UPDATE table
+<a id="__codelineno-4-2" name="__codelineno-4-2"></a>SET USERNAME_HMAC_1 = USERNAME_HMAC_2
+</code></pre></div></td></tr></table></div>
 <p><strong>Pros of the Double HMAC strategy:</strong></p>
 <ul>
 <li>Fairly solid HMAC design which will probably work for a good number of application requirements</li>
