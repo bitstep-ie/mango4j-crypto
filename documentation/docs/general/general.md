@@ -97,7 +97,7 @@ In mango4j-crypto all the code for cryptographic operations is hidden behind an 
 Encryption Service Delegate'. What this means is that an infinite number of approaches can be used to
 perform the cryptographic operations by allowing developers to supply their own Encryption Service Delegates. Just
 create your own subclass of
-the [EncryptionServiceDelegate](/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/EncryptionServiceDelegate.java)
+the [EncryptionServiceDelegate](https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/EncryptionServiceDelegate.java)
 class and implement the abstract methods. Coupled with the CryptoKey objects this allows applications to support
 multiple
 types of cryptographic providers or different cryptographic approaches depending on application requirements. This also
@@ -146,11 +146,11 @@ public class CryptoKey {
 
 *type:* The type of the Encryption Service Delegate that this key will use to carry out its cryptographic operations.
 This must match the value returned from the
-desired [EncryptionServiceDelegate.supportedCryptoKeyType()](/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/EncryptionServiceDelegate.java#L17)
+desired [EncryptionServiceDelegate.supportedCryptoKeyType()](https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/EncryptionServiceDelegate.java#L17)
 implementation.
 <br>
 For example: The
-included [CacheWrappedKeyEncryptionService.supportedCryptoKeyType()](/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/wrapped/CachedWrappedKeyEncryptionService.java#251)
+included [CacheWrappedKeyEncryptionService.supportedCryptoKeyType()](https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/wrapped/CachedWrappedKeyEncryptionService.java#251)
 returns the value "CACHED_WRAPPED", so if you wanted to use that Encryption Service Delegate implementation then you
 would have a CryptoKey object with this 'type' field set to "CACHED_WRAPPED". At runtime the library matches the
 CryptoKeys with their corresponding EncryptionServiceDelegates by comparing this 'type' field. If you create you own
@@ -174,9 +174,9 @@ encryption delegates in different regions without having to write any custom app
 
 ## Ciphertext representation
 
-When [CryptoShield.encrypt()](/mango4j-crypto/src/main/java/ie/bitstep/mango/crypto/CryptoShield.java#L202)
+When [CryptoShield.encrypt()](https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto/src/main/java/ie/bitstep/mango/crypto/CryptoShield.java#L202)
 is called on an object the library will set
-the [@EncryptedData](/mango4j-crypto/src/main/java/ie/bitstep/mango/crypto/annotations/EncryptedData.java)
+the [@EncryptedData](https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto/src/main/java/ie/bitstep/mango/crypto/annotations/EncryptedData.java)
 field in the object to the calculated ciphertext.
 This final ciphertext is represented in a standardised way for encryption (not HMACs). Instead of just returning the
 straight
@@ -434,7 +434,7 @@ there would still exist a race condition in your code which can result in 2 user
 
 To remedy this you need to implement particular approaches to calculating and storing the HMACs for your entity fields.
 The following sections detail some of these approaches, all of which are supported in
-the [mango4j-crypto](/README.md) library.
+the [mango4j-crypto]({{ site.baseurl }}/ README.md) library.
 
 
 # HMAC Strategies
