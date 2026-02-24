@@ -14,7 +14,7 @@
 
     <groupId>ie.bitstep.mango</groupId>
     <artifactId>mango4j-crypto-framework</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
 
     <properties>
         <java.version>17</java.version>
@@ -38,6 +38,7 @@
         <pitest.junit5.plugin.version>1.2.3</pitest.junit5.plugin.version>
 
         <!--    Dependencies versions    -->
+        <mango4j.version>1.0.0</mango4j.version>
         <junit-jupiter.version>6.0.2</junit-jupiter.version>
         <junit-mockito.version>5.21.0</junit-mockito.version>
         <mockito-core.version>5.21.0</mockito-core.version>
