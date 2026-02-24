@@ -11,7 +11,7 @@ for cryptographic operations. It does this by providing a simple wrapper around 
 The key type for this delegate is "AWS_KMS", so associated CryptoKeys must have their 
 [type](/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/domain/CryptoKey.java#L43) set to that value.
 
-The following are the fields that must be included in your Cryptokey [configuration](https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/domain/CryptoKey.java#L62) 
+The following are the fields that must be included in your Cryptokey [configuration]({{repo_url}}/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/domain/CryptoKey.java#L62) 
 
 ```JSON
 {

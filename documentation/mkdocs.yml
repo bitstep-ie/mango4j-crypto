@@ -1,6 +1,6 @@
 site_name: "mango4j-crypto"
 site_description: Framework to help developers implement application level encryption, powered by Mango
-site_url: https://bitstep-ie.github.io/mango4j-crypto/
+base_url: https://bitstep-ie.github.io/mango4j-crypto/
 repo_url: https://github.com/bitstep-ie/mango4j-crypto
 repo_name: bitstep-ie/mango4j-crypto
 docs_dir: ./docs
