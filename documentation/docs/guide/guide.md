@@ -7,33 +7,6 @@
 </figure>
 
 
-# Table Of Contents
-
-1. [Introduction](#introduction)
-2. [Getting Started](#getting-started)
-3. [Encryption](#encryption)
-   1. [CryptoKey Provider](#cryptokey-provider)
-   2. [CryptoShield Setup](#cryptoshield-setup)
-4. [HMAC](#hmac)
-    1. [Single HMAC Strategy](#single-hmac-strategy)
-    2. [List HMAC Strategy](#list-hmac-strategy)
-       1. [HMAC Tokenizers](#hmac-tokenizers)
-       2. [Compound Unique Constraints with the List HMAC Strategy](#compound-unique-constraints-with-the-list-hmac-strategy)
-    3. [Single HMAC Strategy With Key Start Time](#single-hmac-strategy-with-key-start-time)
-    4. [Double HMAC Strategy](#double-hmac-strategy)
-5. [Key Rotation](#key-rotation)
-6. [Rekeying](#rekeying)
-7. [Provided Encryption Service Delegates](#provided-encryption-service-delegates)
-   1. [Testing Delegates](#testing-delegates)
-      1. [Base64EncryptionService](#base64-encryption-service-delegate)
-      2. [IdentityEncryptionService](#identity-encryption-service-delegate)
-   2. [Production Delegates](#production-delegates)
-      1. [PBKDF2EncryptionService](#pbkdf2-encryption-service-delegate)
-      2. [WrappedKeyEncryptionService](#wrapped-key-encryption-service-delegate)
-      3. [CachedWrappedKeyEncryptionService](#cached-wrapped-key-encryption-service-delegate)
-      3. [AWS Encryption Service](#aws-encryption-service-delegate)
-
-
 ## Annotations
 
 The main annotations that developers will use are:

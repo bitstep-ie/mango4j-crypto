@@ -1,38 +1,6 @@
-# Table of Contents
+# General documentation
 
-1. [Introduction](#introduction)
-2. [Mango CryptoKey Driven Design](#mango-crypto-key-driven-design)
-    1. [Key Objects](#key-objects)
-    2. [Encryption Service Delegates](#encryption-service-delegates)
-3. [Ciphertext Representation](#ciphertext-representation)
-4. [Key Rotation (Changing the key)](#key-rotation-changing-the-key)
-    1. [Encryption Key Rotation](#encryption-key-rotation)
-    2. [HMAC Key Rotation](#hmac-key-rotation)
-5. [Rekeying (re-encrypting existing records with the new key)](#rekeying-re-encrypting-existing-records-with-the-new-key)
-6. [HMAC Key Rotation Challenges](#hmac-key-rotation-challenges)
-    1. [Searching operations during the rotation of a HMAC key](#searching-operations-after-the-rotation-of-a-hmac-key)
-    2. [Unique constraint enforcement](#unique-constraint-enforcement-after-the-rotation-of-a-hmac-key)
-7. [HMAC Strategies](#hmac-strategies)
-    1. [List HMAC Strategy](#list-hmac-strategy)
-        1. [Process for re-keying data with the List HMAC Strategy](#process-for-re-keying-data-with-the-list-hmac-strategy)
-    2. [Double HMAC Strategy](#double-hmac-strategy)
-        1. [Process for re-keying data with the Double HMAC Strategy](#process-for-re-keying-data-with-the-double-hmac-strategy)
-8. [FAQ](#faq)
-    1. [What is a tenant?](#whats-a-tenant)
-    2. [What's a HMAC?](#Whats-a-hmac)
-    3. [What is a hash?](#whats-a-hash)
-    4. [What's an IV?](#whats-an-iv)
-    5. [Why do I need to HMAC data in order to make it searchable?](#why-do-I-need-to-HMAC-data-in-order-to-make-it-searchable)
-    6. [Why do I need to HMAC confidential data in order to make it unique?](#why-do-i-need-to-hmac-confidential-data-in-order-to-make-it-unique)
-    7. [What is a key rotation?](#what-is-a-key-rotation)
-    8. [Why would I perform a key rotation?](#why-would-i-perform-a-key-rotation)
-    9. [What does re-keying mean?](#what-does-re-keying-mean)
-    10. [Why should I re-key?](#why-should-i-re-key)
-    11. [Why does mango4j-crypto-core have the concept of only 1 encryption key but multiple HMAC keys?](#why-does-mango4j-crypto-core-have-the-concept-of-only-1-encryption-key-but-multiple-hmac-keys)
-    12. [Why don't HMACs have a reference to the HMAC key stored alongside them the same way encrypted ciphertext does?](#why-dont-hmacs-have-a-reference-to-the-hmac-key-stored-alongside-them-the-same-way-encrypted-ciphertext-does)
-    13. [What is HMAC tokenization?](#what-is-hmac-tokenization)
-
-# Introduction
+## Introduction
 
 This documentation is aimed at providing a more general discussion of implementing encryption in your code.
 
@@ -63,7 +31,7 @@ HMACs are used for 2 main purposes in an application:
    The [FAQ](#Why-do-I-need-to-HMAC-data-in-order-to-make-it-searchable) section at the bottom of this document
    explains this in more detail.
 
-# Mango Crypto-Key Driven Design
+## Mango Crypto-Key Driven Design
 
 Often when designing applications which have to implement Application Level Encryption (ALE) it might seem to make sense
 to
@@ -91,7 +59,7 @@ more robustly. HMAC key rotation has a
 long section all of its own in this document which should be considered mandatory reading for all developers who need to
 HMAC data for lookup or unique constraint purposes.
 
-## Encryption Service Delegates
+### Encryption Service Delegates
 
 In mango4j-crypto all the code for cryptographic operations is hidden behind an abstraction we refer to as the '
 Encryption Service Delegate'. What this means is that an infinite number of approaches can be used to
@@ -118,7 +86,7 @@ your own Encryption Service Delegates which you think would be universally usefu
 making it publicly available, or even submitting a PR to the mango4j-crypto project so that others can benefit from it
 too.
 
-## Key objects
+### Key objects
 
 CryptoKey objects tell the library which Encryption Service Delegate to use to carry out the actual cryptographic
 operations under the hood.
@@ -172,7 +140,7 @@ A big advantage of using CryptoKey objects to represent cryptographic key inform
 abstracted. It could also allow you to rotate from one type of key to another (e.g. AWS_KMS to AZURE_DEDICATED_HSM) with no application code changes. Or you could support different
 encryption delegates in different regions without having to write any custom application code to support that.
 
-## Ciphertext representation
+### Ciphertext representation
 
 When [CryptoShield.encrypt()](/mango4j-crypto/src/main/java/ie/bitstep/mango/crypto/CryptoShield.java#L202)
 is called on an object the library will set
@@ -202,7 +170,7 @@ where:
   defines as necessary to include. This is why it's a map, because it needs to be flexible enough to accommodate
   different ciphertext data structures that different EncryptionServiceDelegates define.
 
-# Key Rotation (Changing the key)
+## Key Rotation (Changing the key)
 
 Key rotation is the process of changing a CryptoKey to a new CryptoKey. After a key is rotated, create and update
 operations should use the new key to perform the encryption operations. After a key is rotated, some records will have
@@ -218,21 +186,21 @@ ensure that no more ciphertext is generated with an old key after we have introd
 Although rotating an encryption key is relatively straight forward, rotating a HMAC key on the other hand can pose
 considerable challenges (discussed at length further in this documentation)
 
-# Encryption Key Rotation
+## Encryption Key Rotation
 
 Changing an encryption key is relatively straightforward. Just add the new encryption key to your tenant/system and use
 it for all write operations going forward. Just make sure to keep the older encryption keys available until no more
 records exist that were encrypted with those keys. This is also why mango4j-crypto includes the CryptoKey ID in the
 ciphertext that it generates, so that we always know what key we need to use to decrypt any given piece of ciphertext.
 
-# HMAC Key Rotation
+## HMAC Key Rotation
 
 HMAC key rotation is a completely different beast and supporting it successfully requires serious application design
 considerations. Due to this material being so involved we've given it a large section all of its own further in this
 document.
 Please read the discussion carefully.
 
-# Rekeying (re-encrypting existing records with the new key)
+## Rekeying (re-encrypting existing records with the new key)
 
 Rekeying is the process whereby after a key rotation we have a background task which decrypts existing records
 (that were encrypted with some older key) and re-encrypt them with the new key.
@@ -274,7 +242,7 @@ An easy way to see the flaw in this logic is to ask yourself what happens in yea
 What about all the records from year 6 to year 10? You now can't find them! Also, with unique constraints you have 5
 years of records in your system which may be at risk of duplication.**
 
-## HMAC Key Rotation Challenges
+### HMAC Key Rotation Challenges
 
 The following section documents the 2 core challenges when it comes to supporting HMAC key rotation in your application.
 It's advised for all developers not familiar with this particular topic to read this section very carefully.
@@ -285,7 +253,7 @@ can see below, in order to support this functionality there are very important c
 the way that you design your application. And the challenges presented by HMAC key rotation can be very difficult to
 retrofit into an application further down the line.
 
-### Searching operations after the rotation of a HMAC key
+#### Searching operations after the rotation of a HMAC key
 
 If your application has the concept of a single HMAC key per tenant, it's extremely likely that you'll need to stop
 doing this and change this design approach. Unless for some reason you don't have to support HMAC key rotation in your
@@ -363,14 +331,14 @@ findByUsernameHmacIn(Collection<String> userNameHmacs);
    operations from the tenant's HMAC key list (that would be the HMAC key with the most recent CryptoKey.createdDate
    field).
 
-#### However, the previous solution still has major flaws!
+##### However, the previous solution still has major flaws!
 
 If your application is a multi-instance application and caches key information (both very likely in modern applications)
 then very big issues still remain.
 <br>
 Even with the previous solution consider the following scenario:
 
-### Multi-instance application with cached Keys search scenario
+#### Multi-instance application with cached Keys search scenario
 
 1. You have 2 instances of your application, and they both cache key/tenant information (common practice because this
    type of
@@ -391,7 +359,7 @@ and is also needed for another (possibly much more serious) challenge regarding 
 design consideration in the next section will also solve the
 above shortcoming.
 
-### Unique constraint enforcement after the rotation of a HMAC key
+#### Unique constraint enforcement after the rotation of a HMAC key
 
 > * IMPORTANT!!! - This problem is much more important than the previous search problem! If your application has unique
     constraints on
@@ -437,13 +405,13 @@ The following sections detail some of these approaches, all of which are support
 the [mango4j-crypto](/README.md) library.
 
 
-# HMAC Strategies
+## HMAC Strategies
 There are several designs you can choose to work with HMACs in your code depending on your application's ability to 
 tolerate or circumvent the challenges documented above (if they apply). So this section will discuss the ones supported 
 by Mango4j-crypto in the following section. We strongly advise considering the List HMAC Strategy but due to its 
 unfamiliarity we'll start with the Single HMAC Strategy. 
 
-## Single HMAC Strategy
+### Single HMAC Strategy
 
 This strategy is only recommended if you're aware of the challenges mentioned above and are confident that they do not 
 apply to your application.
@@ -460,7 +428,7 @@ However, as mentioned previously this strategy exposes you to the 2 main challen
 
 Those challenges can still be dealt with using this strategy but the trade offs may not be worth it. Let's explore:
 
-## Search challenge solution
+### Search challenge solution
 The 1st of the HMAC challenges (search outage) can be dealt with in a fairly simple manner by introducing the concept 
 of a "HMAC key start time". When a new HMAC key is introduced into the system we could set this key start time to 
 "the current time + the key cache time". Then we make sure that the application never performs write operations with 
@@ -469,7 +437,7 @@ perform search operations (regardless of key start times). But since no applicat
 the new key until all instances know about that key then all instances should be able to find all records including 
 new/updated ones.
 
-## Unique constraints challenge partial solution
+### Unique constraints challenge partial solution
 
 For the 2nd challenge (unique constraint integrity) it can only be narrowed down to a race condition but even then, only 
 by using a costly trade-off (in addition to using the "key start time" concept): forcing the application to perform a search before every write operation.
@@ -535,7 +503,7 @@ a more powerful search support. But please consider the challenges above when de
 
 
 
-## List HMAC strategy
+### List HMAC strategy
 
 This strategy documents the most general and powerful design that application developers can use to take care of all
 problems mentioned above. Using this design guarantees your
@@ -590,7 +558,7 @@ from 1 to 3 separate tables for each write operation and for searching it will r
 USER_PROFILE_LOOKUPS table back to the original record in the USER_PROFILE
 table.
 
-### Process for re-keying data with the List HMAC Strategy
+#### Process for re-keying data with the List HMAC Strategy
 
 1. Add your new HMAC key to the tenant's list of HMAC keys
 2. Wait until the HMAC key cache expiry time has passed (if applicable), so that all application instances are using the
@@ -641,7 +609,7 @@ table.
   rate at which an application deletes old keys this will have
   a performance impact if the list of HMAC keys keeps growing.
 
-## Double HMAC strategy
+### Double HMAC strategy
 
 The Double HMAC strategy is a compromise between the List HMAC strategy and the (mostly not recommended) Single HMAC
 Strategy (or its sister strategy the Single Time Based HMAC
@@ -677,7 +645,7 @@ necessary for the List HMAC strategy. It's important to note
 that all search code must search for the HMAC in both columns at all times though, as it could be in either one. This
 leads to messier search code.
 
-### Process for re-keying data with the Double HMAC Strategy
+#### Process for re-keying data with the Double HMAC Strategy
 
 1. Add your new HMAC key to the tenant's list of HMAC keys
 2. Wait until the HMAC key cache expiry time has passed (if applicable), so that all application instances are using the
@@ -734,7 +702,7 @@ the same, but at that point you may as well go with the List HMAC Strategy inste
 <br>
 <br>
 
-## Some final considerations for application designs
+### Some final considerations for application designs
 
 Although corporate security guidelines in some companies may only require applications to support HMAC key
 rotation but not necessarily rekeying, we strongly advise application developers to reconsider this in the context of
@@ -753,9 +721,9 @@ the List HMAC Strategy.
 <br>
 <br>
 
-## FAQ
+### FAQ
 
-### What's a tenant?
+#### What's a tenant?
 
 For applications which store data from different client applications or enterprises there is often the requirement that
 we need to segregate the data belonging to each client (i.e. your application has multiple customer enterprises which
@@ -778,11 +746,11 @@ for Bank A is encrypted with an encryption key which is _only_ used by Bank A, A
 for Bank B is encrypted with an encryption key which is _only_ used by Bank B. If your system doesn't have/need the
 concept of tenants then you can just think of a tenant as "the application" in this documentation.
 
-### What's a HMAC?
+#### What's a HMAC?
 
 A HMAC is just a hash which uses a secret key to perform the hashing operation.
 
-### What's a hash?
+#### What's a hash?
 
 A hash is a one-way encryption cipher. One-way means that for a given piece of data, hashing it will produce a
 ciphertext
@@ -791,7 +759,7 @@ storing data that needs to be matched but which we never want to risk an attacke
 store
 passwords in a secure system.
 
-### What's an IV?
+#### What's an IV?
 
 An IV (Initialization Vector) essentially introduces randomness into the data being encrypted. A new IV should be
 generated and used for every encryption operation which means that even if you encrypt the same piece of data with the
@@ -801,7 +769,7 @@ data (the IV is actually stored in the clear, inside the data containing the cip
 ciphertext is
 always unique for any encryption operation makes cryptanalysis more difficult to potential attackers.
 
-### Why do I need to HMAC data in order to make it searchable?
+#### Why do I need to HMAC data in order to make it searchable?
 
 When we encrypt a piece of data we should use an [IV](#Whats-an-IV) as well as the secret key - so make sure to
 consider using IVs in any custom EncryptionServiceDelegate implementations you create for your application.
@@ -815,19 +783,19 @@ of data so they can be used for search purposes. If an encrypted attribute also 
 it,
 Their irreversibility makes them very secure.
 
-### Why do I need to HMAC confidential data in order to make it unique?
+#### Why do I need to HMAC confidential data in order to make it unique?
 
 As explained above the encryption of confidential data always results in a unique ciphertext (due to the use of IVs) so
 that particular ciphertext cannot be used to enforce a
 unique constraint. The solution is to also store a HMAC for this attribute and place a unique constraint on that field
 instead.
 
-### What is a key rotation?
+#### What is a key rotation?
 
 A key rotation is the action of changing an encryption or HMAC key that you're using right now (for a tenant) to a
 different one.
 
-### Why would I perform a key rotation?
+#### Why would I perform a key rotation?
 
 Many corporate and regulatory guidelines require encryption keys to be updated when certain criteria are met. The
 criteria definitions can sometimes be a bit fuzzy and there's no permanent concrete
@@ -847,13 +815,13 @@ The following points should also be taken into consideration when deciding when 
   application instances deployed in those environments will have
   to rotate keys onto a different cryptographic provider.
 
-### What does re-keying mean?
+#### What does re-keying mean?
 
 Re-keying is where after introducing a new encryption/HMAC key, some background job goes through the
 database record by record, decrypting (with the old key) and re-encrypting (re-keying) with the new key(s) until there
 are no more records left that use the old key(s).
 
-### Why should I re-key
+#### Why should I re-key
 
 If an encryption or HMAC key is compromised then you'll probably have to make sure that no data in your DB is encrypted
 or contains HMACs calculated with that key. This means you
@@ -867,7 +835,7 @@ If your application is multi-instance, caches keys and doesn't use the List HMAC
 your application uses HMACs for unique constraint
 enforcement.
 
-### Why does mango4j-crypto-core have the concept of only 1 encryption key but multiple HMAC keys?
+#### Why does mango4j-crypto-core have the concept of only 1 encryption key but multiple HMAC keys?
 
 When a piece of data is encrypted a reference to the encryption key is contained in the actual ciphertext along with the
 encrypted data. This means that it will always be possible
@@ -887,7 +855,7 @@ to _search_ for data, we don't know where it is yet.
 Therefore, we don't know which HMAC key might have been used to HMAC it. So we have to try all the HMAC keys to search
 for it.
 
-### Why don't HMACs have a reference to the HMAC key stored alongside them the same way encrypted ciphertext does?
+#### Why don't HMACs have a reference to the HMAC key stored alongside them the same way encrypted ciphertext does?
 
 Elaborating on previous statements: It would serve no real purpose to store a reference to the HMAC key beside the HMAC
 since they are used primarily for search purposes and by
@@ -907,7 +875,7 @@ possible HMAC keys when searching.
 easily query which records need re-keyed and which do not. But this is a
 convenience related to re-keying performance only and is not related to normal HMAC functionality.
 
-### What is HMAC tokenization?
+#### What is HMAC tokenization?
 
 HMAC Tokenization is the process of chopping an input value into separate pieces and calculating HMACs for each piece
 for more flexible search support. i.e. for a PAN (Primary Account Number - such as Credit Card numbers) you could
@@ -916,13 +884,13 @@ HMACs for a single input. This allows you to support richer
 search capabilities because now your application can support searching on the last 4 digits of the PAN and allows
 searches to find a PAN whether it has dashes/spaces in it or not.
 
-## Appendixes
+### Appendixes
 
-### A: Decisioning diagram for which HMAC strategy to use
+#### A: Decisioning diagram for which HMAC strategy to use
 
 ![rekeying-decision-flow-diagram](/documentation/docs/assets/rekeying-decision-flow-diagram_v2.png)
 
-### B: Possible re-keying process when using list HMAC strategy when the application need to delete a specific HMAC key
+#### B: Possible re-keying process when using list HMAC strategy when the application need to delete a specific HMAC key
 
 When your application mostly runs on key rotation without rekeying, but you need to support a process whereby a HMAC key
 needs to
@@ -943,7 +911,7 @@ Substitute key: The HMAC key that was next introduced to the system after the de
 3. Delete the HMAC key to be removed from the system.
 4. Delete the HMACs calculated with the deleted HMAC key from all records.
 
-#### Case study for an application which uses the List HMAC Strategy and has the unique constraint challenge
+##### Case study for an application which uses the List HMAC Strategy and has the unique constraint challenge
 
 Background: ACME unique application is an application that relies solely on HMAC key rotation (without rekeying) to
 manage the
