@@ -5,7 +5,7 @@
     <parent>
         <artifactId>mango4j-crypto-framework</artifactId>
         <groupId>ie.bitstep.mango</groupId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>untagged-61a3556045254782aa0a-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
