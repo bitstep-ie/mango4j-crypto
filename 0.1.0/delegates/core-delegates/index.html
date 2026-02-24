@@ -13,6 +13,10 @@
         <link rel="canonical" href="https://bitstep-ie.github.io/mango4j-crypto/0.1.0/delegates/core-delegates/">
       
       
+        <link rel="prev" href="../test-delegates/">
+      
+      
+        <link rel="next" href="../aws-delegate/">
       
       
         
@@ -23,7 +27,7 @@
     
     
       
-        <title>Production Delegates - mango4j-crypto</title>
+        <title>Core Delegates - mango4j-crypto</title>
       
     
     
@@ -111,7 +115,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Production Delegates
+              Core Delegates
             
           </span>
         </div>
@@ -239,10 +243,12 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
+      <li class="md-tabs__item md-tabs__item--active">
         <a href="../" class="md-tabs__link">
           
   
@@ -349,24 +355,29 @@
       
   
   
+    
   
   
+  
     
     
     
     
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
             
   
   
@@ -384,7 +395,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -455,10 +466,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="." class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core Delegates
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -474,6 +512,59 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pbkdf2-encryption-service-delegate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PBKDF2 Encryption Service Delegate
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#wrapped-key-encryption-service-delegate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Wrapped Key Encryption Service Delegate
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cached-wrapped-key-encryption-service-delegate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cached Wrapped Key Encryption Service Delegate
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -486,7 +577,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../aws-delegates.md" class="md-nav__link">
+      <a href="../aws-delegate/" class="md-nav__link">
         
   
   
@@ -622,7 +713,7 @@
 
 <h1 id="production-delegates">Production Delegates<a class="headerlink" href="#production-delegates" title="Permanent link">&para;</a></h1>
 <h2 id="pbkdf2-encryption-service-delegate">PBKDF2 Encryption Service Delegate<a class="headerlink" href="#pbkdf2-encryption-service-delegate" title="Permanent link">&para;</a></h2>
-<p>The <a href="/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/PBKDF2EncryptionService.java">PBKDF2EncryptionService</a> is a provided EncryptionServiceDelegate implementation that uses the JDKs Java Cryptography Architecture (JCA) for encryption and decryption. This is a real encryption service that could be used for production deployments (make sure to store the pass phrase in a secure manner) and can also be useful for testing purposes. It supports various encryption algorithms, modes and padding schemes that are available in the JDK. You can configure these values by configuring the appropriate attributes in the <a href="/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/domain/CryptoKey.java">CryptoKey</a> configuration map. An example CryptoKey definition for the PBKDF2EncryptionService would be as follows:</p>
+<p>The <a href="https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/PBKDF2EncryptionService.java">PBKDF2EncryptionService</a> is a provided EncryptionServiceDelegate implementation that uses the JDKs Java Cryptography Architecture (JCA) for encryption and decryption. This is a real encryption service that could be used for production deployments (make sure to store the pass phrase in a secure manner) and can also be useful for testing purposes. It supports various encryption algorithms, modes and padding schemes that are available in the JDK. You can configure these values by configuring the appropriate attributes in the <a href="https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/domain/CryptoKey.java">CryptoKey</a> configuration map. An example CryptoKey definition for the PBKDF2EncryptionService would be as follows:</p>
 <p><div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1"> 1</a></span>
 <span class="normal"><a href="#__codelineno-0-2"> 2</a></span>
 <span class="normal"><a href="#__codelineno-0-3"> 3</a></span>
@@ -660,7 +751,7 @@
 <br>
 <br></p>
 <h2 id="wrapped-key-encryption-service-delegate">Wrapped Key Encryption Service Delegate<a class="headerlink" href="#wrapped-key-encryption-service-delegate" title="Permanent link">&para;</a></h2>
-<p>The <a href="/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/wrapped/WrappedKeyEncryptionService.java">WrappedKeyEncryptionService</a> is a provided EncryptionServiceDelegate implementation that uses the JDKs Java Cryptography Architecture (JCA) for encryption and decryption using a uniquely generated key for each encryption operation. This key is "wrapped" (encrypted) with the wrapping key. This is the same approach that other providers such as the AWS Encryption SDK (they call it envelope encryption) to carry out encryption operations locally but keeping the generated keys secure. So to break it down, it works like this:</p>
+<p>The <a href="https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/wrapped/WrappedKeyEncryptionService.java">WrappedKeyEncryptionService</a> is a provided EncryptionServiceDelegate implementation that uses the JDKs Java Cryptography Architecture (JCA) for encryption and decryption using a uniquely generated key for each encryption operation. This key is "wrapped" (encrypted) with the wrapping key. This is the same approach that other providers such as the AWS Encryption SDK (they call it envelope encryption) to carry out encryption operations locally but keeping the generated keys secure. So to break it down, it works like this:</p>
 <p>Everytime encrypt is called, a new random key is generated for the encryption operation. This key is then encrypted (wrapped) with the wrapping key and stored in the ciphertext along with the encrypted data. When decrypting, the library extracts the wrapped key from the ciphertext, decrypts (unwraps) it with the wrapping key to get the original generated key and then uses that key to decrypt the data. This approach allows you to have a unique key for each encryption operation while still keeping those keys secure with a wrapping key. The configuration for using this encryption service is a bit more complex than the PBKDF2EncryptionService as you need to have both a wrapping CryptoKey and a content CryptoKey configured in your system and you need to specify which one is which in their configurations. Please see the javadocs for the WrappedKeyEncryptionService and the CryptoKey class for more details on how to configure this encryption service.</p>
 <p>Here is an example of a Wrapped Crypto Key:
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1"> 1</a></span>
@@ -716,16 +807,16 @@
 <br>
 <br></p>
 <h2 id="cached-wrapped-key-encryption-service-delegate">Cached Wrapped Key Encryption Service Delegate<a class="headerlink" href="#cached-wrapped-key-encryption-service-delegate" title="Permanent link">&para;</a></h2>
-<p>The <a href="/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/wrapped/CachedWrappedKeyEncryptionService.java">CachedWrappedKeyEncryptionService</a> is a provided EncryptionServiceDelegate implementation that works almost the same way as the WrappedKeyEncryptionService except for that it caches keys in memory for a certain period for much better performance. So it is a compromise between security and performance. The keys are stored in an in-memory vault which uses a secret key generated on application startup to offer slightly better protection of the keys while in the cache. This obviously isn't foolproof, if somebody can do a dump of the heap they could potentially track down the vault key and decrypt the keys in the cache. So this should only be used if you have other controls in place to protect against this type of attack and you should also make sure to set the cache period to the minimum that you can get away with in your application. The configuration for using this encryption service is the same as the WrappedKeyEncryptionService (see previous section for example CryptoKey definition) but you also need to specify the cache period in CachedWrappedKeyEncryptionService using the constructor parameters.</p>
+<p>The <a href="https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/wrapped/CachedWrappedKeyEncryptionService.java">CachedWrappedKeyEncryptionService</a> is a provided EncryptionServiceDelegate implementation that works almost the same way as the WrappedKeyEncryptionService except for that it caches keys in memory for a certain period for much better performance. So it is a compromise between security and performance. The keys are stored in an in-memory vault which uses a secret key generated on application startup to offer slightly better protection of the keys while in the cache. This obviously isn't foolproof, if somebody can do a dump of the heap they could potentially track down the vault key and decrypt the keys in the cache. So this should only be used if you have other controls in place to protect against this type of attack and you should also make sure to set the cache period to the minimum that you can get away with in your application. The configuration for using this encryption service is the same as the WrappedKeyEncryptionService (see previous section for example CryptoKey definition) but you also need to specify the cache period in CachedWrappedKeyEncryptionService using the constructor parameters.</p>
 <p>The relevant constructor parameters are:</p>
 <p><strong>entryTTL:</strong> This is the time to live for each key in the cache for decryption purposes. Once a key has been in the cache for this amount of time it will be evicted from the cache (and the key bytes will be destroyed) and the next time it is needed it will be unwrapped again using the WRAPPING key and re-cached. Set this to the minimum amount of time that you can get away with in your application to minimise the risk of keys being compromised while in the cache.
-<br>
-<strong>currentEntryTTL:</strong> This is the time to live for the current encryption key in the cache. Whereas the WrappedKeyEncryptionService generates a new Data Encryption Key on every encryption operation, the CachedWrappedKeyEncryptionService generates one and stores it in the cache for subsequent encryption operations until it expires. The currentEntryTTL parameter is the length of time that the current encryption key will be stored in the cache before it expires and a new one is generated. Set this to the minimum amount of time that you can get away with in your application to minimise the risk of keys being compromised while in the cache.
-<br>
-<strong>cacheGracePeriod:</strong> Short period for which expired keys can remain available to allow for clock skew and to avoid situations where a key is obtained from the cache just before expiration and then the key material subsequently destroyed before the actual encryption/decryption is carried out by the delegate. Set this to a short period of time, like a few seconds.</p>
+<br></p>
+<p><strong>currentEntryTTL:</strong> This is the time to live for the current encryption key in the cache. Whereas the WrappedKeyEncryptionService generates a new Data Encryption Key on every encryption operation, the CachedWrappedKeyEncryptionService generates one and stores it in the cache for subsequent encryption operations until it expires. The currentEntryTTL parameter is the length of time that the current encryption key will be stored in the cache before it expires and a new one is generated. Set this to the minimum amount of time that you can get away with in your application to minimise the risk of keys being compromised while in the cache.
+<br></p>
+<p><strong>cacheGracePeriod:</strong> Short period for which expired keys can remain available to allow for clock skew and to avoid situations where a key is obtained from the cache just before expiration and then the key material subsequently destroyed before the actual encryption/decryption is carried out by the delegate. Set this to a short period of time, like a few seconds.</p>
 <p>The CachedWrappedKeyEncryptionService is a good option to consider if you want to get the performance benefits of caching for wrapped keys but you also want to have some level of protection for the keys while in the cache. Unlike the WrappedKeyEncryptionService which generates a new Data Encryption Key for every encryption operation and subsequently encrypts that key with the WRAPPING key, the CachedWrappedKeyEncryptionService generates one, encrypts it with the WRAPPING key and stores it in the cache for subsequent encryption operations until it expires. So it can dramatically cut down on calls to the WRAPPING key service for encryption operations.
-<br>
-Likewise, for decryption operations, if the key needed for decryption is in the cache it can be used directly without needing to call the WRAPPING key service to unwrap it first. So this can also cut down on calls to the WRAPPING key service for decryption operations as well.</p>
+<br></p>
+<p>Likewise, for decryption operations, if the key needed for decryption is in the cache it can be used directly without needing to call the WRAPPING key service to unwrap it first. So this can also cut down on calls to the WRAPPING key service for decryption operations as well.</p>
 
 
 
