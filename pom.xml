@@ -62,8 +62,15 @@
 
             <!--     Deploy       -->
             <plugin>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>${maven.deploy.plugin.version}</version>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.9.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>central</publishingServerId>
+                    <waitUntil>published</waitUntil>
+                    <deployAtEnd>true</deployAtEnd>
+                </configuration>
             </plugin>
 
             <plugin>
@@ -71,6 +78,7 @@
                 <artifactId>maven-help-plugin</artifactId>
                 <version>${maven.help.plugin}</version>
             </plugin>
+
 
             <!--      Surefire      -->
             <plugin>
@@ -192,6 +200,36 @@
                         <goals>
                             <goal>report</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                    <id>sign-artifacts</id>
+                    <phase>verify</phase>
+                    <goals>
+                        <goal>sign</goal>
+                    </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Sources -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                    <id>attach-sources</id>
+                    <goals>
+                        <goal>jar</goal>
+                    </goals>
                     </execution>
                 </executions>
             </plugin>
