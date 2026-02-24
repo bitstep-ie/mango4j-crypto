@@ -336,11 +336,10 @@ public class ListHmacFieldStrategy implements HmacStrategy {
 				lookupHmacs.addAll(tokenizedHmacHolders);
 			}
 
-			if (hmacPurposesForThisField.contains(Hmac.Purposes.UNIQUE) && !belongsToGroup(sourceField)) { // groups were already processed above
-				if (!(entry.getValue().isOptionalUnique()) || fieldValue != null) {
-					// disregard null values which are for optional standalone unique HMACs
-					uniqueHmacs.addAll(defaultHmacHoldersForThisField);
-				}
+			if (hmacPurposesForThisField.contains(Hmac.Purposes.UNIQUE) && !belongsToGroup(sourceField) // groups were already processed above
+					&& (!(entry.getValue().isOptionalUnique()) || fieldValue != null)) {
+				// disregard null values which are for optional standalone unique HMACs
+				uniqueHmacs.addAll(defaultHmacHoldersForThisField);
 			}
 		}
 		populateCompoundUniqueHmacs(entity, uniqueHmacs);
@@ -364,8 +363,8 @@ public class ListHmacFieldStrategy implements HmacStrategy {
 	 * @param uniqueHmacs output list for unique HMACs
 	 */
 	private void populateCompoundUniqueHmacs(Object entity, List<HmacHolder> uniqueHmacs) {
-		UniqueGroupSet entityUniqueGroups = new UniqueGroupSet(this.entityUniqueGroups);
-		entityUniqueGroups.getGroups().forEach((groupName, group) -> {
+		UniqueGroupSet entityInstanceUniqueGroups = new UniqueGroupSet(this.entityUniqueGroups);
+		entityInstanceUniqueGroups.getGroups().forEach((groupName, group) -> {
 			for (UniqueGroupMember uniqueGroupMember : group.getUniqueGroupWrappers()) {
 				String fieldValue = getFieldStringValue(entity, uniqueGroupMember.field());
 				if (uniqueGroupMember.uniqueGroup().isOptional() && fieldValue == null) {

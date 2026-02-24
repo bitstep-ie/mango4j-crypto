@@ -261,7 +261,7 @@ class DoubleHmacFieldStrategyTest {
 
 	@Test
 	void multipleHmacKeysSuccessHmacKeyIdFieldsInWrongOrder() {
-		TestAnnotatedEntityForDoubleHmacFieldStrategyWithHmacKeyIdFieldsReversed testEntity = new TestAnnotatedEntityForDoubleHmacFieldStrategyWithHmacKeyIdFieldsReversed();
+		TestAnnotatedEntityForDoubleHmacFieldStrategyWithHmacKeyIdFieldsReversed testEntity = new TestAnnotatedEntityForDoubleHmacFieldStrategyWithHmacKeyIdFieldsReversed(); // NOSONAR - reusing testEntity variable name for test
 		testEntity.setEthnicity(TEST_ETHNICITY);
 		testEntity.setFavouriteColor(TEST_FAVOURITE_COLOR);
 		testEntity.setPan(TEST_PAN);

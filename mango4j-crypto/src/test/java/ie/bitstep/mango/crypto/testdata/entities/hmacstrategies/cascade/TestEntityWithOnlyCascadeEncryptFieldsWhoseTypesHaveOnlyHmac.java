@@ -11,7 +11,7 @@ public class TestEntityWithOnlyCascadeEncryptFieldsWhoseTypesHaveOnlyHmac {
 	@CascadeEncrypt
 	private TestMockHmacEntityWithNoEncryptFields testMockHmacEntityWithNoEncryptFields2;
 
-	private TestMockHmacEntityWithNoEncryptFields testMockHmacEntityWithNoEncryptFieldsNotTraversed;
+	private TestMockHmacEntityWithNoEncryptFields testMockHmacEntityWithNoEncryptFieldsNotTraversed; // NOSONAR - Need this field to test that only fields annotated with @CascadeEncrypt are traversed
 
 
 }
