@@ -35,6 +35,7 @@ extra:
   favicon: assets/favicon.ico
   version:
     provider: mike
+  repo_url: https://github.com/bitstep-ie/mango4j-crypto
 
 nav:
   - Guide: guide/guide.md

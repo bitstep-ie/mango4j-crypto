@@ -10,7 +10,7 @@
 <br>
 
 
-- [Official Guide]({{ site.base_url }}/documentation/docs/guide/guide.md)
-- [Encryption Delegates]({{ site.base_url }} /documentation/docs/delegates)
-- [General Documentation on Application Level Encryption]({{ site.base_url }} /documentation/docs/general/general.md)
+- [Official Guide](guide/guide.md)
+- [Encryption Delegates](delegates)
+- [General Documentation on Application Level Encryption](general/general.md)
 - [Mango4J Crypto Example Application](https://github.com/bitstep-ie/mango4j-examples)

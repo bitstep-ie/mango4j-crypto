@@ -9,7 +9,7 @@ for cryptographic operations. It does this by providing a simple wrapper around 
   See [note about limitations below](#aws-kms-limitations)
 
 The key type for this delegate is "AWS_KMS", so associated CryptoKeys must have their 
-[type](/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/domain/CryptoKey.java#L43) set to that value.
+[type]({{config.repo_url}}/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/domain/CryptoKey.java#L43) set to that value.
 
 The following are the fields that must be included in your Cryptokey [configuration]({{repo_url}}/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/domain/CryptoKey.java#L62) 
 
