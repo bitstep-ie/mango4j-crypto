@@ -6,7 +6,7 @@
     <parent>
         <groupId>ie.bitstep.mango</groupId>
         <artifactId>mango4j-crypto-framework</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>untagged-61a3556045254782aa0a-SNAPSHOT</version>
     </parent>
 
     <artifactId>mango4j-crypto-aws-delegate</artifactId>
