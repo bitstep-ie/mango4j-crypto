@@ -10,8 +10,10 @@
       
       
       
+        <link rel="canonical" href="https://bitstep-ie.github.io/mango4j-crypto/0.1.0/general/general/">
       
-        <link rel="prev" href="../../delegates/aws-delegate/">
+      
+        <link rel="prev" href="../../delegates/test-delegates/">
       
       
       
@@ -19,7 +21,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.2">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
     
     
       
@@ -74,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#table-of-contents" class="md-skip">
+        <a href="#general-documentation" class="md-skip">
           Skip to content
         </a>
       
@@ -432,7 +434,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../delegates/core-delegates/" class="md-nav__link">
+      <a href="../../delegates/core-delegates" class="md-nav__link">
         
   
   
@@ -460,7 +462,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../delegates/aws-delegate/" class="md-nav__link">
+      <a href="../../delegates/aws-delegates.md" class="md-nav__link">
         
   
   
@@ -504,6 +506,24 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    General Documentation
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -520,6 +540,525 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introduction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Introduction
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mango-crypto-key-driven-design" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mango Crypto-Key Driven Design
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Mango Crypto-Key Driven Design">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#encryption-service-delegates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Encryption Service Delegates
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-objects" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key objects
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-rotation-changing-the-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Rotation (Changing the key)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#encryption-key-rotation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Encryption Key Rotation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hmac-key-rotation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HMAC Key Rotation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rekeying-re-encrypting-existing-records-with-the-new-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rekeying (re-encrypting existing records with the new key)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Rekeying (re-encrypting existing records with the new key)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hmac-key-rotation-challenges" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HMAC Key Rotation Challenges
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="HMAC Key Rotation Challenges">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#searching-operations-after-the-rotation-of-a-hmac-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Searching operations after the rotation of a HMAC key
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Searching operations after the rotation of a HMAC key">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#however-the-previous-solution-still-has-major-flaws" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        However, the previous solution still has major flaws!
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-instance-application-with-cached-keys-search-scenario" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-instance application with cached Keys search scenario
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unique-constraint-enforcement-after-the-rotation-of-a-hmac-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Unique constraint enforcement after the rotation of a HMAC key
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hmac-strategies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HMAC Strategies
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="HMAC Strategies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#single-hmac-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Single HMAC Strategy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#search-challenge-solution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Search challenge solution
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unique-constraints-challenge-partial-solution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Unique constraints challenge partial solution
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#list-hmac-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        List HMAC strategy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="List HMAC strategy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#process-for-re-keying-data-with-the-list-hmac-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Process for re-keying data with the List HMAC Strategy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#double-hmac-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Double HMAC strategy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Double HMAC strategy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#process-for-re-keying-data-with-the-double-hmac-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Process for re-keying data with the Double HMAC Strategy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#some-final-considerations-for-application-designs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Some final considerations for application designs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#faq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FAQ
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="FAQ">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#whats-a-tenant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's a tenant?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-a-hmac" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's a HMAC?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-a-hash" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's a hash?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-an-iv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's an IV?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-do-i-need-to-hmac-data-in-order-to-make-it-searchable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why do I need to HMAC data in order to make it searchable?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-do-i-need-to-hmac-confidential-data-in-order-to-make-it-unique" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why do I need to HMAC confidential data in order to make it unique?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-is-a-key-rotation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is a key rotation?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-would-i-perform-a-key-rotation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why would I perform a key rotation?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-does-re-keying-mean" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What does re-keying mean?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-should-i-re-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why should I re-key
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-does-mango4j-crypto-core-have-the-concept-of-only-1-encryption-key-but-multiple-hmac-keys" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why does mango4j-crypto-core have the concept of only 1 encryption key but multiple HMAC keys?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-dont-hmacs-have-a-reference-to-the-hmac-key-stored-alongside-them-the-same-way-encrypted-ciphertext-does" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why don't HMACs have a reference to the HMAC key stored alongside them the same way encrypted ciphertext does?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-is-hmac-tokenization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is HMAC tokenization?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appendixes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Appendixes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Appendixes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-decisioning-diagram-for-which-hmac-strategy-to-use" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A: Decisioning diagram for which HMAC strategy to use
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-possible-re-keying-process-when-using-list-hmac-strategy-when-the-application-need-to-delete-a-specific-hmac-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B: Possible re-keying process when using list HMAC strategy when the application need to delete a specific HMAC key
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="B: Possible re-keying process when using list HMAC strategy when the application need to delete a specific HMAC key">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#case-study-for-an-application-which-uses-the-list-hmac-strategy-and-has-the-unique-constraint-challenge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Case study for an application which uses the List HMAC Strategy and has the unique constraint challenge
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -545,6 +1084,514 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introduction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Introduction
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mango-crypto-key-driven-design" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mango Crypto-Key Driven Design
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Mango Crypto-Key Driven Design">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#encryption-service-delegates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Encryption Service Delegates
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-objects" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key objects
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-rotation-changing-the-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Rotation (Changing the key)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#encryption-key-rotation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Encryption Key Rotation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hmac-key-rotation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HMAC Key Rotation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rekeying-re-encrypting-existing-records-with-the-new-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rekeying (re-encrypting existing records with the new key)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Rekeying (re-encrypting existing records with the new key)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hmac-key-rotation-challenges" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HMAC Key Rotation Challenges
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="HMAC Key Rotation Challenges">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#searching-operations-after-the-rotation-of-a-hmac-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Searching operations after the rotation of a HMAC key
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Searching operations after the rotation of a HMAC key">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#however-the-previous-solution-still-has-major-flaws" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        However, the previous solution still has major flaws!
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-instance-application-with-cached-keys-search-scenario" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-instance application with cached Keys search scenario
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unique-constraint-enforcement-after-the-rotation-of-a-hmac-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Unique constraint enforcement after the rotation of a HMAC key
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hmac-strategies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HMAC Strategies
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="HMAC Strategies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#single-hmac-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Single HMAC Strategy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#search-challenge-solution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Search challenge solution
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unique-constraints-challenge-partial-solution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Unique constraints challenge partial solution
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#list-hmac-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        List HMAC strategy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="List HMAC strategy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#process-for-re-keying-data-with-the-list-hmac-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Process for re-keying data with the List HMAC Strategy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#double-hmac-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Double HMAC strategy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Double HMAC strategy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#process-for-re-keying-data-with-the-double-hmac-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Process for re-keying data with the Double HMAC Strategy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#some-final-considerations-for-application-designs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Some final considerations for application designs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#faq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FAQ
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="FAQ">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#whats-a-tenant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's a tenant?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-a-hmac" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's a HMAC?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-a-hash" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's a hash?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-an-iv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's an IV?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-do-i-need-to-hmac-data-in-order-to-make-it-searchable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why do I need to HMAC data in order to make it searchable?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-do-i-need-to-hmac-confidential-data-in-order-to-make-it-unique" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why do I need to HMAC confidential data in order to make it unique?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-is-a-key-rotation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is a key rotation?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-would-i-perform-a-key-rotation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why would I perform a key rotation?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-does-re-keying-mean" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What does re-keying mean?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-should-i-re-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why should I re-key
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-does-mango4j-crypto-core-have-the-concept-of-only-1-encryption-key-but-multiple-hmac-keys" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why does mango4j-crypto-core have the concept of only 1 encryption key but multiple HMAC keys?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-dont-hmacs-have-a-reference-to-the-hmac-key-stored-alongside-them-the-same-way-encrypted-ciphertext-does" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why don't HMACs have a reference to the HMAC key stored alongside them the same way encrypted ciphertext does?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-is-hmac-tokenization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is HMAC tokenization?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appendixes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Appendixes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Appendixes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-decisioning-diagram-for-which-hmac-strategy-to-use" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A: Decisioning diagram for which HMAC strategy to use
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-possible-re-keying-process-when-using-list-hmac-strategy-when-the-application-need-to-delete-a-specific-hmac-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B: Possible re-keying process when using list HMAC strategy when the application need to delete a specific HMAC key
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="B: Possible re-keying process when using list HMAC strategy when the application need to delete a specific HMAC key">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#case-study-for-an-application-which-uses-the-list-hmac-strategy-and-has-the-unique-constraint-challenge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Case study for an application which uses the List HMAC Strategy and has the unique constraint challenge
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -563,55 +1610,8 @@
   
 
 
-<h1 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link">&para;</a></h1>
-<ol>
-<li><a href="#introduction">Introduction</a></li>
-<li><a href="#mango-crypto-key-driven-design">Mango CryptoKey Driven Design</a><ol>
-<li><a href="#key-objects">Key Objects</a></li>
-<li><a href="#encryption-service-delegates">Encryption Service Delegates</a></li>
-</ol>
-</li>
-<li><a href="#ciphertext-representation">Ciphertext Representation</a></li>
-<li><a href="#key-rotation-changing-the-key">Key Rotation (Changing the key)</a><ol>
-<li><a href="#encryption-key-rotation">Encryption Key Rotation</a></li>
-<li><a href="#hmac-key-rotation">HMAC Key Rotation</a></li>
-</ol>
-</li>
-<li><a href="#rekeying-re-encrypting-existing-records-with-the-new-key">Rekeying (re-encrypting existing records with the new key)</a></li>
-<li><a href="#hmac-key-rotation-challenges">HMAC Key Rotation Challenges</a><ol>
-<li><a href="#searching-operations-after-the-rotation-of-a-hmac-key">Searching operations during the rotation of a HMAC key</a></li>
-<li><a href="#unique-constraint-enforcement-after-the-rotation-of-a-hmac-key">Unique constraint enforcement</a></li>
-</ol>
-</li>
-<li><a href="#hmac-strategies">HMAC Strategies</a><ol>
-<li><a href="#list-hmac-strategy">List HMAC Strategy</a><ol>
-<li><a href="#process-for-re-keying-data-with-the-list-hmac-strategy">Process for re-keying data with the List HMAC Strategy</a></li>
-</ol>
-</li>
-<li><a href="#double-hmac-strategy">Double HMAC Strategy</a><ol>
-<li><a href="#process-for-re-keying-data-with-the-double-hmac-strategy">Process for re-keying data with the Double HMAC Strategy</a></li>
-</ol>
-</li>
-</ol>
-</li>
-<li><a href="#faq">FAQ</a><ol>
-<li><a href="#whats-a-tenant">What is a tenant?</a></li>
-<li><a href="#Whats-a-hmac">What's a HMAC?</a></li>
-<li><a href="#whats-a-hash">What is a hash?</a></li>
-<li><a href="#whats-an-iv">What's an IV?</a></li>
-<li><a href="#why-do-I-need-to-HMAC-data-in-order-to-make-it-searchable">Why do I need to HMAC data in order to make it searchable?</a></li>
-<li><a href="#why-do-i-need-to-hmac-confidential-data-in-order-to-make-it-unique">Why do I need to HMAC confidential data in order to make it unique?</a></li>
-<li><a href="#what-is-a-key-rotation">What is a key rotation?</a></li>
-<li><a href="#why-would-i-perform-a-key-rotation">Why would I perform a key rotation?</a></li>
-<li><a href="#what-does-re-keying-mean">What does re-keying mean?</a></li>
-<li><a href="#why-should-i-re-key">Why should I re-key?</a></li>
-<li><a href="#why-does-mango4j-crypto-core-have-the-concept-of-only-1-encryption-key-but-multiple-hmac-keys">Why does mango4j-crypto-core have the concept of only 1 encryption key but multiple HMAC keys?</a></li>
-<li><a href="#why-dont-hmacs-have-a-reference-to-the-hmac-key-stored-alongside-them-the-same-way-encrypted-ciphertext-does">Why don't HMACs have a reference to the HMAC key stored alongside them the same way encrypted ciphertext does?</a></li>
-<li><a href="#what-is-hmac-tokenization">What is HMAC tokenization?</a></li>
-</ol>
-</li>
-</ol>
-<h1 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">&para;</a></h1>
+<h1 id="general-documentation">General documentation<a class="headerlink" href="#general-documentation" title="Permanent link">&para;</a></h1>
+<h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">&para;</a></h2>
 <p>This documentation is aimed at providing a more general discussion of implementing encryption in your code.</p>
 <p>Much of the contents in this document can be
 used as a reference for developers who need to implement ALE regardless of whether they use mango4j-crypto or not.
@@ -636,7 +1636,7 @@ HMACs are used for 2 main purposes in an application:</p>
    The <a href="#Why-do-I-need-to-HMAC-data-in-order-to-make-it-searchable">FAQ</a> section at the bottom of this document
    explains this in more detail.</li>
 </ol>
-<h1 id="mango-crypto-key-driven-design">Mango Crypto-Key Driven Design<a class="headerlink" href="#mango-crypto-key-driven-design" title="Permanent link">&para;</a></h1>
+<h2 id="mango-crypto-key-driven-design">Mango Crypto-Key Driven Design<a class="headerlink" href="#mango-crypto-key-driven-design" title="Permanent link">&para;</a></h2>
 <p>Often when designing applications which have to implement Application Level Encryption (ALE) it might seem to make sense
 to
 design only with some specific
@@ -661,12 +1661,12 @@ specific cryptographic providers from your code and allows you to handle encrypt
 more robustly. HMAC key rotation has a
 long section all of its own in this document which should be considered mandatory reading for all developers who need to
 HMAC data for lookup or unique constraint purposes.</p>
-<h2 id="encryption-service-delegates">Encryption Service Delegates<a class="headerlink" href="#encryption-service-delegates" title="Permanent link">&para;</a></h2>
+<h3 id="encryption-service-delegates">Encryption Service Delegates<a class="headerlink" href="#encryption-service-delegates" title="Permanent link">&para;</a></h3>
 <p>In mango4j-crypto all the code for cryptographic operations is hidden behind an abstraction we refer to as the '
 Encryption Service Delegate'. What this means is that an infinite number of approaches can be used to
 perform the cryptographic operations by allowing developers to supply their own Encryption Service Delegates. Just
 create your own subclass of
-the <a href="https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/EncryptionServiceDelegate.java">EncryptionServiceDelegate</a>
+the <a href="/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/EncryptionServiceDelegate.java">EncryptionServiceDelegate</a>
 class and implement the abstract methods. Coupled with the CryptoKey objects this allows applications to support
 multiple
 types of cryptographic providers or different cryptographic approaches depending on application requirements. This also
@@ -686,13 +1686,24 @@ Mang4j-crypto comes with a few built-in Encryption Service Delegate implementati
 your own Encryption Service Delegates which you think would be universally useful then please consider giving back by
 making it publicly available, or even submitting a PR to the mango4j-crypto project so that others can benefit from it
 too.</p>
-<h2 id="key-objects">Key objects<a class="headerlink" href="#key-objects" title="Permanent link">&para;</a></h2>
+<h3 id="key-objects">Key objects<a class="headerlink" href="#key-objects" title="Permanent link">&para;</a></h3>
 <p>CryptoKey objects tell the library which Encryption Service Delegate to use to carry out the actual cryptographic
 operations under the hood.
 We often see applications representing their encryption/HMAC keys in their code with simple Strings (representing an AWS
 KMS key ID or key ARN for example) rather than key objects, but representing your key information with objects instead
 provides much more flexibility with how your encryption works. For example, this library represents keys in the code
 with the following object:</p>
+<p>```java language=java
+public class CryptoKey {
+    private String id;
+    private CryptoKeyUsage usage;
+    private String type;
+    private Map<String, Object> configuration;
+    private Instant keyStartTime;
+    private RekeyMode rekeyMode;
+    private Instant createdDate;
+    private Instant lastModifiedDate;
+}
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1"> 1</a></span>
 <span class="normal"><a href="#__codelineno-0-2"> 2</a></span>
 <span class="normal"><a href="#__codelineno-0-3"> 3</a></span>
@@ -702,61 +1713,93 @@ with the following object:</p>
 <span class="normal"><a href="#__codelineno-0-7"> 7</a></span>
 <span class="normal"><a href="#__codelineno-0-8"> 8</a></span>
 <span class="normal"><a href="#__codelineno-0-9"> 9</a></span>
-<span class="normal"><a href="#__codelineno-0-10">10</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a>public class CryptoKey {
-<a id="__codelineno-0-2" name="__codelineno-0-2"></a>    private String id;
-<a id="__codelineno-0-3" name="__codelineno-0-3"></a>    private CryptoKeyUsage usage;
-<a id="__codelineno-0-4" name="__codelineno-0-4"></a>    private String type;
-<a id="__codelineno-0-5" name="__codelineno-0-5"></a>    private Map&lt;String, Object&gt; configuration;
-<a id="__codelineno-0-6" name="__codelineno-0-6"></a>    private Instant keyStartTime;
-<a id="__codelineno-0-7" name="__codelineno-0-7"></a>    private RekeyMode rekeyMode;
-<a id="__codelineno-0-8" name="__codelineno-0-8"></a>    private Instant createdDate;
-<a id="__codelineno-0-9" name="__codelineno-0-9"></a>    private Instant lastModifiedDate;
-<a id="__codelineno-0-10" name="__codelineno-0-10"></a>}
-</code></pre></div></td></tr></table></div>
-<p><em>id:</em> Just a plain old random GUID</p>
-<p><em>usage:</em> What this key will be used for (either encryption or HMAC)</p>
-<p><em>type:</em> The type of the Encryption Service Delegate that this key will use to carry out its cryptographic operations.
-This must match the value returned from the
-desired <a href="https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/EncryptionServiceDelegate.java#L17">EncryptionServiceDelegate.supportedCryptoKeyType()</a>
-implementation.
-<br>
-For example: The
-included <a href="https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/wrapped/CachedWrappedKeyEncryptionService.java#251">CacheWrappedKeyEncryptionService.supportedCryptoKeyType()</a>
-returns the value "CACHED_WRAPPED", so if you wanted to use that Encryption Service Delegate implementation then you
-would have a CryptoKey object with this 'type' field set to "CACHED_WRAPPED". At runtime the library matches the
-CryptoKeys with their corresponding EncryptionServiceDelegates by comparing this 'type' field. If you create you own
-Encryption Service Delegate implementation, you can define this field however you like.</p>
-<p><em>Configuration:</em> This field stores the information about the key that the Encryption Service Delegates use to carry out
-their operations. It would never contain the actual
-bytes of the key or related confidential information (at least not in the clear). Instead, it would usually contain a
-reference to the key. For example: if the 'type' of this key was AWS_KMS then this map would have an entry called "
-keyArn" with the value of the AWS Key ID or Key ARN. Each Encryption Service Delegate implementation will know what
-configuration information it needs to carry out its operations so the application just needs to make sure that the right
-information is present in this map for the given key type.</p>
-<p><em>keyStartTime:</em> Optional field which is only used for HMAC CryptoKeys. When used this can alleviate some of the shortcomings with the <a href="#single-hmac-strategy">Single HMAC Strategy</a> that are described further in this document. If you are using this field it should be set when the CryptoKey is created in your application. It's very important to set this to some time in the future which is greater than the key cache time. i.e. by the time this ketStartTime date passes, all application instances should know about this key. </p>
-<p><br>
-<br>
-A big advantage of using CryptoKey objects to represent cryptographic key information is that it allows applications to easily support multiple cryptographic providers while keeping code clean and encryption code
-abstracted. It could also allow you to rotate from one type of key to another (e.g. AWS_KMS to AZURE_DEDICATED_HSM) with no application code changes. Or you could support different
-encryption delegates in different regions without having to write any custom application code to support that.</p>
-<h2 id="ciphertext-representation">Ciphertext representation<a class="headerlink" href="#ciphertext-representation" title="Permanent link">&para;</a></h2>
-<p>When <a href="https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto/src/main/java/ie/bitstep/mango/crypto/CryptoShield.java#L202">CryptoShield.encrypt()</a>
-is called on an object the library will set
-the <a href="https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto/src/main/java/ie/bitstep/mango/crypto/annotations/EncryptedData.java">@EncryptedData</a>
-field in the object to the calculated ciphertext.
-This final ciphertext is represented in a standardised way for encryption (not HMACs). Instead of just returning the
-straight
-ciphertext output it will return it as a JSON String with the following definition:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
-<span class="normal"><a href="#__codelineno-1-2">2</a></span>
-<span class="normal"><a href="#__codelineno-1-3">3</a></span>
-<span class="normal"><a href="#__codelineno-1-4">4</a></span>
-<span class="normal"><a href="#__codelineno-1-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a>{
-<a id="__codelineno-1-2" name="__codelineno-1-2"></a>  &quot;cryptoKeyId&quot;: &quot;someKeyId&quot;,
-<a id="__codelineno-1-3" name="__codelineno-1-3"></a>  &quot;iv&quot;: &quot;someInitializationVector&quot;,
-<a id="__codelineno-1-4" name="__codelineno-1-4"></a>  &quot;data&quot;: {}
-<a id="__codelineno-1-5" name="__codelineno-1-5"></a>}
-</code></pre></div></td></tr></table></div>
+<span class="normal"><a href="#__codelineno-0-10">10</a></span>
+<span class="normal"><a href="#__codelineno-0-11">11</a></span>
+<span class="normal"><a href="#__codelineno-0-12">12</a></span>
+<span class="normal"><a href="#__codelineno-0-13">13</a></span>
+<span class="normal"><a href="#__codelineno-0-14">14</a></span>
+<span class="normal"><a href="#__codelineno-0-15">15</a></span>
+<span class="normal"><a href="#__codelineno-0-16">16</a></span>
+<span class="normal"><a href="#__codelineno-0-17">17</a></span>
+<span class="normal"><a href="#__codelineno-0-18">18</a></span>
+<span class="normal"><a href="#__codelineno-0-19">19</a></span>
+<span class="normal"><a href="#__codelineno-0-20">20</a></span>
+<span class="normal"><a href="#__codelineno-0-21">21</a></span>
+<span class="normal"><a href="#__codelineno-0-22">22</a></span>
+<span class="normal"><a href="#__codelineno-0-23">23</a></span>
+<span class="normal"><a href="#__codelineno-0-24">24</a></span>
+<span class="normal"><a href="#__codelineno-0-25">25</a></span>
+<span class="normal"><a href="#__codelineno-0-26">26</a></span>
+<span class="normal"><a href="#__codelineno-0-27">27</a></span>
+<span class="normal"><a href="#__codelineno-0-28">28</a></span>
+<span class="normal"><a href="#__codelineno-0-29">29</a></span>
+<span class="normal"><a href="#__codelineno-0-30">30</a></span>
+<span class="normal"><a href="#__codelineno-0-31">31</a></span>
+<span class="normal"><a href="#__codelineno-0-32">32</a></span>
+<span class="normal"><a href="#__codelineno-0-33">33</a></span>
+<span class="normal"><a href="#__codelineno-0-34">34</a></span>
+<span class="normal"><a href="#__codelineno-0-35">35</a></span>
+<span class="normal"><a href="#__codelineno-0-36">36</a></span>
+<span class="normal"><a href="#__codelineno-0-37">37</a></span>
+<span class="normal"><a href="#__codelineno-0-38">38</a></span>
+<span class="normal"><a href="#__codelineno-0-39">39</a></span>
+<span class="normal"><a href="#__codelineno-0-40">40</a></span>
+<span class="normal"><a href="#__codelineno-0-41">41</a></span>
+<span class="normal"><a href="#__codelineno-0-42">42</a></span>
+<span class="normal"><a href="#__codelineno-0-43">43</a></span>
+<span class="normal"><a href="#__codelineno-0-44">44</a></span>
+<span class="normal"><a href="#__codelineno-0-45">45</a></span>
+<span class="normal"><a href="#__codelineno-0-46">46</a></span>
+<span class="normal"><a href="#__codelineno-0-47">47</a></span>
+<span class="normal"><a href="#__codelineno-0-48">48</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a>*id:* Just a plain old random GUID
+<a id="__codelineno-0-2" name="__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3"></a>*usage:* What this key will be used for (either encryption or HMAC)
+<a id="__codelineno-0-4" name="__codelineno-0-4"></a>
+<a id="__codelineno-0-5" name="__codelineno-0-5"></a>*type:* The type of the Encryption Service Delegate that this key will use to carry out its cryptographic operations.
+<a id="__codelineno-0-6" name="__codelineno-0-6"></a>This must match the value returned from the
+<a id="__codelineno-0-7" name="__codelineno-0-7"></a>desired [EncryptionServiceDelegate.supportedCryptoKeyType()](/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/EncryptionServiceDelegate.java#L17)
+<a id="__codelineno-0-8" name="__codelineno-0-8"></a>implementation.
+<a id="__codelineno-0-9" name="__codelineno-0-9"></a>&lt;br&gt;
+<a id="__codelineno-0-10" name="__codelineno-0-10"></a>For example: The
+<a id="__codelineno-0-11" name="__codelineno-0-11"></a>included [CacheWrappedKeyEncryptionService.supportedCryptoKeyType()](/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/wrapped/CachedWrappedKeyEncryptionService.java#251)
+<a id="__codelineno-0-12" name="__codelineno-0-12"></a>returns the value &quot;CACHED_WRAPPED&quot;, so if you wanted to use that Encryption Service Delegate implementation then you
+<a id="__codelineno-0-13" name="__codelineno-0-13"></a>would have a CryptoKey object with this &#39;type&#39; field set to &quot;CACHED_WRAPPED&quot;. At runtime the library matches the
+<a id="__codelineno-0-14" name="__codelineno-0-14"></a>CryptoKeys with their corresponding EncryptionServiceDelegates by comparing this &#39;type&#39; field. If you create you own
+<a id="__codelineno-0-15" name="__codelineno-0-15"></a>Encryption Service Delegate implementation, you can define this field however you like.
+<a id="__codelineno-0-16" name="__codelineno-0-16"></a>
+<a id="__codelineno-0-17" name="__codelineno-0-17"></a>*Configuration:* This field stores the information about the key that the Encryption Service Delegates use to carry out
+<a id="__codelineno-0-18" name="__codelineno-0-18"></a>their operations. It would never contain the actual
+<a id="__codelineno-0-19" name="__codelineno-0-19"></a>bytes of the key or related confidential information (at least not in the clear). Instead, it would usually contain a
+<a id="__codelineno-0-20" name="__codelineno-0-20"></a>reference to the key. For example: if the &#39;type&#39; of this key was AWS_KMS then this map would have an entry called &quot;
+<a id="__codelineno-0-21" name="__codelineno-0-21"></a>keyArn&quot; with the value of the AWS Key ID or Key ARN. Each Encryption Service Delegate implementation will know what
+<a id="__codelineno-0-22" name="__codelineno-0-22"></a>configuration information it needs to carry out its operations so the application just needs to make sure that the right
+<a id="__codelineno-0-23" name="__codelineno-0-23"></a>information is present in this map for the given key type.
+<a id="__codelineno-0-24" name="__codelineno-0-24"></a>
+<a id="__codelineno-0-25" name="__codelineno-0-25"></a>*keyStartTime:* Optional field which is only used for HMAC CryptoKeys. When used this can alleviate some of the shortcomings with the [Single HMAC Strategy](#single-hmac-strategy) that are described further in this document. If you are using this field it should be set when the CryptoKey is created in your application. It&#39;s very important to set this to some time in the future which is greater than the key cache time. i.e. by the time this ketStartTime date passes, all application instances should know about this key. 
+<a id="__codelineno-0-26" name="__codelineno-0-26"></a>
+<a id="__codelineno-0-27" name="__codelineno-0-27"></a>&lt;br&gt;
+<a id="__codelineno-0-28" name="__codelineno-0-28"></a>&lt;br&gt;
+<a id="__codelineno-0-29" name="__codelineno-0-29"></a>A big advantage of using CryptoKey objects to represent cryptographic key information is that it allows applications to easily support multiple cryptographic providers while keeping code clean and encryption code
+<a id="__codelineno-0-30" name="__codelineno-0-30"></a>abstracted. It could also allow you to rotate from one type of key to another (e.g. AWS_KMS to AZURE_DEDICATED_HSM) with no application code changes. Or you could support different
+<a id="__codelineno-0-31" name="__codelineno-0-31"></a>encryption delegates in different regions without having to write any custom application code to support that.
+<a id="__codelineno-0-32" name="__codelineno-0-32"></a>
+<a id="__codelineno-0-33" name="__codelineno-0-33"></a>### Ciphertext representation
+<a id="__codelineno-0-34" name="__codelineno-0-34"></a>
+<a id="__codelineno-0-35" name="__codelineno-0-35"></a>When [CryptoShield.encrypt()](/mango4j-crypto/src/main/java/ie/bitstep/mango/crypto/CryptoShield.java#L202)
+<a id="__codelineno-0-36" name="__codelineno-0-36"></a>is called on an object the library will set
+<a id="__codelineno-0-37" name="__codelineno-0-37"></a>the [@EncryptedData](/mango4j-crypto/src/main/java/ie/bitstep/mango/crypto/annotations/EncryptedData.java)
+<a id="__codelineno-0-38" name="__codelineno-0-38"></a>field in the object to the calculated ciphertext.
+<a id="__codelineno-0-39" name="__codelineno-0-39"></a>This final ciphertext is represented in a standardised way for encryption (not HMACs). Instead of just returning the
+<a id="__codelineno-0-40" name="__codelineno-0-40"></a>straight
+<a id="__codelineno-0-41" name="__codelineno-0-41"></a>ciphertext output it will return it as a JSON String with the following definition:
+<a id="__codelineno-0-42" name="__codelineno-0-42"></a>
+<a id="__codelineno-0-43" name="__codelineno-0-43"></a>```json language=json
+<a id="__codelineno-0-44" name="__codelineno-0-44"></a>{
+<a id="__codelineno-0-45" name="__codelineno-0-45"></a>  &quot;cryptoKeyId&quot;: &quot;someKeyId&quot;,
+<a id="__codelineno-0-46" name="__codelineno-0-46"></a>  &quot;iv&quot;: &quot;someInitializationVector&quot;,
+<a id="__codelineno-0-47" name="__codelineno-0-47"></a>  &quot;data&quot;: {}
+<a id="__codelineno-0-48" name="__codelineno-0-48"></a>}
+</code></pre></div></td></tr></table></div></p>
 <p>where:</p>
 <ul>
 <li><em>cryptoKeyId</em> is the identifier of the crypto key object (e.g. the CryptoKey.id field) in your system that was used to
@@ -769,7 +1812,7 @@ ciphertext output it will return it as a JSON String with the following definiti
   defines as necessary to include. This is why it's a map, because it needs to be flexible enough to accommodate
   different ciphertext data structures that different EncryptionServiceDelegates define.</li>
 </ul>
-<h1 id="key-rotation-changing-the-key">Key Rotation (Changing the key)<a class="headerlink" href="#key-rotation-changing-the-key" title="Permanent link">&para;</a></h1>
+<h2 id="key-rotation-changing-the-key">Key Rotation (Changing the key)<a class="headerlink" href="#key-rotation-changing-the-key" title="Permanent link">&para;</a></h2>
 <p>Key rotation is the process of changing a CryptoKey to a new CryptoKey. After a key is rotated, create and update
 operations should use the new key to perform the encryption operations. After a key is rotated, some records will have
 been encrypted with the previous key (or keys) while some will have been encrypted with the new key. So previous keys
@@ -782,17 +1825,17 @@ But a key rotation should be something which an application can do at short noti
 ensure that no more ciphertext is generated with an old key after we have introduced a new key into the system.
 Although rotating an encryption key is relatively straight forward, rotating a HMAC key on the other hand can pose
 considerable challenges (discussed at length further in this documentation)</p>
-<h1 id="encryption-key-rotation">Encryption Key Rotation<a class="headerlink" href="#encryption-key-rotation" title="Permanent link">&para;</a></h1>
+<h2 id="encryption-key-rotation">Encryption Key Rotation<a class="headerlink" href="#encryption-key-rotation" title="Permanent link">&para;</a></h2>
 <p>Changing an encryption key is relatively straightforward. Just add the new encryption key to your tenant/system and use
 it for all write operations going forward. Just make sure to keep the older encryption keys available until no more
 records exist that were encrypted with those keys. This is also why mango4j-crypto includes the CryptoKey ID in the
 ciphertext that it generates, so that we always know what key we need to use to decrypt any given piece of ciphertext.</p>
-<h1 id="hmac-key-rotation">HMAC Key Rotation<a class="headerlink" href="#hmac-key-rotation" title="Permanent link">&para;</a></h1>
+<h2 id="hmac-key-rotation">HMAC Key Rotation<a class="headerlink" href="#hmac-key-rotation" title="Permanent link">&para;</a></h2>
 <p>HMAC key rotation is a completely different beast and supporting it successfully requires serious application design
 considerations. Due to this material being so involved we've given it a large section all of its own further in this
 document.
 Please read the discussion carefully.</p>
-<h1 id="rekeying-re-encrypting-existing-records-with-the-new-key">Rekeying (re-encrypting existing records with the new key)<a class="headerlink" href="#rekeying-re-encrypting-existing-records-with-the-new-key" title="Permanent link">&para;</a></h1>
+<h2 id="rekeying-re-encrypting-existing-records-with-the-new-key">Rekeying (re-encrypting existing records with the new key)<a class="headerlink" href="#rekeying-re-encrypting-existing-records-with-the-new-key" title="Permanent link">&para;</a></h2>
 <p>Rekeying is the process whereby after a key rotation we have a background task which decrypts existing records
 (that were encrypted with some older key) and re-encrypt them with the new key.
 This is done when you want to completely remove an older key from the system after a key rotation but there are still
@@ -830,7 +1873,7 @@ years.
 An easy way to see the flaw in this logic is to ask yourself what happens in year 11 when you change the HMAC key?
 What about all the records from year 6 to year 10? You now can't find them! Also, with unique constraints you have 5
 years of records in your system which may be at risk of duplication.</strong></p>
-<h2 id="hmac-key-rotation-challenges">HMAC Key Rotation Challenges<a class="headerlink" href="#hmac-key-rotation-challenges" title="Permanent link">&para;</a></h2>
+<h3 id="hmac-key-rotation-challenges">HMAC Key Rotation Challenges<a class="headerlink" href="#hmac-key-rotation-challenges" title="Permanent link">&para;</a></h3>
 <p>The following section documents the 2 core challenges when it comes to supporting HMAC key rotation in your application.
 It's advised for all developers not familiar with this particular topic to read this section very carefully.
 It may seem easy to not give much attention to the scenario of rotating HMAC keys, possibly thinking <em>"when are we
@@ -839,7 +1882,7 @@ hopefully as you
 can see below, in order to support this functionality there are very important considerations to take into account for
 the way that you design your application. And the challenges presented by HMAC key rotation can be very difficult to
 retrofit into an application further down the line.</p>
-<h3 id="searching-operations-after-the-rotation-of-a-hmac-key">Searching operations after the rotation of a HMAC key<a class="headerlink" href="#searching-operations-after-the-rotation-of-a-hmac-key" title="Permanent link">&para;</a></h3>
+<h4 id="searching-operations-after-the-rotation-of-a-hmac-key">Searching operations after the rotation of a HMAC key<a class="headerlink" href="#searching-operations-after-the-rotation-of-a-hmac-key" title="Permanent link">&para;</a></h4>
 <p>If your application has the concept of a single HMAC key per tenant, it's extremely likely that you'll need to stop
 doing this and change this design approach. Unless for some reason you don't have to support HMAC key rotation in your
 application.
@@ -898,23 +1941,29 @@ finished and you change the tenants HMAC key to the new one.</p>
 <li>Modify your application search code in such a way that instead of looking for a HMAC field value equal to the
    generated HMAC (e.g. in JpaRepository):</li>
 </ol>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a>findByUsernameHmac(String userNameHmac);
-</code></pre></div></td></tr></table></div>
-<p>Change it to generate a list of HMAC values (using the tenant's <em>list</em> of HMAC keys) and look for a HMAC value which is
-in that list of HMACs (e.g. in JpaRepository):</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a>findByUsernameHmacIn(Collection&lt;String&gt; userNameHmacs);
-</code></pre></div></td></tr></table></div>
+<p>```java language=java
+findByUsernameHmac(String userNameHmac);
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
+<span class="normal"><a href="#__codelineno-1-2">2</a></span>
+<span class="normal"><a href="#__codelineno-1-3">3</a></span>
+<span class="normal"><a href="#__codelineno-1-4">4</a></span>
+<span class="normal"><a href="#__codelineno-1-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a>Change it to generate a list of HMAC values (using the tenant&#39;s _list_ of HMAC keys) and look for a HMAC value which is
+<a id="__codelineno-1-2" name="__codelineno-1-2"></a>in that list of HMACs (e.g. in JpaRepository):
+<a id="__codelineno-1-3" name="__codelineno-1-3"></a>
+<a id="__codelineno-1-4" name="__codelineno-1-4"></a>```java language=java
+<a id="__codelineno-1-5" name="__codelineno-1-5"></a>findByUsernameHmacIn(Collection&lt;String&gt; userNameHmacs);
+</code></pre></div></td></tr></table></div></p>
 <ol>
 <li>Modify your normal application HMAC code for <em><em>write</em></em> operations to choose the active HMAC key for the HMAC
    operations from the tenant's HMAC key list (that would be the HMAC key with the most recent CryptoKey.createdDate
    field).</li>
 </ol>
-<h4 id="however-the-previous-solution-still-has-major-flaws">However, the previous solution still has major flaws!<a class="headerlink" href="#however-the-previous-solution-still-has-major-flaws" title="Permanent link">&para;</a></h4>
+<h5 id="however-the-previous-solution-still-has-major-flaws">However, the previous solution still has major flaws!<a class="headerlink" href="#however-the-previous-solution-still-has-major-flaws" title="Permanent link">&para;</a></h5>
 <p>If your application is a multi-instance application and caches key information (both very likely in modern applications)
 then very big issues still remain.
 <br>
 Even with the previous solution consider the following scenario:</p>
-<h3 id="multi-instance-application-with-cached-keys-search-scenario">Multi-instance application with cached Keys search scenario<a class="headerlink" href="#multi-instance-application-with-cached-keys-search-scenario" title="Permanent link">&para;</a></h3>
+<h4 id="multi-instance-application-with-cached-keys-search-scenario">Multi-instance application with cached Keys search scenario<a class="headerlink" href="#multi-instance-application-with-cached-keys-search-scenario" title="Permanent link">&para;</a></h4>
 <ol>
 <li>You have 2 instances of your application, and they both cache key/tenant information (common practice because this
    type of
@@ -934,7 +1983,7 @@ Even with the previous solution consider the following scenario:</p>
 and is also needed for another (possibly much more serious) challenge regarding unique constraints. Implementing the
 design consideration in the next section will also solve the
 above shortcoming.</p>
-<h3 id="unique-constraint-enforcement-after-the-rotation-of-a-hmac-key">Unique constraint enforcement after the rotation of a HMAC key<a class="headerlink" href="#unique-constraint-enforcement-after-the-rotation-of-a-hmac-key" title="Permanent link">&para;</a></h3>
+<h4 id="unique-constraint-enforcement-after-the-rotation-of-a-hmac-key">Unique constraint enforcement after the rotation of a HMAC key<a class="headerlink" href="#unique-constraint-enforcement-after-the-rotation-of-a-hmac-key" title="Permanent link">&para;</a></h4>
 <blockquote>
 <ul>
 <li>IMPORTANT!!! - This problem is much more important than the previous search problem! If your application has unique
@@ -978,13 +2027,13 @@ there would still exist a race condition in your code which can result in 2 user
 </ul>
 <p>To remedy this you need to implement particular approaches to calculating and storing the HMACs for your entity fields.
 The following sections detail some of these approaches, all of which are supported in
-the <a href="{{ site.baseurl }}/ README.md">mango4j-crypto</a> library.</p>
-<h1 id="hmac-strategies">HMAC Strategies<a class="headerlink" href="#hmac-strategies" title="Permanent link">&para;</a></h1>
+the <a href="/README.md">mango4j-crypto</a> library.</p>
+<h2 id="hmac-strategies">HMAC Strategies<a class="headerlink" href="#hmac-strategies" title="Permanent link">&para;</a></h2>
 <p>There are several designs you can choose to work with HMACs in your code depending on your application's ability to 
 tolerate or circumvent the challenges documented above (if they apply). So this section will discuss the ones supported 
 by Mango4j-crypto in the following section. We strongly advise considering the List HMAC Strategy but due to its 
 unfamiliarity we'll start with the Single HMAC Strategy. </p>
-<h2 id="single-hmac-strategy">Single HMAC Strategy<a class="headerlink" href="#single-hmac-strategy" title="Permanent link">&para;</a></h2>
+<h3 id="single-hmac-strategy">Single HMAC Strategy<a class="headerlink" href="#single-hmac-strategy" title="Permanent link">&para;</a></h3>
 <p>This strategy is only recommended if you're aware of the challenges mentioned above and are confident that they do not 
 apply to your application.
 The Single HMAC strategy isn't really much of a strategy, it's just the way that many applications (unfortunately in
@@ -1017,7 +2066,7 @@ single column in your table/record where you store the HMAC. So our USER_PROFILE
 <p>And (as usual) you have a list of HMAC keys on a tenant.
 However, as mentioned previously this strategy exposes you to the 2 main challenges associated with HMAC key rotation.</p>
 <p>Those challenges can still be dealt with using this strategy but the trade offs may not be worth it. Let's explore:</p>
-<h2 id="search-challenge-solution">Search challenge solution<a class="headerlink" href="#search-challenge-solution" title="Permanent link">&para;</a></h2>
+<h3 id="search-challenge-solution">Search challenge solution<a class="headerlink" href="#search-challenge-solution" title="Permanent link">&para;</a></h3>
 <p>The 1st of the HMAC challenges (search outage) can be dealt with in a fairly simple manner by introducing the concept 
 of a "HMAC key start time". When a new HMAC key is introduced into the system we could set this key start time to 
 "the current time + the key cache time". Then we make sure that the application never performs write operations with 
@@ -1025,7 +2074,7 @@ that key until after the "key start time". An application would always use all o
 perform search operations (regardless of key start times). But since no application would create/update a record with 
 the new key until all instances know about that key then all instances should be able to find all records including 
 new/updated ones.</p>
-<h2 id="unique-constraints-challenge-partial-solution">Unique constraints challenge partial solution<a class="headerlink" href="#unique-constraints-challenge-partial-solution" title="Permanent link">&para;</a></h2>
+<h3 id="unique-constraints-challenge-partial-solution">Unique constraints challenge partial solution<a class="headerlink" href="#unique-constraints-challenge-partial-solution" title="Permanent link">&para;</a></h3>
 <p>For the 2nd challenge (unique constraint integrity) it can only be narrowed down to a race condition but even then, only 
 by using a costly trade-off (in addition to using the "key start time" concept): forcing the application to perform a search before every write operation.
 <br>
@@ -1081,7 +2130,7 @@ a more powerful search support. But please consider the challenges above when de
 <li>Even with "key start time" unique constraint support requires performance degradation.</li>
 <li>Can never fully support unique constraint integrity under all circumstances.</li>
 </ul>
-<h2 id="list-hmac-strategy">List HMAC strategy<a class="headerlink" href="#list-hmac-strategy" title="Permanent link">&para;</a></h2>
+<h3 id="list-hmac-strategy">List HMAC strategy<a class="headerlink" href="#list-hmac-strategy" title="Permanent link">&para;</a></h3>
 <p>This strategy documents the most general and powerful design that application developers can use to take care of all
 problems mentioned above. Using this design guarantees your
 application will accommodate HMACs correctly regardless of your use case or application requirements.
@@ -1181,7 +2230,7 @@ relational DBs this strategy will require inserting/updating
 from 1 to 3 separate tables for each write operation and for searching it will require a join from the
 USER_PROFILE_LOOKUPS table back to the original record in the USER_PROFILE
 table.</p>
-<h3 id="process-for-re-keying-data-with-the-list-hmac-strategy">Process for re-keying data with the List HMAC Strategy<a class="headerlink" href="#process-for-re-keying-data-with-the-list-hmac-strategy" title="Permanent link">&para;</a></h3>
+<h4 id="process-for-re-keying-data-with-the-list-hmac-strategy">Process for re-keying data with the List HMAC Strategy<a class="headerlink" href="#process-for-re-keying-data-with-the-list-hmac-strategy" title="Permanent link">&para;</a></h4>
 <ol>
 <li>Add your new HMAC key to the tenant's list of HMAC keys</li>
 <li>Wait until the HMAC key cache expiry time has passed (if applicable), so that all application instances are using the
@@ -1232,7 +2281,7 @@ table.</p>
   rate at which an application deletes old keys this will have
   a performance impact if the list of HMAC keys keeps growing.</li>
 </ul>
-<h2 id="double-hmac-strategy">Double HMAC strategy<a class="headerlink" href="#double-hmac-strategy" title="Permanent link">&para;</a></h2>
+<h3 id="double-hmac-strategy">Double HMAC strategy<a class="headerlink" href="#double-hmac-strategy" title="Permanent link">&para;</a></h3>
 <p>The Double HMAC strategy is a compromise between the List HMAC strategy and the (mostly not recommended) Single HMAC
 Strategy (or its sister strategy the Single Time Based HMAC
 strategy) that allows for a more normal entity design.</p>
@@ -1287,7 +2336,7 @@ This keeps the entity design simple and for relational DBs it eliminates the nee
 necessary for the List HMAC strategy. It's important to note
 that all search code must search for the HMAC in both columns at all times though, as it could be in either one. This
 leads to messier search code.</p>
-<h3 id="process-for-re-keying-data-with-the-double-hmac-strategy">Process for re-keying data with the Double HMAC Strategy<a class="headerlink" href="#process-for-re-keying-data-with-the-double-hmac-strategy" title="Permanent link">&para;</a></h3>
+<h4 id="process-for-re-keying-data-with-the-double-hmac-strategy">Process for re-keying data with the Double HMAC Strategy<a class="headerlink" href="#process-for-re-keying-data-with-the-double-hmac-strategy" title="Permanent link">&para;</a></h4>
 <ol>
 <li>Add your new HMAC key to the tenant's list of HMAC keys</li>
 <li>Wait until the HMAC key cache expiry time has passed (if applicable), so that all application instances are using the
@@ -1309,10 +2358,9 @@ leads to messier search code.</p>
    using the old HMAC key.</li>
 <li>Copy X_HMAC_2 column values into X_HMAC_1 columns for all fields in all records, something like:</li>
 </ol>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1">1</a></span>
-<span class="normal"><a href="#__codelineno-4-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a>UPDATE table
-<a id="__codelineno-4-2" name="__codelineno-4-2"></a>SET USERNAME_HMAC_1 = USERNAME_HMAC_2
-</code></pre></div></td></tr></table></div>
+<p><code>sql language=sql
+UPDATE table
+SET USERNAME_HMAC_1 = USERNAME_HMAC_2</code></p>
 <p><strong>Pros of the Double HMAC strategy:</strong></p>
 <ul>
 <li>Fairly solid HMAC design which will probably work for a good number of application requirements</li>
@@ -1342,7 +2390,7 @@ the same, but at that point you may as well go with the List HMAC Strategy inste
 <p><br>
 <br>
 <br></p>
-<h2 id="some-final-considerations-for-application-designs">Some final considerations for application designs<a class="headerlink" href="#some-final-considerations-for-application-designs" title="Permanent link">&para;</a></h2>
+<h3 id="some-final-considerations-for-application-designs">Some final considerations for application designs<a class="headerlink" href="#some-final-considerations-for-application-designs" title="Permanent link">&para;</a></h3>
 <p>Although corporate security guidelines in some companies may only require applications to support HMAC key
 rotation but not necessarily rekeying, we strongly advise application developers to reconsider this in the context of
 their application functionality and requirements! Supporting only HMAC key rotation for long-lived data means
@@ -1359,8 +2407,8 @@ The only concrete way to solve the unique constraint challenge for key rotation 
 the List HMAC Strategy.
 <br>
 <br></p>
-<h2 id="faq">FAQ<a class="headerlink" href="#faq" title="Permanent link">&para;</a></h2>
-<h3 id="whats-a-tenant">What's a tenant?<a class="headerlink" href="#whats-a-tenant" title="Permanent link">&para;</a></h3>
+<h3 id="faq">FAQ<a class="headerlink" href="#faq" title="Permanent link">&para;</a></h3>
+<h4 id="whats-a-tenant">What's a tenant?<a class="headerlink" href="#whats-a-tenant" title="Permanent link">&para;</a></h4>
 <p>For applications which store data from different client applications or enterprises there is often the requirement that
 we need to segregate the data belonging to each client (i.e. your application has multiple customer enterprises which
 use it: Bank A, Bank B and Bank C).
@@ -1381,16 +2429,16 @@ Each operation in your application will then be within the context of one of the
 for Bank A is encrypted with an encryption key which is <em>only</em> used by Bank A, And similarly, any data stored
 for Bank B is encrypted with an encryption key which is <em>only</em> used by Bank B. If your system doesn't have/need the
 concept of tenants then you can just think of a tenant as "the application" in this documentation.</p>
-<h3 id="whats-a-hmac">What's a HMAC?<a class="headerlink" href="#whats-a-hmac" title="Permanent link">&para;</a></h3>
+<h4 id="whats-a-hmac">What's a HMAC?<a class="headerlink" href="#whats-a-hmac" title="Permanent link">&para;</a></h4>
 <p>A HMAC is just a hash which uses a secret key to perform the hashing operation.</p>
-<h3 id="whats-a-hash">What's a hash?<a class="headerlink" href="#whats-a-hash" title="Permanent link">&para;</a></h3>
+<h4 id="whats-a-hash">What's a hash?<a class="headerlink" href="#whats-a-hash" title="Permanent link">&para;</a></h4>
 <p>A hash is a one-way encryption cipher. One-way means that for a given piece of data, hashing it will produce a
 ciphertext
 but that ciphertext can never be used to reproduce the original value, it can never be decrypted. Hashes are useful for
 storing data that needs to be matched but which we never want to risk an attacker knowing. Hashes are often used to
 store
 passwords in a secure system.</p>
-<h3 id="whats-an-iv">What's an IV?<a class="headerlink" href="#whats-an-iv" title="Permanent link">&para;</a></h3>
+<h4 id="whats-an-iv">What's an IV?<a class="headerlink" href="#whats-an-iv" title="Permanent link">&para;</a></h4>
 <p>An IV (Initialization Vector) essentially introduces randomness into the data being encrypted. A new IV should be
 generated and used for every encryption operation which means that even if you encrypt the same piece of data with the
 same
@@ -1398,7 +2446,7 @@ secret key, the resulting ciphertext will be different. The ciphertext will alwa
 data (the IV is actually stored in the clear, inside the data containing the ciphertext) but the fact that the resulting
 ciphertext is
 always unique for any encryption operation makes cryptanalysis more difficult to potential attackers.</p>
-<h3 id="why-do-i-need-to-hmac-data-in-order-to-make-it-searchable">Why do I need to HMAC data in order to make it searchable?<a class="headerlink" href="#why-do-i-need-to-hmac-data-in-order-to-make-it-searchable" title="Permanent link">&para;</a></h3>
+<h4 id="why-do-i-need-to-hmac-data-in-order-to-make-it-searchable">Why do I need to HMAC data in order to make it searchable?<a class="headerlink" href="#why-do-i-need-to-hmac-data-in-order-to-make-it-searchable" title="Permanent link">&para;</a></h4>
 <p>When we encrypt a piece of data we should use an <a href="#Whats-an-IV">IV</a> as well as the secret key - so make sure to
 consider using IVs in any custom EncryptionServiceDelegate implementations you create for your application.
 Due to the fact that each time we encrypt a piece of data it never generates the same ciphertext this means
@@ -1410,15 +2458,15 @@ value alongside any attribute that needs to be searchable. HMACs will always giv
 of data so they can be used for search purposes. If an encrypted attribute also has a HMAC value stored separately for
 it,
 Their irreversibility makes them very secure.</p>
-<h3 id="why-do-i-need-to-hmac-confidential-data-in-order-to-make-it-unique">Why do I need to HMAC confidential data in order to make it unique?<a class="headerlink" href="#why-do-i-need-to-hmac-confidential-data-in-order-to-make-it-unique" title="Permanent link">&para;</a></h3>
+<h4 id="why-do-i-need-to-hmac-confidential-data-in-order-to-make-it-unique">Why do I need to HMAC confidential data in order to make it unique?<a class="headerlink" href="#why-do-i-need-to-hmac-confidential-data-in-order-to-make-it-unique" title="Permanent link">&para;</a></h4>
 <p>As explained above the encryption of confidential data always results in a unique ciphertext (due to the use of IVs) so
 that particular ciphertext cannot be used to enforce a
 unique constraint. The solution is to also store a HMAC for this attribute and place a unique constraint on that field
 instead.</p>
-<h3 id="what-is-a-key-rotation">What is a key rotation?<a class="headerlink" href="#what-is-a-key-rotation" title="Permanent link">&para;</a></h3>
+<h4 id="what-is-a-key-rotation">What is a key rotation?<a class="headerlink" href="#what-is-a-key-rotation" title="Permanent link">&para;</a></h4>
 <p>A key rotation is the action of changing an encryption or HMAC key that you're using right now (for a tenant) to a
 different one.</p>
-<h3 id="why-would-i-perform-a-key-rotation">Why would I perform a key rotation?<a class="headerlink" href="#why-would-i-perform-a-key-rotation" title="Permanent link">&para;</a></h3>
+<h4 id="why-would-i-perform-a-key-rotation">Why would I perform a key rotation?<a class="headerlink" href="#why-would-i-perform-a-key-rotation" title="Permanent link">&para;</a></h4>
 <p>Many corporate and regulatory guidelines require encryption keys to be updated when certain criteria are met. The
 criteria definitions can sometimes be a bit fuzzy and there's no permanent concrete
 criteria for all applications. Some criteria are usage based, e.g. changing the key after it's been used X times. Other
@@ -1436,11 +2484,11 @@ in your application.</p>
   application instances deployed in those environments will have
   to rotate keys onto a different cryptographic provider.</li>
 </ul>
-<h3 id="what-does-re-keying-mean">What does re-keying mean?<a class="headerlink" href="#what-does-re-keying-mean" title="Permanent link">&para;</a></h3>
+<h4 id="what-does-re-keying-mean">What does re-keying mean?<a class="headerlink" href="#what-does-re-keying-mean" title="Permanent link">&para;</a></h4>
 <p>Re-keying is where after introducing a new encryption/HMAC key, some background job goes through the
 database record by record, decrypting (with the old key) and re-encrypting (re-keying) with the new key(s) until there
 are no more records left that use the old key(s).</p>
-<h3 id="why-should-i-re-key">Why should I re-key<a class="headerlink" href="#why-should-i-re-key" title="Permanent link">&para;</a></h3>
+<h4 id="why-should-i-re-key">Why should I re-key<a class="headerlink" href="#why-should-i-re-key" title="Permanent link">&para;</a></h4>
 <p>If an encryption or HMAC key is compromised then you'll probably have to make sure that no data in your DB is encrypted
 or contains HMACs calculated with that key. This means you
 have to consider re-keying all the data that used that compromised key with a new encryption/HMAC key.
@@ -1452,7 +2500,7 @@ possibly store) for every HMAC operation.
 If your application is multi-instance, caches keys and doesn't use the List HMAC Strategy then you'll need to re-key if
 your application uses HMACs for unique constraint
 enforcement.</p>
-<h3 id="why-does-mango4j-crypto-core-have-the-concept-of-only-1-encryption-key-but-multiple-hmac-keys">Why does mango4j-crypto-core have the concept of only 1 encryption key but multiple HMAC keys?<a class="headerlink" href="#why-does-mango4j-crypto-core-have-the-concept-of-only-1-encryption-key-but-multiple-hmac-keys" title="Permanent link">&para;</a></h3>
+<h4 id="why-does-mango4j-crypto-core-have-the-concept-of-only-1-encryption-key-but-multiple-hmac-keys">Why does mango4j-crypto-core have the concept of only 1 encryption key but multiple HMAC keys?<a class="headerlink" href="#why-does-mango4j-crypto-core-have-the-concept-of-only-1-encryption-key-but-multiple-hmac-keys" title="Permanent link">&para;</a></h4>
 <p>When a piece of data is encrypted a reference to the encryption key is contained in the actual ciphertext along with the
 encrypted data. This means that it will always be possible
 to decrypt the data even if the current encryption key is changed (i.e. for a key rotation), assuming you didn't delete
@@ -1469,7 +2517,7 @@ HMAC key rotation challenges.</p>
 to <em>search</em> for data, we don't know where it is yet.
 Therefore, we don't know which HMAC key might have been used to HMAC it. So we have to try all the HMAC keys to search
 for it.</p>
-<h3 id="why-dont-hmacs-have-a-reference-to-the-hmac-key-stored-alongside-them-the-same-way-encrypted-ciphertext-does">Why don't HMACs have a reference to the HMAC key stored alongside them the same way encrypted ciphertext does?<a class="headerlink" href="#why-dont-hmacs-have-a-reference-to-the-hmac-key-stored-alongside-them-the-same-way-encrypted-ciphertext-does" title="Permanent link">&para;</a></h3>
+<h4 id="why-dont-hmacs-have-a-reference-to-the-hmac-key-stored-alongside-them-the-same-way-encrypted-ciphertext-does">Why don't HMACs have a reference to the HMAC key stored alongside them the same way encrypted ciphertext does?<a class="headerlink" href="#why-dont-hmacs-have-a-reference-to-the-hmac-key-stored-alongside-them-the-same-way-encrypted-ciphertext-does" title="Permanent link">&para;</a></h4>
 <p>Elaborating on previous statements: It would serve no real purpose to store a reference to the HMAC key beside the HMAC
 since they are used primarily for search purposes and by
 definition that means that you have no information about the row where the HMAC is or even where it is in the DB. With
@@ -1486,17 +2534,17 @@ possible HMAC keys when searching.</p>
 <p><em>Caveat:</em> In saying that, it is useful to store a reference to the HMAC key alongside the HMAC so that re-key jobs can
 easily query which records need re-keyed and which do not. But this is a
 convenience related to re-keying performance only and is not related to normal HMAC functionality.</p>
-<h3 id="what-is-hmac-tokenization">What is HMAC tokenization?<a class="headerlink" href="#what-is-hmac-tokenization" title="Permanent link">&para;</a></h3>
+<h4 id="what-is-hmac-tokenization">What is HMAC tokenization?<a class="headerlink" href="#what-is-hmac-tokenization" title="Permanent link">&para;</a></h4>
 <p>HMAC Tokenization is the process of chopping an input value into separate pieces and calculating HMACs for each piece
 for more flexible search support. i.e. for a PAN (Primary Account Number - such as Credit Card numbers) you could
 HMAC the full PAN, HMAC the last 4 digits of the PAN, HMAC the PAN without dashes/spaces giving a total of 3 resulting
 HMACs for a single input. This allows you to support richer
 search capabilities because now your application can support searching on the last 4 digits of the PAN and allows
 searches to find a PAN whether it has dashes/spaces in it or not.</p>
-<h2 id="appendixes">Appendixes<a class="headerlink" href="#appendixes" title="Permanent link">&para;</a></h2>
-<h3 id="a-decisioning-diagram-for-which-hmac-strategy-to-use">A: Decisioning diagram for which HMAC strategy to use<a class="headerlink" href="#a-decisioning-diagram-for-which-hmac-strategy-to-use" title="Permanent link">&para;</a></h3>
+<h3 id="appendixes">Appendixes<a class="headerlink" href="#appendixes" title="Permanent link">&para;</a></h3>
+<h4 id="a-decisioning-diagram-for-which-hmac-strategy-to-use">A: Decisioning diagram for which HMAC strategy to use<a class="headerlink" href="#a-decisioning-diagram-for-which-hmac-strategy-to-use" title="Permanent link">&para;</a></h4>
 <p><img alt="rekeying-decision-flow-diagram" src="/documentation/docs/assets/rekeying-decision-flow-diagram_v2.png" /></p>
-<h3 id="b-possible-re-keying-process-when-using-list-hmac-strategy-when-the-application-need-to-delete-a-specific-hmac-key">B: Possible re-keying process when using list HMAC strategy when the application need to delete a specific HMAC key<a class="headerlink" href="#b-possible-re-keying-process-when-using-list-hmac-strategy-when-the-application-need-to-delete-a-specific-hmac-key" title="Permanent link">&para;</a></h3>
+<h4 id="b-possible-re-keying-process-when-using-list-hmac-strategy-when-the-application-need-to-delete-a-specific-hmac-key">B: Possible re-keying process when using list HMAC strategy when the application need to delete a specific HMAC key<a class="headerlink" href="#b-possible-re-keying-process-when-using-list-hmac-strategy-when-the-application-need-to-delete-a-specific-hmac-key" title="Permanent link">&para;</a></h4>
 <p>When your application mostly runs on key rotation without rekeying, but you need to support a process whereby a HMAC key
 needs to
 be completely removed from the system then you can follow
@@ -1514,7 +2562,7 @@ Deprecated HMAC Key: HMAC key that you want to completely remove from your syste
 <li>Delete the HMAC key to be removed from the system.</li>
 <li>Delete the HMACs calculated with the deleted HMAC key from all records.</li>
 </ol>
-<h4 id="case-study-for-an-application-which-uses-the-list-hmac-strategy-and-has-the-unique-constraint-challenge">Case study for an application which uses the List HMAC Strategy and has the unique constraint challenge<a class="headerlink" href="#case-study-for-an-application-which-uses-the-list-hmac-strategy-and-has-the-unique-constraint-challenge" title="Permanent link">&para;</a></h4>
+<h5 id="case-study-for-an-application-which-uses-the-list-hmac-strategy-and-has-the-unique-constraint-challenge">Case study for an application which uses the List HMAC Strategy and has the unique constraint challenge<a class="headerlink" href="#case-study-for-an-application-which-uses-the-list-hmac-strategy-and-has-the-unique-constraint-challenge" title="Permanent link">&para;</a></h5>
 <p>Background: ACME unique application is an application that relies solely on HMAC key rotation (without rekeying) to
 manage the
 keying of records over time. ACME application also requires

@@ -1,3 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://bitstep-ie.github.io/mango4j-crypto/0.1.0/</loc>
+         <lastmod>2026-02-24</lastmod>
+    </url>
+    <url>
+         <loc>https://bitstep-ie.github.io/mango4j-crypto/0.1.0/delegates/aws-delegate/</loc>
+         <lastmod>2026-02-24</lastmod>
+    </url>
+    <url>
+         <loc>https://bitstep-ie.github.io/mango4j-crypto/0.1.0/delegates/core-delegates/</loc>
+         <lastmod>2026-02-24</lastmod>
+    </url>
+    <url>
+         <loc>https://bitstep-ie.github.io/mango4j-crypto/0.1.0/delegates/test-delegates/</loc>
+         <lastmod>2026-02-24</lastmod>
+    </url>
+    <url>
+         <loc>https://bitstep-ie.github.io/mango4j-crypto/0.1.0/general/general/</loc>
+         <lastmod>2026-02-24</lastmod>
+    </url>
+    <url>
+         <loc>https://bitstep-ie.github.io/mango4j-crypto/0.1.0/guide/guide/</loc>
+         <lastmod>2026-02-24</lastmod>
+    </url>
 </urlset>

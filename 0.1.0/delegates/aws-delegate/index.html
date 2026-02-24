@@ -10,22 +10,20 @@
       
       
       
+        <link rel="canonical" href="https://bitstep-ie.github.io/mango4j-crypto/0.1.0/delegates/aws-delegate/">
       
-        <link rel="prev" href="../core-delegates/">
       
-      
-        <link rel="next" href="../../general/general/">
       
       
         
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.2">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
     
     
       
-        <title>AWS Delegate - mango4j-crypto</title>
+        <title>AWS Encryption Service Delegate - mango4j-crypto</title>
       
     
     
@@ -113,7 +111,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              AWS Delegate
+              AWS Encryption Service Delegate
             
           </span>
         </div>
@@ -241,12 +239,10 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
+      <li class="md-tabs__item">
         <a href="../test-delegates/" class="md-tabs__link">
           
   
@@ -353,29 +349,24 @@
       
   
   
-    
   
   
-  
     
     
     
     
       
-        
-        
-      
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
             
   
   
@@ -393,7 +384,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -439,7 +430,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../core-delegates/" class="md-nav__link">
+      <a href="../core-delegates" class="md-nav__link">
         
   
   
@@ -464,19 +455,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../aws-delegates.md" class="md-nav__link">
         
   
   
@@ -492,7 +474,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -552,6 +533,53 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#aws-kms-limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AWS KMS Limitations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-use" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to Use
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How to Use">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mango4j-crypto-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mango4j-crypto-example
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -579,8 +607,8 @@ for cryptographic operations. It does this by providing a simple wrapper around 
   See <a href="#aws-kms-limitations">note about limitations below</a></p>
 </blockquote>
 <p>The key type for this delegate is "AWS_KMS", so associated CryptoKeys must have their 
-<a href="{{config.repo_url}}/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/domain/CryptoKey.java#L43">type</a> set to that value.</p>
-<p>The following are the fields that must be included in your Cryptokey <a href="{{repo_url}}/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/domain/CryptoKey.java#L62">configuration</a> </p>
+<a href="/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/domain/CryptoKey.java#L43">type</a> set to that value.</p>
+<p>The following are the fields that must be included in your Cryptokey <a href="/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/domain/CryptoKey.java#L62">configuration</a> </p>
 <p><div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span>
 <span class="normal"><a href="#__codelineno-0-2">2</a></span>
 <span class="normal"><a href="#__codelineno-0-3">3</a></span>
@@ -593,7 +621,7 @@ for cryptographic operations. It does this by providing a simple wrapper around 
 Supported algorithms for encryption/decryption currently are: SYMMETRIC_DEFAULT
 <br>
 Supported algorithms for HMAC generation currently are: HMAC_SHA_224, HMAC_SHA_256, HMAC_SHA_384, HMAC_SHA_512,   </p>
-<h1 id="aws-kms-limitations">AWS KMS Limitations<a class="headerlink" href="#aws-kms-limitations" title="Permanent link">&para;</a></h1>
+<h2 id="aws-kms-limitations">AWS KMS Limitations<a class="headerlink" href="#aws-kms-limitations" title="Permanent link">&para;</a></h2>
 <p>For applications which need to encrypt payloads larger than 4k and also want more control over how cryptographic operations 
 are carried out, Amazon also provide an 
 <a href="https://docs.aws.amazon.com/encryption-sdk/latest/developer-guide/introduction.html">AWS Encryption SDK</a> which 
@@ -602,12 +630,12 @@ operations. This client side approach includes creating Data Encryption Keys for
 <em>wrapping</em> (encrypting) them with the AWS KMS master key. Since mango4j-crypto already has support for wrapped key 
 encryption we currently do not provide any delegate support for the AWS Encryption SDK. If you want to use the envelope 
 approach you can just use the 
-<a href="https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/wrapped/WrappedKeyEncryptionService.java">Wrapped Key Encryption Service Delegate</a> 
+<a href="/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/wrapped/WrappedKeyEncryptionService.java">Wrapped Key Encryption Service Delegate</a> 
 with an AWS_KMS (this delegate) CryptoKey as the wrapping key. 
 For performance critical functionality you can also check out the 
-<a href="https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/wrapped/CachedWrappedKeyEncryptionService.java">Cache Wrapped Key Encryption Service Delegate</a> 
+<a href="/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/wrapped/CachedWrappedKeyEncryptionService.java">Cache Wrapped Key Encryption Service Delegate</a> 
 with an AWS_KMS (this delegate) CryptoKey as the wrapping key</p>
-<h1 id="how-to-use">How to Use<a class="headerlink" href="#how-to-use" title="Permanent link">&para;</a></h1>
+<h2 id="how-to-use">How to Use<a class="headerlink" href="#how-to-use" title="Permanent link">&para;</a></h2>
 <p>Add the following dependency to your pom</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
 <span class="normal"><a href="#__codelineno-1-2">2</a></span>
@@ -620,7 +648,7 @@ with an AWS_KMS (this delegate) CryptoKey as the wrapping key</p>
 <a id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="nt">&lt;/dependency&gt;</span>
 </code></pre></div></td></tr></table></div>
 <p>Then just create an instance of 
-<a href="https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-aws-delegate/src/main/java/ie/bitstep/mango/crypto/delegates/aws/impl/service/encryption/AwsEncryptionServiceDelegate.java">AwsEncryptionServiceDelegate</a> 
+<a href="/mango4j-crypto-aws-delegate/src/main/java/ie/bitstep/mango/crypto/delegates/aws/impl/service/encryption/AwsEncryptionServiceDelegate.java">AwsEncryptionServiceDelegate</a> 
 with a configured KmsClient and add it to the list of delegates you configure with your CryptoShield.
 For example a Spring configuration might look like this:</p>
 <p><div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1"> 1</a></span>
@@ -686,7 +714,7 @@ For example a Spring configuration might look like this:</p>
 <a id="__codelineno-2-27" name="__codelineno-2-27"></a><span class="w">                                 </span><span class="n">List</span><span class="o">&lt;</span><span class="n">EncryptionServiceDelegate</span><span class="o">&gt;</span><span class="w"> </span><span class="n">encryptionServiceDelegates</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <a id="__codelineno-2-28" name="__codelineno-2-28"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">CryptoShield</span><span class="p">.</span><span class="na">Builder</span><span class="p">()</span>
 <a id="__codelineno-2-29" name="__codelineno-2-29"></a><span class="w">            </span><span class="p">.</span><span class="na">withAnnotatedEntities</span><span class="p">(</span><span class="n">List</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">MyConfidentialEntity</span><span class="p">.</span><span class="na">class</span><span class="p">))</span>
-<a id="__codelineno-2-30" name="__codelineno-2-30"></a><span class="w">            </span><span class="p">.</span><span class="na">withCryptoKeyProvider</span><span class="p">(</span><span class="n">cryptoKeyProvider</span><span class="p">)</span>
+<a id="__codelineno-2-30" name="__codelineno-2-30"></a><span class="w">        </span><span class="p">.</span><span class="na">withCryptoKeyProvider</span><span class="p">(</span><span class="n">cryptoKeyProvider</span><span class="p">)</span>
 <a id="__codelineno-2-31" name="__codelineno-2-31"></a><span class="w">            </span><span class="p">.</span><span class="na">withEncryptionServiceDelegates</span><span class="p">(</span><span class="n">encryptionServiceDelegates</span><span class="p">)</span>
 <a id="__codelineno-2-32" name="__codelineno-2-32"></a><span class="w">            </span><span class="p">.</span><span class="na">withObjectMapperFactory</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ConfigurableObjectMapperFactory</span><span class="p">())</span>
 <a id="__codelineno-2-33" name="__codelineno-2-33"></a><span class="w">            </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>

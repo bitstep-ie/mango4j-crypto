@@ -10,18 +10,20 @@
       
       
       
+        <link rel="canonical" href="https://bitstep-ie.github.io/mango4j-crypto/0.1.0/delegates/test-delegates/">
+      
       
         <link rel="prev" href="../../guide/guide/">
       
       
-        <link rel="next" href="../core-delegates/">
+        <link rel="next" href="../../general/general/">
       
       
         
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.2">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
     
     
       
@@ -508,7 +510,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../core-delegates/" class="md-nav__link">
+      <a href="../core-delegates" class="md-nav__link">
         
   
   
@@ -536,7 +538,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../aws-delegate/" class="md-nav__link">
+      <a href="../aws-delegates.md" class="md-nav__link">
         
   
   
@@ -661,14 +663,14 @@
 
 <h1 id="testing-delegates">Testing Delegates<a class="headerlink" href="#testing-delegates" title="Permanent link">&para;</a></h1>
 <h2 id="base64-encryption-service-delegate">Base64 Encryption Service Delegate<a class="headerlink" href="#base64-encryption-service-delegate" title="Permanent link">&para;</a></h2>
-<p>The <a href="https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/test/Base64EncryptionService.java">Base64EncryptionService</a> is a provided EncryptionServiceDelegate implementation that simply Base64 encodes the 
+<p>The <a href="/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/test/Base64EncryptionService.java">Base64EncryptionService</a> is a provided EncryptionServiceDelegate implementation that simply Base64 encodes the 
 plaintext and decodes the Base64 string back to plaintext for decryption. This should only be used for testing purposes 
 and should never be made available in a production deployment.
 There is no keyConfiguration required for Base64EncryptionService.
 <br>
 <br></p>
 <h2 id="identity-encryption-service-delegate">Identity Encryption Service Delegate<a class="headerlink" href="#identity-encryption-service-delegate" title="Permanent link">&para;</a></h2>
-<p>The <a href="https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/test/IdentityEncryptionService.java">IdentityEncryptionService</a> is a provided EncryptionServiceDelegate implementation that basically does nothing. 
+<p>The <a href="/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/test/IdentityEncryptionService.java">IdentityEncryptionService</a> is a provided EncryptionServiceDelegate implementation that basically does nothing. 
 It simply stores the plaintext as is and returns the same plaintext for decryption. This should only be used for testing 
 purposes and should never be made available in a production deployment. 
 There is no keyConfiguration required for Base64EncryptionService.
