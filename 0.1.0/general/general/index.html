@@ -10,8 +10,6 @@
       
       
       
-        <link rel="canonical" href="https://bitstep-ie.github.io/mango4j-crypto/0.1.0/general/general/">
-      
       
         <link rel="prev" href="../../delegates/aws-delegate/">
       
@@ -668,7 +666,7 @@ HMAC data for lookup or unique constraint purposes.</p>
 Encryption Service Delegate'. What this means is that an infinite number of approaches can be used to
 perform the cryptographic operations by allowing developers to supply their own Encryption Service Delegates. Just
 create your own subclass of
-the <a href="/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/EncryptionServiceDelegate.java">EncryptionServiceDelegate</a>
+the <a href="https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/EncryptionServiceDelegate.java">EncryptionServiceDelegate</a>
 class and implement the abstract methods. Coupled with the CryptoKey objects this allows applications to support
 multiple
 types of cryptographic providers or different cryptographic approaches depending on application requirements. This also
@@ -719,11 +717,11 @@ with the following object:</p>
 <p><em>usage:</em> What this key will be used for (either encryption or HMAC)</p>
 <p><em>type:</em> The type of the Encryption Service Delegate that this key will use to carry out its cryptographic operations.
 This must match the value returned from the
-desired <a href="/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/EncryptionServiceDelegate.java#L17">EncryptionServiceDelegate.supportedCryptoKeyType()</a>
+desired <a href="https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/EncryptionServiceDelegate.java#L17">EncryptionServiceDelegate.supportedCryptoKeyType()</a>
 implementation.
 <br>
 For example: The
-included <a href="/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/wrapped/CachedWrappedKeyEncryptionService.java#251">CacheWrappedKeyEncryptionService.supportedCryptoKeyType()</a>
+included <a href="https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/wrapped/CachedWrappedKeyEncryptionService.java#251">CacheWrappedKeyEncryptionService.supportedCryptoKeyType()</a>
 returns the value "CACHED_WRAPPED", so if you wanted to use that Encryption Service Delegate implementation then you
 would have a CryptoKey object with this 'type' field set to "CACHED_WRAPPED". At runtime the library matches the
 CryptoKeys with their corresponding EncryptionServiceDelegates by comparing this 'type' field. If you create you own
@@ -742,9 +740,9 @@ A big advantage of using CryptoKey objects to represent cryptographic key inform
 abstracted. It could also allow you to rotate from one type of key to another (e.g. AWS_KMS to AZURE_DEDICATED_HSM) with no application code changes. Or you could support different
 encryption delegates in different regions without having to write any custom application code to support that.</p>
 <h2 id="ciphertext-representation">Ciphertext representation<a class="headerlink" href="#ciphertext-representation" title="Permanent link">&para;</a></h2>
-<p>When <a href="/mango4j-crypto/src/main/java/ie/bitstep/mango/crypto/CryptoShield.java#L202">CryptoShield.encrypt()</a>
+<p>When <a href="https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto/src/main/java/ie/bitstep/mango/crypto/CryptoShield.java#L202">CryptoShield.encrypt()</a>
 is called on an object the library will set
-the <a href="/mango4j-crypto/src/main/java/ie/bitstep/mango/crypto/annotations/EncryptedData.java">@EncryptedData</a>
+the <a href="https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto/src/main/java/ie/bitstep/mango/crypto/annotations/EncryptedData.java">@EncryptedData</a>
 field in the object to the calculated ciphertext.
 This final ciphertext is represented in a standardised way for encryption (not HMACs). Instead of just returning the
 straight
@@ -980,7 +978,7 @@ there would still exist a race condition in your code which can result in 2 user
 </ul>
 <p>To remedy this you need to implement particular approaches to calculating and storing the HMACs for your entity fields.
 The following sections detail some of these approaches, all of which are supported in
-the <a href="/README.md">mango4j-crypto</a> library.</p>
+the <a href="{{ site.baseurl }}/ README.md">mango4j-crypto</a> library.</p>
 <h1 id="hmac-strategies">HMAC Strategies<a class="headerlink" href="#hmac-strategies" title="Permanent link">&para;</a></h1>
 <p>There are several designs you can choose to work with HMACs in your code depending on your application's ability to 
 tolerate or circumvent the challenges documented above (if they apply). So this section will discuss the ones supported 
