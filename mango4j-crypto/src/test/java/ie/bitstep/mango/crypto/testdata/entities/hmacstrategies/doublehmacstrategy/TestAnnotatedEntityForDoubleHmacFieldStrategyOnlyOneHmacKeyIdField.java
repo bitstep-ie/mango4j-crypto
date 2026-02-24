@@ -37,9 +37,9 @@ public class TestAnnotatedEntityForDoubleHmacFieldStrategyOnlyOneHmacKeyIdField 
 
 	private String panHmac2;
 
-	private String someOtherHmacValueHmac1;
+	private String someOtherHmacValueHmac1; // NOSONAR - Need this field to test that the DoubleHmacStrategy is correctly applied to all fields annotated with @Hmac, even if they are not annotated with @Encrypt. Also need this field to test that the correct HMAC key is used for each field.
 
-	private String someOtherHmacValueHmac2;
+	private String someOtherHmacValueHmac2; // NOSONAR - Need this field to test that the DoubleHmacStrategy is correctly applied to all fields annotated with @Hmac, even if they are not annotated with @Encrypt. Also need this field to test that the correct HMAC key is used for each field.
 
 	@HmacKeyId
 	private String hmacKeyId1;

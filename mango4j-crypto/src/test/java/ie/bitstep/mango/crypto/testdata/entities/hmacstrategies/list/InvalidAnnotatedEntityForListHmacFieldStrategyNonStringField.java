@@ -92,7 +92,7 @@ public class InvalidAnnotatedEntityForListHmacFieldStrategyNonStringField implem
 
 	@Override
 	public void setLookups(Collection<CryptoShieldHmacHolder> hmacHolder) {
-
+		// Only used for test validation, so can be left empty
 	}
 
 	@Override
@@ -102,7 +102,7 @@ public class InvalidAnnotatedEntityForListHmacFieldStrategyNonStringField implem
 
 	@Override
 	public void setUniqueValues(Collection<CryptoShieldHmacHolder> hmacHolder) {
-
+		// Only used for test validation, so can be left empty
 	}
 
 	@Override

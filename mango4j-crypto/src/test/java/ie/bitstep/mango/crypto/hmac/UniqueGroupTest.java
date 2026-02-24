@@ -16,7 +16,7 @@ class UniqueGroupTest {
 	private static final String TEST_GROUP_NAME = "test-group";
 	private static final int TEST_GROUP_ORDER = 1;
 
-	private String someTestFieldWithoutUniqueGroupAnnotation;
+	private String someTestFieldWithoutUniqueGroupAnnotation; // NOSONAR - Used in this test class to test behavior of UniqueGroup when a field without the annotation is added
 
 	@UniqueGroup(name = TEST_GROUP_NAME, order = TEST_GROUP_ORDER)
 	private String someTestFieldWithUniqueGroupAnnotation;

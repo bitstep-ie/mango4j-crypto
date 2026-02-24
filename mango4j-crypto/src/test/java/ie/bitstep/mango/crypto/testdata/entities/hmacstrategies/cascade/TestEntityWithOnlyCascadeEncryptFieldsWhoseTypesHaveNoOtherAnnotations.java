@@ -11,5 +11,5 @@ public class TestEntityWithOnlyCascadeEncryptFieldsWhoseTypesHaveNoOtherAnnotati
 	@CascadeEncrypt
 	private NothingAnnotatedEntity nothingAnnotatedEntity2;
 
-	private NothingAnnotatedEntity nothingAnnotatedEntityNotTraversed;
+	private NothingAnnotatedEntity nothingAnnotatedEntityNotTraversed; // NOSONAR - Need this field to test that only fields annotated with @CascadeEncrypt are traversed
 }
