@@ -24,16 +24,16 @@
     <p align="center">
         A framework for implementing Application Level Encryption in java applications.
         <br />
-        <a href="https://bitstep-ie.github.io/mango4j-crypto/latest/guide/guide"><strong>📚 Explore the Official Guide »</strong></a>
+        <a href="https://bitstep-ie.github.io/mango4j-crypto/latest/guide/guide" target="_blank"><strong>📚 Explore the Official Guide »</strong></a>
         <br />
         <br />
-        <a href="https://github.com/bitstep-ie/mango4j-examples">🔎 View Example Application</a>
+        <a href="https://github.com/bitstep-ie/mango4j-examples" target="_blank">🔎 View Example Application</a>
         &middot;
-        <a href="https://github.com/bitstep-ie/mango4j-crypto/issues">
+        <a href="https://github.com/bitstep-ie/mango4j-crypto/issues/new?template=bug_report.md" target="_blank">
             🐛 Report Bug
         </a>
         &middot;
-        <a href="https://github.com/bitstep-ie/mango4j-crypto/issue">
+        <a href="https://github.com/bitstep-ie/mango4j-crypto/issues/new?template=feature_request.md" target="_blank">
             💡 Request Feature
         </a>
     </p>
