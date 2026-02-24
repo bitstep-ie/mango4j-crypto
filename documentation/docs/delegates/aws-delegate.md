@@ -25,7 +25,7 @@ Supported algorithms for encryption/decryption currently are: SYMMETRIC_DEFAULT
 Supported algorithms for HMAC generation currently are: HMAC_SHA_224, HMAC_SHA_256, HMAC_SHA_384, HMAC_SHA_512,   
 
 
-# AWS KMS Limitations
+## AWS KMS Limitations
 For applications which need to encrypt payloads larger than 4k and also want more control over how cryptographic operations 
 are carried out, Amazon also provide an 
 [AWS Encryption SDK](https://docs.aws.amazon.com/encryption-sdk/latest/developer-guide/introduction.html) which 
@@ -40,7 +40,7 @@ For performance critical functionality you can also check out the
 [Cache Wrapped Key Encryption Service Delegate](/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/wrapped/CachedWrappedKeyEncryptionService.java) 
 with an AWS_KMS (this delegate) CryptoKey as the wrapping key
 
-# How to Use
+## How to Use
 Add the following dependency to your pom
 
 ```xml

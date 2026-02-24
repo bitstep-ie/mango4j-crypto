@@ -24,7 +24,7 @@
     <p align="center">
         A framework for implementing Application Level Encryption in java applications.
         <br />
-        <a href="https://bitstep-ie.github.io/mango4j-crypto/latest/guide/guide" target="_blank"><strong>📚 Explore the Official Guide »</strong></a>
+        <a href="https://bitstep-ie.github.io/mango4j-crypto/latest" target="_blank"><strong>📚 Explore the Official Guide »</strong></a>
         <br />
         <br />
         <a href="https://github.com/bitstep-ie/mango4j-examples" target="_blank">🔎 View Example Application</a>
