@@ -16,10 +16,17 @@ jobs:
     if: ${{ github.event.inputs.confirm == 'yes' }}
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
+
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          token: ${{ steps.app-token.outputs.token }}
 
       - name: Set up Python
         uses: actions/setup-python@v5

@@ -14,7 +14,7 @@
 
     <groupId>ie.bitstep.mango</groupId>
     <artifactId>mango4j-crypto-framework</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>untagged-74cc5505b7abb39e65aa-SNAPSHOT</version>
 
     <properties>
         <java.version>17</java.version>
@@ -38,6 +38,7 @@
         <pitest.junit5.plugin.version>1.2.3</pitest.junit5.plugin.version>
 
         <!--    Dependencies versions    -->
+        <mango4j.version>1.0.0</mango4j.version>
         <junit-jupiter.version>6.0.2</junit-jupiter.version>
         <junit-mockito.version>5.21.0</junit-mockito.version>
         <mockito-core.version>5.21.0</mockito-core.version>
@@ -61,8 +62,15 @@
 
             <!--     Deploy       -->
             <plugin>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>${maven.deploy.plugin.version}</version>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.9.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>central</publishingServerId>
+                    <waitUntil>published</waitUntil>
+                    <deployAtEnd>true</deployAtEnd>
+                </configuration>
             </plugin>
 
             <plugin>
@@ -70,6 +78,7 @@
                 <artifactId>maven-help-plugin</artifactId>
                 <version>${maven.help.plugin}</version>
             </plugin>
+
 
             <!--      Surefire      -->
             <plugin>
@@ -191,6 +200,36 @@
                         <goals>
                             <goal>report</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                    <id>sign-artifacts</id>
+                    <phase>verify</phase>
+                    <goals>
+                        <goal>sign</goal>
+                    </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Sources -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                    <id>attach-sources</id>
+                    <goals>
+                        <goal>jar</goal>
+                    </goals>
                     </execution>
                 </executions>
             </plugin>

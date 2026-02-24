@@ -59,7 +59,7 @@ public class InvalidAnnotatedEntityForListHmacFieldStrategyUniqueFieldWithoutUni
 
 	@Override
 	public void setLookups(Collection<CryptoShieldHmacHolder> hmacHolder) {
-
+		// Only used for test validation, so can be left empty
 	}
 
 	@Override

@@ -24,16 +24,16 @@
     <p align="center">
         A framework for implementing Application Level Encryption in java applications.
         <br />
-        <a href="documentation/docs/guide/guide.md"><strong>📚 Explore the Official Guide »</strong></a>
+        <a href="https://bitstep-ie.github.io/mango4j-crypto/latest" target="_blank"><strong>📚 Explore the Official Guide »</strong></a>
         <br />
         <br />
-        <a href="https://github.com/bitstep-ie/mango4j-examples">🔎 View Example Application</a>
+        <a href="https://github.com/bitstep-ie/mango4j-examples" target="_blank">🔎 View Example Application</a>
         &middot;
-        <a href="https://github.com/bitstep-ie/mango4j-crypto/issues">
+        <a href="https://github.com/bitstep-ie/mango4j-crypto/issues/new?template=bug_report.md" target="_blank">
             🐛 Report Bug
         </a>
         &middot;
-        <a href="https://github.com/bitstep-ie/mango4j-crypto/issue">
+        <a href="https://github.com/bitstep-ie/mango4j-crypto/issues/new?template=feature_request.md" target="_blank">
             💡 Request Feature
         </a>
     </p>
@@ -53,12 +53,12 @@ This library is not an encryption provider or standard, it's a framework. Just l
 application, Mango4j-crypto isn't encryption. Mango4j-crypto enables you to implement Application Level Encryption in 
 your applications quickly and effectively, just like Springboot enables you to build a web application quickly 
 and effectively. It allows you to use any cryptographic approaches you need and doesn't tie you into any particular 
-cryptographic provider. This will make more sense after you read [the official general documentation](documentation/docs/general/general.md), so 
+cryptographic provider. This will make more sense after you read [the official general documentation](https://bitstep-ie.github.io/mango4j-crypto/latest/general/general/), so 
 please read that to get up to speed. The library has extensive javadocs also, so it's encouraged for developers to read 
 those.
 
 The following is a basic quick start guide to getting started with the library. For more complete instructions please read [the 
-official guide](documentation/docs/guide/guide.md) instead.
+official guide](https://bitstep-ie.github.io/mango4j-crypto/latest/guide/guide) instead.
 
 You can also check out the mango4j-crypto-example demo module in the 
 [mango4j-examples](https://github.com/bitstep-ie/mango4j-examples) repository for a
@@ -252,4 +252,4 @@ Likewise, to decrypt an entity you can call:
 
 And this will decrypt and reset all the confidential (transient) fields in your entity back to their original values.
 
-Please see [the official guide](documentation/docs/guide/guide.md) for a more indepth explanation of all supported features. 
+Please see [the official guide](https://bitstep-ie.github.io/mango4j-crypto/latest/guide/guide) for a more indepth explanation of all supported features. 
