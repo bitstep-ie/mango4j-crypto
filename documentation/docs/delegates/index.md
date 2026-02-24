@@ -4,7 +4,7 @@ In mango4j-crypto all the code for cryptographic operations is hidden behind an 
 Encryption Service Delegate'. What this means is that an infinite number of approaches can be used to
 perform the cryptographic operations by allowing developers to supply their own Encryption Service Delegates. Just
 create your own subclass of
-the [EncryptionServiceDelegate](/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/EncryptionServiceDelegate.java)
+the [EncryptionServiceDelegate](https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/EncryptionServiceDelegate.java)
 class and implement the abstract methods. Coupled with the CryptoKey objects this allows applications to support
 multiple
 types of cryptographic providers or different cryptographic approaches depending on application requirements. This also
