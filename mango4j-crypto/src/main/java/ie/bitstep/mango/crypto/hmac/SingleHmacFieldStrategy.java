@@ -98,7 +98,7 @@ public class SingleHmacFieldStrategy implements HmacStrategy {
 		}
 
 		entityHmacKeyIdField = hmacKeyIdFields.get(0);
-		entityHmacKeyIdField.setAccessible(true);
+		entityHmacKeyIdField.setAccessible(true); // NOSONAR - mango4j-crypto revolves around reflection
 	}
 
 	/**
@@ -132,7 +132,7 @@ public class SingleHmacFieldStrategy implements HmacStrategy {
 	}
 
 	private void setHmacKeyId(Object entity, CryptoKey hmacKeyToUse) throws IllegalAccessException {
-		entityHmacKeyIdField.set(entity, hmacKeyToUse.getId());
+		entityHmacKeyIdField.set(entity, hmacKeyToUse.getId()); // NOSONAR - mango4j-crypto revolves around reflection
 	}
 
 	/**

@@ -80,12 +80,12 @@ public class DoubleHmacFieldStrategy implements HmacStrategy {
 				try {
 					if (hmacHolders.size() == 1) {
 						// if there's only 1 HMAC key then just put the same HMAC value into the 1st field too
-						targetHmacFields.get(0).set(entity, hmacHolders.get(0).getValue()); // NOSONAR
-						entityHmacKeyIdFields.get(0).set(entity, hmacHolders.get(0).getCryptoKey().getId());
+						targetHmacFields.get(0).set(entity, hmacHolders.get(0).getValue()); // NOSONAR - mango4j-crypto revolves around reflection
+						entityHmacKeyIdFields.get(0).set(entity, hmacHolders.get(0).getCryptoKey().getId()); // NOSONAR - mango4j-crypto revolves around reflection
 					} else {
 						// if there's 2 HMAC keys then put the 2nd HMAC value (the one with the old key) into the 1st field
-						targetHmacFields.get(0).set(entity, hmacHolders.get(1).getValue()); // NOSONAR
-						entityHmacKeyIdFields.get(0).set(entity, hmacHolders.get(1).getCryptoKey().getId());
+						targetHmacFields.get(0).set(entity, hmacHolders.get(1).getValue()); // NOSONAR - mango4j-crypto revolves around reflection
+						entityHmacKeyIdFields.get(0).set(entity, hmacHolders.get(1).getCryptoKey().getId()); // NOSONAR - mango4j-crypto revolves around reflection
 					}
 				} catch (Exception e) {
 					throw new NonTransientCryptoException(String.format("An error occurred trying to set the HMAC field on entity %s: %s", entity.getClass().getSimpleName(), e.getClass().getSimpleName()), e);
@@ -176,8 +176,8 @@ public class DoubleHmacFieldStrategy implements HmacStrategy {
 						.toList();
 				hmacStrategyHelper.encryptionService().hmac(hmacHolders);
 				// Put the 1st HMAC value (the one with the most recent key) into the 2nd field
-				targetHmacFields.get(1).set(entity, hmacHolders.get(0).getValue()); // NOSONAR
-				entityHmacKeyIdFields.get(1).set(entity, hmacHolders.get(0).getCryptoKey().getId());
+				targetHmacFields.get(1).set(entity, hmacHolders.get(0).getValue()); // NOSONAR - mango4j-crypto revolves around reflection
+				entityHmacKeyIdFields.get(1).set(entity, hmacHolders.get(0).getCryptoKey().getId()); // NOSONAR - mango4j-crypto revolves around reflection
 				doubleHmacFieldStrategyDelegate.setFieldForOlderHmacKey(entity, hmacHolders, targetHmacFields);
 			} catch (TransientCryptoException | NonTransientCryptoException e) {
 				throw e;

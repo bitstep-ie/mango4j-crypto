@@ -55,7 +55,8 @@ jobs:
             -Dsonar.host.url=${SONAR_HOST_URL} \
             -Dsonar.token=${SONAR_TOKEN} \
             -Dsonar.branch.name=${GITHUB_REF_NAME} \
-            -Dsonar.coverage.exclusions=**/test/**
+            -Dsonar.exclusions=**/keyrotation/** \
+            -Dsonar.coverage.exclusions=**/test/**,**/keyrotation/**
 
       - name: SonarQube Scan-PRs
         if: github.event_name == 'pull_request'
@@ -77,6 +78,7 @@ jobs:
             -Dsonar.pullrequest.key=$PR_ID \
             -Dsonar.pullrequest.branch=$PR_BRANCH \
             -Dsonar.pullrequest.base=$PR_BASE \
+            -Dsonar.exclusions=**/keyrotation/** \
             -Dsonar.coverage.exclusions=**/test/**,**/keyrotation/**
 
 
