@@ -1,0 +1,25 @@
+# 'documentation' label to any changes within 'documentation' and 'docs' folder or any subfolders
+documentation:
+  - changed-files:
+      - any-glob-to-any-file: ['documentation/**','docs/**']
+
+# 'enhancement' label to any changes within 'src' folders or any subfolders
+enhancement:
+  - changed-files:
+      - any-glob-to-any-file: ['**/mango4j-crypto*/src/**']
+
+# 'config' label to any changes within '.github' folder or any subfolders and checkstyle
+config:
+  - changed-files:
+      - any-glob-to-any-file: ['.github/**','checkstyle.xml', '.gitignore']
+
+# 'dependencies' label to any pom.xml changes
+dependencies:
+  - changed-files:
+      - any-glob-to-any-file: ['**/pom.xml']
+
+
+# 'legal' Label for these type of files
+legal:
+  - changed-files:
+      - any-glob-to-any-file: ["LICENSE*", "NOTICES*", "CODE_OF_CONDUCT*", "CONTRIBUTING*", "SECURITY*"]
