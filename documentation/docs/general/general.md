@@ -75,7 +75,7 @@ provider to another without needing to change any application code (and potentia
 application).
 <br>
 <br>
-Mang4j-crypto comes with a few built-in Encryption Service Delegate implementations:
+Mango4j-crypto comes with a few built-in Encryption Service Delegate implementations:
 <br>
 
 * Production: Wrapped Delegate, Cache Wrapped Delegate
