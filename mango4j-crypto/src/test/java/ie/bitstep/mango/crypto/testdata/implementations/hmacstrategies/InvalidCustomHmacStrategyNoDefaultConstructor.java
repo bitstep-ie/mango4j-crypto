@@ -10,6 +10,6 @@ public class InvalidCustomHmacStrategyNoDefaultConstructor implements HmacStrate
 
 	@Override
 	public void hmac(Object entity) {
-
+		// Only used for test validation, so can be left empty
 	}
 }

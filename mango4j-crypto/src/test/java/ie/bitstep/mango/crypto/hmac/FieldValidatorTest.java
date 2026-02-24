@@ -39,8 +39,9 @@ class FieldValidatorTest {
 	}
 
 	@Test
-	void constructorUniqueGroupFieldButNoUniquePurpose() {
-		assertThatThrownBy(() -> FieldValidator.validateSourceHmacField(TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroupWithNoUniquePurpose.class.getDeclaredField("pan"), TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroupWithNoUniquePurpose.class))
+	void constructorUniqueGroupFieldButNoUniquePurpose() throws NoSuchFieldException {
+		Field panField = TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroupWithNoUniquePurpose.class.getDeclaredField("pan");
+		assertThatThrownBy(() -> FieldValidator.validateSourceHmacField(panField, TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroupWithNoUniquePurpose.class))
 				.isInstanceOf(NonTransientCryptoException.class)
 				.hasMessage("TestAnnotatedEntityForListHmacFieldStrategyWithHmacOnlyUniqueGroupWithNoUniquePurpose has a HMAC field named pan marked with @UniqueGroup with but it does not have a purpose of UNIQUE");
 	}
