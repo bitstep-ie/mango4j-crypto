@@ -10,7 +10,7 @@ An example entity is as follows:
 ### Encryption
 
 
-```java language=java
+```java
 import ie.bitstep.mango.crypto.annotations.Encrypt;
 import ie.bitstep.mango.crypto.annotations.EncryptedData;
 import ie.bitstep.mango.crypto.annotations.Hmac;
@@ -105,7 +105,7 @@ Before we enable mango4j-crypto to encrypt/decrypt our UserProfile entity we nee
 [CryptoKeyProvider](/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/providers/CryptoKeyProvider.java) 
 interface for our application. If you store your CryptoKey objects in a database it might look something like this:
 
-```java language=java
+```java
 package ie.bitstep.mango.examples.crypto.example.common;
 
 import ie.bitstep.mango.crypto.core.domain.CryptoKey;
@@ -179,8 +179,7 @@ public class ApplicationCryptoKeyProvider implements CryptoKeyProvider {
 * Finally we just need to create an instance (bean) for CryptoShield in your application config, passing in a list of all your application
   entities which use @Encrypt or @Hmac, like the following:
 
-```java language=java
-
+```java
 @Bean
 public CryptoShield cryptoShield(CryptoKeyProvider cryptoKeyProvider) {
 	return new CryptoShield.Builder()
@@ -207,7 +206,7 @@ public CryptoShield cryptoShield(CryptoKeyProvider cryptoKeyProvider) {
 
 Then your application code can encrypt your entities by calling:
 
-```java language=java
+```java
         cryptoShield.encrypt(userProfile);
 ```
 And this will encrypt all the confidential fields in your entity and set the resulting ciphertext into the field marked 
@@ -218,7 +217,7 @@ with @EncryptedData.
 <br>
 Likewise, to decrypt an entity you can call:
 
-```java language=java
+```java
         cryptoShield.decrypt(userProfile);
 ```
 
@@ -241,7 +240,7 @@ Strategy. The configuration is as follows:
 2. For each entity that uses this library create a corresponding implementation of the RekeyService interface.
 3. Configure a RekeyScheduler in your config class, like so:
 
-```java language=java
+```java
 
 @Bean
 public RekeyScheduler rekeyScheduler(CryptoShield cryptoShield,

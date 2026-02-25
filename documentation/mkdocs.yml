@@ -37,7 +37,10 @@ extra:
     provider: mike
 
 nav:
-  - Guide: guide/guide.md
+  - Guide: 
+    - Guide: guide/guide.md
+    - Annotations: guide/annotations.md
+    - Hmac: guide/hmac.md
   - Delegates:
       - Delegates: delegates/index.md
       - Test Delegates: delegates/test-delegates.md
