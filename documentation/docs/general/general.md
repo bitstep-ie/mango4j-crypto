@@ -1,4 +1,4 @@
-# General documentation
+# Application Level Encryption
 
 ## Introduction
 

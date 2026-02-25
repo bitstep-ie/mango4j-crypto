@@ -12,5 +12,5 @@
 
 - [Official Guide](guide/guide.md)
 - [Encryption Delegates](delegates/test-delegates.md)
-- [General Documentation on Application Level Encryption](general/general.md)
+- [Application Level Encryption (ALE)](general/general.md)
 - [Mango4J Crypto Example Application](https://github.com/bitstep-ie/mango4j-examples)
