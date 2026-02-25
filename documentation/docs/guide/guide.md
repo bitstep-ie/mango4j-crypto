@@ -279,38 +279,41 @@ KEY_ON or KEY_OFF this RekeyScheduler will trigger the rekeying process the next
 > doesn't have HMACs). It's just that HMAC rekey is currently only supported for entities that use the List HMAC Strategy.
 
 
-
 ## Encryption Service Delegates
-Mango4J Crypto uses pluggable Encryption Service Delegates to carry out cryptographic operations at runtime. There are several encryption service delegates currently supported (and more to come). Please see the 
-[delegates section](../delegates) for documentation on each. 
+In mango4j-crypto all the code for cryptographic operations is hidden behind an abstraction we refer to as the '
+Encryption Service Delegate'. What this means is that an infinite number of approaches can be used to perform the
+cryptographic operations by allowing developers to supply their own Encryption Service Delegates. Just create your own
+subclass of the EncryptionServiceDelegate class and implement the abstract methods. Coupled with the CryptoKey objects
+this allows applications to support multiple types of cryptographic providers or different cryptographic approaches
+depending on application requirements. This also allows applications to support different cryptographic providers at
+the same time (e.g. different regions using different providers) without needing to change any application code.
+And it also allows keys to be rotated from one provider to another without needing to change any application code
+(and potentially without even restarting the application).
 
-You can also create your own EncryptionServiceDelegate implementations by subclassing the
-[EncryptionServiceDelegate](https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/EncryptionServiceDelegate.java) class and
-implementing the abstract methods with your own logic using your cryptographic provider of choice.
+Mango4j-crypto comes with a few built-in Encryption Service Delegate implementations which you can find
+[documented here](../delegates/delegates.md).
 
-## HMAC
-
-### HMAC Strategies
+## HMAC Strategies
 
 A core concept in the mango4j-crypto library is that of HMAC strategies. There are various ways that an application
 could choose to implement key-rotation friendly HMAC functionality (please read the 
-[general documentation](../general/general.md#hmac-key-rotation-challenges) for a detailed
+[general documentation](../general/rotation.md#hmac-key-rotation-challenges) for a detailed
 explanation of this material) and this library provides 3 
-[HMAC Strategies](../general/general.md#hmac-strategies) out of the box.
+[HMAC Strategies](../general/hmac-strategies/hmac-strategies.md) out of the box.
 
 You can choose which ones to apply to your application entities by using the corresponding class level annotation. The
 library authors strongly advise application developers to consider
 the @ListHmacStrategy unless there are strong reasons not to. Currently, the library supports the following (in
 order of preference of the mango4j-crypto team):
-- [@ListHmacStrategy](#list-hmac-strategy)
-- [@SingleHmacStrategy](#single-hmac-strategy)
-- [@DoubleHmacStrategy](#double-hmac-strategy)
+- [@ListHmacStrategy](../general/hmac-strategies/list-hmac.md)
+- [@SingleHmacStrategy](../general/hmac-strategies/single-hmac.md)
+- [@DoubleHmacStrategy](../general/hmac-strategies/double-hmac.md)
 
 But we'll start with the Single HMAC Strategy as that's the easiest to understand. In this example we also need to 
 generate HMACs for both the pan and username fields as they both need to be searchable and username needs to be unique 
 in our application.
 
-#### Single HMAC Strategy
+### Single HMAC Strategy
 
 ```java language=java
 import ie.bitstep.mango.crypto.annotations.Encrypt;
@@ -409,7 +412,7 @@ public class UserProfileEntity {
 
 <br>
 
-#### List HMAC Strategy
+### List HMAC Strategy
 
 
 ```java language=java
@@ -550,7 +553,7 @@ it with an SQL DB check out the [mango4j-crypto-example](https://github.com/bits
 > make sure that the setLookup() and setUniqueValues() methods _completely replace_ the existing lists! Do not append to
 > the existing lists!!!
 
-##### HMAC Tokenizers
+#### HMAC Tokenizers
 
 If using the ListHmacStrategy for an entity you can make use of HMAC Tokenizers by specifying them in the @Hmac
 annotation's HmacTokenizers method. Like:
@@ -587,9 +590,9 @@ order number (which you must never change!) and the library will calculate a sin
 > NOTE: Mixing HMAC and cleartext fields in a unique group is fine. But at least one field in the group must be marked 
 > with @Hmac otherwise the library will throw an error on startup.
 
-#### Double HMAC Strategy
+### Double HMAC Strategy
 
-Please read the [the official general documentation](../general/general.md#double-hmac-strategy) for a description 
+Please read the [the official general documentation](../general/hmac-strategies/double-hmac.md) for a description 
 of the Double HMAC Strategy and for when you might want to use it. The entity definition when using it is similar to the 
 one for the Single HMAC Strategy. Below is an example entity definition.
 
@@ -697,20 +700,6 @@ public class UserProfileEntity {
 >   [mango4j-examples code](https://github.com/bitstep-ie/mango4j-examples/blob/main/mango4j-crypto-example/src/main/java/ie/bitstep/mango/examples/crypto/example/doublehmacstrategy/service/UserProfileService.java#L62) to see an example of what this might look like.
 
 <br>
-
-## Encryption Service Delegates
-In mango4j-crypto all the code for cryptographic operations is hidden behind an abstraction we refer to as the ' 
-Encryption Service Delegate'. What this means is that an infinite number of approaches can be used to perform the 
-cryptographic operations by allowing developers to supply their own Encryption Service Delegates. Just create your own 
-subclass of the EncryptionServiceDelegate class and implement the abstract methods. Coupled with the CryptoKey objects 
-this allows applications to support multiple types of cryptographic providers or different cryptographic approaches 
-depending on application requirements. This also allows applications to support different cryptographic providers at 
-the same time (e.g. different regions using different providers) without needing to change any application code. 
-And it also allows keys to be rotated from one provider to another without needing to change any application code 
-(and potentially without even restarting the application).
-
-Mango4j-crypto comes with a few built-in Encryption Service Delegate implementations which you can find 
-[documented here](../delegates).
 
 
 ## Annotations
