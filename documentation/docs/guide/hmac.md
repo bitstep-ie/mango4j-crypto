@@ -22,7 +22,7 @@ in our application.
 
 ### Single HMAC Strategy
 
-```java language=java
+```java
 import ie.bitstep.mango.crypto.annotations.Encrypt;
 import ie.bitstep.mango.crypto.annotations.EncryptedData;
 import ie.bitstep.mango.crypto.annotations.Hmac;
@@ -122,7 +122,7 @@ public class UserProfileEntity {
 ### List HMAC Strategy
 
 
-```java language=java
+```java
 import ie.bitstep.mango.crypto.annotations.Encrypt;
 import ie.bitstep.mango.crypto.annotations.EncryptedData;
 import ie.bitstep.mango.crypto.annotations.EncryptionKeyId;
@@ -266,7 +266,7 @@ If using the ListHmacStrategy for an entity you can make use of HMAC Tokenizers 
 annotation's HmacTokenizers method. Like:
 
 
-```java language=java
+```java
 @Hmac(HmacTokenizers = {PanTokenizer.class})
 private transient String pan;
 ```
@@ -303,7 +303,7 @@ Please read the [the official general documentation](../general/general.md#doubl
 of the Double HMAC Strategy and for when you might want to use it. The entity definition when using it is similar to the 
 one for the Single HMAC Strategy. Below is an example entity definition.
 
-```java language=java
+```java
 import ie.bitstep.mango.crypto.annotations.Encrypt;
 import ie.bitstep.mango.crypto.annotations.EncryptedData;
 import ie.bitstep.mango.crypto.annotations.Hmac;

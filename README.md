@@ -82,7 +82,7 @@ Add the following dependency to your pom
 ```
 
 Add the appropriate annotations to your entity definition, for example:
-```java language=java
+```java
 import ie.bitstep.mango.crypto.annotations.Encrypt;
 import ie.bitstep.mango.crypto.annotations.EncryptedData;
 import ie.bitstep.mango.crypto.annotations.Hmac;
@@ -160,7 +160,7 @@ public class UserProfileEntity {
 Create your implementation of the [CryptoKeyProvider](/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/providers/CryptoKeyProvider.java) 
 interface. If you store your CryptoKey objects in a database it might look something like this:
 
-```java language=java
+```java
 package ie.bitstep.mango.examples.crypto.example.common;
 
 import ie.bitstep.mango.crypto.core.domain.CryptoKey;
@@ -219,7 +219,7 @@ public class ApplicationCryptoKeyProvider implements CryptoKeyProvider {
 Create an instance (bean) for CryptoShield in your application config, passing in a list of all your application
   entities which use @Encrypt or @Hmac, for example:
 
-```java language=java
+```java
 
 @Bean
 public CryptoShield cryptoShield(CryptoKeyProvider cryptoKeyProvider) {
@@ -235,7 +235,7 @@ public CryptoShield cryptoShield(CryptoKeyProvider cryptoKeyProvider) {
 
 Then your application code can encrypt your entities by calling:
 
-```java language=java
+```java
         cryptoShield.encrypt(userProfile);
 ```
 And this will encrypt all the confidential fields in your entity and set the resulting ciphertext into the field marked 
@@ -246,7 +246,7 @@ with @EncryptedData.
 <br>
 Likewise, to decrypt an entity you can call:
 
-```java language=java
+```java
         cryptoShield.decrypt(userProfile);
 ```
 

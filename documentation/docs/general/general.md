@@ -65,7 +65,7 @@ In mango4j-crypto all the code for cryptographic operations is hidden behind an 
 Encryption Service Delegate'. What this means is that an infinite number of approaches can be used to
 perform the cryptographic operations by allowing developers to supply their own Encryption Service Delegates. Just
 create your own subclass of
-the [EncryptionServiceDelegate](/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/EncryptionServiceDelegate.java)
+the [EncryptionServiceDelegate](https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/EncryptionServiceDelegate.java)
 class and implement the abstract methods. Coupled with the CryptoKey objects this allows applications to support
 multiple
 types of cryptographic providers or different cryptographic approaches depending on application requirements. This also
@@ -114,7 +114,7 @@ public class CryptoKey {
 
 *type:* The type of the Encryption Service Delegate that this key will use to carry out its cryptographic operations.
 This must match the value returned from the
-desired [EncryptionServiceDelegate.supportedCryptoKeyType()](/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/EncryptionServiceDelegate.java#L17)
+desired [EncryptionServiceDelegate.supportedCryptoKeyType()](https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/EncryptionServiceDelegate.java#L17)
 implementation.
 <br>
 For example: The
@@ -150,7 +150,7 @@ This final ciphertext is represented in a standardised way for encryption (not H
 straight
 ciphertext output it will return it as a JSON String with the following definition:
 
-```json language=json
+```json
 {
   "cryptoKeyId": "someKeyId",
   "iv": "someInitializationVector",
@@ -668,7 +668,7 @@ leads to messier search code.
    using the old HMAC key.
 9. Copy X_HMAC_2 column values into X_HMAC_1 columns for all fields in all records, something like:
 
-```sql language=sql
+```sql
 UPDATE table
 SET USERNAME_HMAC_1 = USERNAME_HMAC_2
 ```
