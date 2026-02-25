@@ -363,7 +363,9 @@ findByUsernameHmacIn(Collection<String> userNameHmacs);
    operations from the tenant's HMAC key list (that would be the HMAC key with the most recent CryptoKey.createdDate
    field).
 
-#### However, the previous solution still has major flaws!
+
+
+**However, the previous solution still has major flaws!**
 
 If your application is a multi-instance application and caches key information (both very likely in modern applications)
 then very big issues still remain.
@@ -490,6 +492,7 @@ definitions on the database irrelevant for most cases (but not all - so they're 
 
 Imagine the following scenario (for even just a single instance application):
 <br>
+
 * Username `john.doe@test.com` is not in the system
 * A new HMAC key has been created in the application with a valid key start time
 * A request comes in to create a new record for username `john.doe@test.com` (on thread 1) 1 millisecond _<ins>before</ins>_ 
