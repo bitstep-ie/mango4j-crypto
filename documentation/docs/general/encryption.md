@@ -71,7 +71,7 @@ keyArn" with the value of the AWS Key ID or Key ARN. Each Encryption Service Del
 configuration information it needs to carry out its operations so the application just needs to make sure that the right
 information is present in this map for the given key type.
 
-*keyStartTime:* Optional field which is only used for HMAC CryptoKeys. When used this can alleviate some of the shortcomings with the [Single HMAC Strategy](#single-hmac-strategy) that are described further in this document. If you are using this field it should be set when the CryptoKey is created in your application. It's very important to set this to some time in the future which is greater than the key cache time. i.e. by the time this ketStartTime date passes, all application instances should know about this key.
+*keyStartTime:* Optional field which is only used for HMAC CryptoKeys. When used this can alleviate some of the shortcomings with the [Single HMAC Strategy](hmac-strategies/single-hmac.md) that are described further in this document. If you are using this field it should be set when the CryptoKey is created in your application. It's very important to set this to some time in the future which is greater than the key cache time. i.e. by the time this ketStartTime date passes, all application instances should know about this key.
 
 <br>
 <br>
@@ -101,7 +101,7 @@ where:
 
 - *cryptoKeyId* is the identifier of the crypto key object (e.g. the CryptoKey.id field) in your system that was used to
   carry out the cryptographic operation
-- *iv* is the [Initialization Vector](#Whats-an-IV) that was used for the cryptographic operation
+- *iv* is the [Initialization Vector](faq.md#Whats-an-IV) that was used for the cryptographic operation
 - *data* is the actual output that was returned from the Encryption Service Delegate's encrypt() method, the ciphertext
   will be included here.
   Each delegate may return different data here depending on the cryptographic provider or method that it uses, or what

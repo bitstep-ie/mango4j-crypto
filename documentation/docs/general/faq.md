@@ -48,7 +48,7 @@ always unique for any encryption operation makes cryptanalysis more difficult to
 
 ## Why do I need to HMAC data in order to make it searchable?
 
-When we encrypt a piece of data we should use an [IV](#Whats-an-IV) as well as the secret key - so make sure to
+When we encrypt a piece of data we should use an [IV](faq.md#Whats-an-IV) as well as the secret key - so make sure to
 consider using IVs in any custom EncryptionServiceDelegate implementations you create for your application.
 Due to the fact that each time we encrypt a piece of data it never generates the same ciphertext this means
 that we cannot search on that attribute. It may be tempting to think that for a search operation you could encrypt the
@@ -118,7 +118,7 @@ When a piece of data is encrypted a reference to the encryption key is contained
 encrypted data. This means that it will always be possible
 to decrypt the data even if the current encryption key is changed (i.e. for a key rotation), assuming you didn't delete
 the old key. HMACs however are
-different, [HMACs don't have a reference to the HMAC key stored alongside them.](#Why-dont-HMACs-have-a-reference-to-the-HMAC-key-stored-alongside-them-the-same-way-encrypted-ciphertext-does)
+different, [HMACs don't have a reference to the HMAC key stored alongside them.](faq.md#Why-dont-HMACs-have-a-reference-to-the-HMAC-key-stored-alongside-them-the-same-way-encrypted-ciphertext-does)
 So, once a HMAC key is updated/rotated to a new HMAC key, some
 records will have HMACs calculated using the old key (since they haven't been recalculated yet) and some records will
 have HMACs calculated using the new key (new records and newly
