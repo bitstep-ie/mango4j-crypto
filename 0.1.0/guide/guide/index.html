@@ -14,7 +14,7 @@
       
       
       
-        <link rel="next" href="../../delegates/">
+        <link rel="next" href="../../delegates/test-delegates/">
       
       
         
@@ -247,7 +247,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../delegates/" class="md-tabs__link">
+        <a href="../../delegates/test-delegates/" class="md-tabs__link">
           
   
   
@@ -534,6 +534,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#encryption-service-delegates_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Encryption Service Delegates
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#annotations" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -651,34 +662,6 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../delegates/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Delegates
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
             
               
                 
@@ -966,6 +949,17 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#encryption-service-delegates_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Encryption Service Delegates
+      
+    </span>
+  </a>
   
 </li>
       
@@ -2168,6 +2162,18 @@ private transient String pan;
   <a href="https://github.com/bitstep-ie/mango4j-examples/blob/main/mango4j-crypto-example/src/main/java/ie/bitstep/mango/examples/crypto/example/doublehmacstrategy/service/UserProfileService.java#L62">mango4j-examples code</a> to see an example of what this might look like.</p>
 </blockquote>
 <p><br></p>
+<h2 id="encryption-service-delegates_1">Encryption Service Delegates<a class="headerlink" href="#encryption-service-delegates_1" title="Permanent link">&para;</a></h2>
+<p>In mango4j-crypto all the code for cryptographic operations is hidden behind an abstraction we refer to as the ' 
+Encryption Service Delegate'. What this means is that an infinite number of approaches can be used to perform the 
+cryptographic operations by allowing developers to supply their own Encryption Service Delegates. Just create your own 
+subclass of the EncryptionServiceDelegate class and implement the abstract methods. Coupled with the CryptoKey objects 
+this allows applications to support multiple types of cryptographic providers or different cryptographic approaches 
+depending on application requirements. This also allows applications to support different cryptographic providers at 
+the same time (e.g. different regions using different providers) without needing to change any application code. 
+And it also allows keys to be rotated from one provider to another without needing to change any application code 
+(and potentially without even restarting the application).</p>
+<p>Mango4j-crypto comes with a few built-in Encryption Service Delegate implementations which you can find 
+<a href="../delegates">documented here</a>.</p>
 <h2 id="annotations">Annotations<a class="headerlink" href="#annotations" title="Permanent link">&para;</a></h2>
 <p>The main annotations that developers will use are:</p>
 <h3 id="encrypt">@Encrypt<a class="headerlink" href="#encrypt" title="Permanent link">&para;</a></h3>
