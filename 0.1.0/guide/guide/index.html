@@ -1210,7 +1210,7 @@ An example entity is as follows:</p>
 </blockquote>
 <h3 id="cryptokey-provider">CryptoKey Provider<a class="headerlink" href="#cryptokey-provider" title="Permanent link">&para;</a></h3>
 <p>Before we enable mango4j-crypto to encrypt/decrypt our UserProfile entity we need to create our implementation of the 
-<a href="/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/providers/CryptoKeyProvider.java">CryptoKeyProvider</a> 
+<a href="https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/providers/CryptoKeyProvider.java">CryptoKeyProvider</a> 
 interface for our application. If you store your CryptoKey objects in a database it might look something like this:</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1"> 1</a></span>
 <span class="normal"><a href="#__codelineno-1-2"> 2</a></span>
@@ -1365,7 +1365,7 @@ profiles. You can create your own EncryptionService classes by creating your own
 carries out encryption operations using a cryptographic provider that you use in whatever way you need.
 * We register our UserProfile entity (and any others) with the library using the withAnnotationEntities() method.
 * ConfigurableObjectMapperFactory is a default implementation of
-  <a href="/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/factories/ObjectMapperFactory.java">ObjectMapperFactory</a> 
+  <a href="https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/factories/ObjectMapperFactory.java">ObjectMapperFactory</a> 
   that comes with the library to provide a Jackson ObjectMapper that it can use for formatting and parsing of the ciphertext. 
   You can supply your own ObjectMapperFactory implementation instead if needed.</p>
 </blockquote>
@@ -1388,7 +1388,7 @@ Likewise, to decrypt an entity you can call:</p>
 added to the system but the old keys are left as they are. Only when no more records are left which were encrypted, or 
 has had HMACs calculated, with an older key should that key be removed from the system. As long as your 
 CryptoKeyProvider implementation works as prescribed then things should be fine. 
-<a href="/documentation/docs/general/general.md#hmac-key-rotation-challenges">But make sure you understand how HMACs are different</a>...</p>
+<a href="../../general/general/#hmac-key-rotation-challenges">But make sure you understand how HMACs are different</a>...</p>
 <h2 id="rekeying">Rekeying<a class="headerlink" href="#rekeying" title="Permanent link">&para;</a></h2>
 <p>Mango4j-crypto has built in support for rekey jobs (currently in BETA). Encryption rekeying is supported for all 
 entities but for HMACs the RekeyScheduler currently only supports rekeying HMACs for entities which use the List HMAC 
@@ -1447,7 +1447,7 @@ without
 restarting the application. In order to make this periodic RekeyScheduler start rekeying entities you need to make use
 of
 the CryptoKey.rekeyMode field. Mango4j-crypto supports 2 types of rekey modes: KEY_OFF and KEY_ON. Please see the
-<a href="general/general.md#rekeying-re-encrypting-existing-records-with-the-new-key">general documentation</a> 
+<a href="../../general/general/#rekeying-re-encrypting-existing-records-with-the-new-key">general documentation</a> 
 for an explanation of these values. Once the CryptoKey.rekeyMode field is set to either
 KEY_ON or KEY_OFF this RekeyScheduler will trigger the rekeying process the next time it runs (defined by
 <code>withRekeyCheckInterval()</code> as above).</p>
@@ -1459,7 +1459,7 @@ doesn't have HMACs). It's just that HMAC rekey is currently only supported for e
 <p>Mango4J Crypto uses pluggable Encryption Service Delegates to carry out cryptographic operations at runtime. There are several encryption service delegates currently supported (and more to come). Please see the 
 <a href="../delegates">delegates section</a> for documentation on each. </p>
 <p>You can also create your own EncryptionServiceDelegate implementations by subclassing the
-<a href="/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/EncryptionServiceDelegate.java">EncryptionServiceDelegate</a> class and
+<a href="https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/EncryptionServiceDelegate.java">EncryptionServiceDelegate</a> class and
 implementing the abstract methods with your own logic using your cryptographic provider of choice.</p>
 <h2 id="hmac">HMAC<a class="headerlink" href="#hmac" title="Permanent link">&para;</a></h2>
 <h3 id="hmac-strategies">HMAC Strategies<a class="headerlink" href="#hmac-strategies" title="Permanent link">&para;</a></h3>
