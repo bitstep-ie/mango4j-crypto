@@ -1,8 +1,7 @@
 # Double HMAC strategy
 
-The Double HMAC strategy is a compromise between the List HMAC strategy and the (mostly not recommended) Single HMAC
-Strategy (or its sister strategy the Single Time Based HMAC
-strategy) that allows for a more normal entity design.
+The Double HMAC strategy is a compromise between the List HMAC strategy and the Single HMAC Strategy that allows for a 
+more normal entity design.
 
 This strategy trades the generality of the List HMAC strategy to a more simple relational design and has an added
 downside of only allowing 2 HMAC keys to be in use for write

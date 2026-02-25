@@ -21,8 +21,8 @@ search operations will progressively get slower. This is because if a tenant has
 HMACs when we search for something. Since we can't remove a tenant's keys (because there may be records that have never
 been modified since being written with the key in use at that time) then we'll have to keep using all of them to
 generate HMACs for every operation until the end of time.
-Also, although the search challenge documented above will still be solved in a functional sense, the unique constraint
-challenge will still remain a serious problem in your application (if you have unique constraint
+Also, although the search challenge documented in the [key rotation section](../rotation.md) will still be solved in a 
+functional sense, the unique constraint challenge will still remain a serious problem in your application (if you have unique constraint
 requirements).
 The only concrete way to solve the unique constraint challenge for key rotation without rekey would be to use
 the [List HMAC Strategy](list-hmac.md).
