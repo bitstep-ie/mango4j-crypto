@@ -985,7 +985,7 @@ reference to the key. For example: if the 'type' of this key was AWS_KMS then th
 keyArn" with the value of the AWS Key ID or Key ARN. Each Encryption Service Delegate implementation will know what
 configuration information it needs to carry out its operations so the application just needs to make sure that the right
 information is present in this map for the given key type.</p>
-<p><em>keyStartTime:</em> Optional field which is only used for HMAC CryptoKeys. When used this can alleviate some of the shortcomings with the <a href="#single-hmac-strategy">Single HMAC Strategy</a> that are described further in this document. If you are using this field it should be set when the CryptoKey is created in your application. It's very important to set this to some time in the future which is greater than the key cache time. i.e. by the time this ketStartTime date passes, all application instances should know about this key.</p>
+<p><em>keyStartTime:</em> Optional field which is only used for HMAC CryptoKeys. When used this can alleviate some of the shortcomings with the <a href="../hmac-strategies/single-hmac/">Single HMAC Strategy</a> that are described further in this document. If you are using this field it should be set when the CryptoKey is created in your application. It's very important to set this to some time in the future which is greater than the key cache time. i.e. by the time this ketStartTime date passes, all application instances should know about this key.</p>
 <p><br>
 <br>
 A big advantage of using CryptoKey objects to represent cryptographic key information is that it allows applications to easily support multiple cryptographic providers while keeping code clean and encryption code
@@ -1013,7 +1013,7 @@ ciphertext output it will return it as a JSON String with the following definiti
 <ul>
 <li><em>cryptoKeyId</em> is the identifier of the crypto key object (e.g. the CryptoKey.id field) in your system that was used to
   carry out the cryptographic operation</li>
-<li><em>iv</em> is the <a href="#Whats-an-IV">Initialization Vector</a> that was used for the cryptographic operation</li>
+<li><em>iv</em> is the <a href="../faq/#Whats-an-IV">Initialization Vector</a> that was used for the cryptographic operation</li>
 <li><em>data</em> is the actual output that was returned from the Encryption Service Delegate's encrypt() method, the ciphertext
   will be included here.
   Each delegate may return different data here depending on the cryptographic provider or method that it uses, or what
