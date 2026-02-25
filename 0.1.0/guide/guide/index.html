@@ -14,7 +14,7 @@
       
       
       
-        <link rel="next" href="../../delegates/test-delegates/">
+        <link rel="next" href="../../delegates/delegates/">
       
       
         
@@ -247,7 +247,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../delegates/test-delegates/" class="md-tabs__link">
+        <a href="../../delegates/delegates/" class="md-tabs__link">
           
   
   
@@ -473,18 +473,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#hmac" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        HMAC
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="HMAC">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
   <a href="#hmac-strategies" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -528,22 +516,6 @@
     </nav>
   
 </li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#encryption-service-delegates_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Encryption Service Delegates
-      
-    </span>
-  </a>
-  
-</li>
       
         <li class="md-nav__item">
   <a href="#annotations" class="md-nav__link">
@@ -569,7 +541,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#hmac_1" class="md-nav__link">
+  <a href="#hmac" class="md-nav__link">
     <span class="md-ellipsis">
       
         @Hmac
@@ -663,6 +635,34 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../delegates/delegates/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -1204,18 +1204,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#hmac" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        HMAC
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="HMAC">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
   <a href="#hmac-strategies" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1259,22 +1247,6 @@
     </nav>
   
 </li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#encryption-service-delegates_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Encryption Service Delegates
-      
-    </span>
-  </a>
-  
-</li>
       
         <li class="md-nav__item">
   <a href="#annotations" class="md-nav__link">
@@ -1300,7 +1272,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#hmac_1" class="md-nav__link">
+  <a href="#hmac" class="md-nav__link">
     <span class="md-ellipsis">
       
         @Hmac
@@ -1769,29 +1741,34 @@ KEY_ON or KEY_OFF this RekeyScheduler will trigger the rekeying process the next
 doesn't have HMACs). It's just that HMAC rekey is currently only supported for entities that use the List HMAC Strategy.</p>
 </blockquote>
 <h2 id="encryption-service-delegates">Encryption Service Delegates<a class="headerlink" href="#encryption-service-delegates" title="Permanent link">&para;</a></h2>
-<p>Mango4J Crypto uses pluggable Encryption Service Delegates to carry out cryptographic operations at runtime. There are several encryption service delegates currently supported (and more to come). Please see the 
-<a href="../delegates">delegates section</a> for documentation on each. </p>
-<p>You can also create your own EncryptionServiceDelegate implementations by subclassing the
-<a href="https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/EncryptionServiceDelegate.java">EncryptionServiceDelegate</a> class and
-implementing the abstract methods with your own logic using your cryptographic provider of choice.</p>
-<h2 id="hmac">HMAC<a class="headerlink" href="#hmac" title="Permanent link">&para;</a></h2>
-<h3 id="hmac-strategies">HMAC Strategies<a class="headerlink" href="#hmac-strategies" title="Permanent link">&para;</a></h3>
+<p>In mango4j-crypto all the code for cryptographic operations is hidden behind an abstraction we refer to as the '
+Encryption Service Delegate'. What this means is that an infinite number of approaches can be used to perform the
+cryptographic operations by allowing developers to supply their own Encryption Service Delegates. Just create your own
+subclass of the EncryptionServiceDelegate class and implement the abstract methods. Coupled with the CryptoKey objects
+this allows applications to support multiple types of cryptographic providers or different cryptographic approaches
+depending on application requirements. This also allows applications to support different cryptographic providers at
+the same time (e.g. different regions using different providers) without needing to change any application code.
+And it also allows keys to be rotated from one provider to another without needing to change any application code
+(and potentially without even restarting the application).</p>
+<p>Mango4j-crypto comes with a few built-in Encryption Service Delegate implementations which you can find
+<a href="../../delegates/delegates/">documented here</a>.</p>
+<h2 id="hmac-strategies">HMAC Strategies<a class="headerlink" href="#hmac-strategies" title="Permanent link">&para;</a></h2>
 <p>A core concept in the mango4j-crypto library is that of HMAC strategies. There are various ways that an application
 could choose to implement key-rotation friendly HMAC functionality (please read the 
-<a href="../../general/general/#hmac-key-rotation-challenges">general documentation</a> for a detailed
+<a href="../../general/rotation/#hmac-key-rotation-challenges">general documentation</a> for a detailed
 explanation of this material) and this library provides 3 
-<a href="../../general/general/#hmac-strategies">HMAC Strategies</a> out of the box.</p>
+<a href="../../general/hmac-strategies/hmac-strategies/">HMAC Strategies</a> out of the box.</p>
 <p>You can choose which ones to apply to your application entities by using the corresponding class level annotation. The
 library authors strongly advise application developers to consider
 the @ListHmacStrategy unless there are strong reasons not to. Currently, the library supports the following (in
 order of preference of the mango4j-crypto team):
-- <a href="#list-hmac-strategy">@ListHmacStrategy</a>
-- <a href="#single-hmac-strategy">@SingleHmacStrategy</a>
-- <a href="#double-hmac-strategy">@DoubleHmacStrategy</a></p>
+- <a href="../../general/hmac-strategies/list-hmac/">@ListHmacStrategy</a>
+- <a href="../../general/hmac-strategies/single-hmac/">@SingleHmacStrategy</a>
+- <a href="../../general/hmac-strategies/double-hmac/">@DoubleHmacStrategy</a></p>
 <p>But we'll start with the Single HMAC Strategy as that's the easiest to understand. In this example we also need to 
 generate HMACs for both the pan and username fields as they both need to be searchable and username needs to be unique 
 in our application.</p>
-<h4 id="single-hmac-strategy">Single HMAC Strategy<a class="headerlink" href="#single-hmac-strategy" title="Permanent link">&para;</a></h4>
+<h3 id="single-hmac-strategy">Single HMAC Strategy<a class="headerlink" href="#single-hmac-strategy" title="Permanent link">&para;</a></h3>
 <p>```java language=java
 import ie.bitstep.mango.crypto.annotations.Encrypt;
 import ie.bitstep.mango.crypto.annotations.EncryptedData;
@@ -2076,7 +2053,7 @@ public void setFavouriteColor(String favouriteColor) {
 <a id="__codelineno-6-11" name="__codelineno-6-11"></a>
 <a id="__codelineno-6-12" name="__codelineno-6-12"></a>&lt;br&gt;
 <a id="__codelineno-6-13" name="__codelineno-6-13"></a>
-<a id="__codelineno-6-14" name="__codelineno-6-14"></a>#### List HMAC Strategy
+<a id="__codelineno-6-14" name="__codelineno-6-14"></a>### List HMAC Strategy
 <a id="__codelineno-6-15" name="__codelineno-6-15"></a>
 <a id="__codelineno-6-16" name="__codelineno-6-16"></a>
 <a id="__codelineno-6-17" name="__codelineno-6-17"></a>```java language=java
@@ -2215,7 +2192,7 @@ it with an SQL DB check out the <a href="https://github.com/bitstep-ie/mango4j-e
 make sure that the setLookup() and setUniqueValues() methods <em>completely replace</em> the existing lists! Do not append to
 the existing lists!!!</p>
 </blockquote>
-<h5 id="hmac-tokenizers">HMAC Tokenizers<a class="headerlink" href="#hmac-tokenizers" title="Permanent link">&para;</a></h5>
+<h4 id="hmac-tokenizers">HMAC Tokenizers<a class="headerlink" href="#hmac-tokenizers" title="Permanent link">&para;</a></h4>
 <p>If using the ListHmacStrategy for an entity you can make use of HMAC Tokenizers by specifying them in the @Hmac
 annotation's HmacTokenizers method. Like:</p>
 <p>```java language=java
@@ -2365,9 +2342,9 @@ private transient String pan;
 <a id="__codelineno-7-24" name="__codelineno-7-24"></a>&gt; NOTE: Mixing HMAC and cleartext fields in a unique group is fine. But at least one field in the group must be marked 
 <a id="__codelineno-7-25" name="__codelineno-7-25"></a>&gt; with @Hmac otherwise the library will throw an error on startup.
 <a id="__codelineno-7-26" name="__codelineno-7-26"></a>
-<a id="__codelineno-7-27" name="__codelineno-7-27"></a>#### Double HMAC Strategy
+<a id="__codelineno-7-27" name="__codelineno-7-27"></a>### Double HMAC Strategy
 <a id="__codelineno-7-28" name="__codelineno-7-28"></a>
-<a id="__codelineno-7-29" name="__codelineno-7-29"></a>Please read the [the official general documentation](../general/general.md#double-hmac-strategy) for a description 
+<a id="__codelineno-7-29" name="__codelineno-7-29"></a>Please read the [the official general documentation](../general/hmac-strategies/double-hmac.md) for a description 
 <a id="__codelineno-7-30" name="__codelineno-7-30"></a>of the Double HMAC Strategy and for when you might want to use it. The entity definition when using it is similar to the 
 <a id="__codelineno-7-31" name="__codelineno-7-31"></a>one for the Single HMAC Strategy. Below is an example entity definition.
 <a id="__codelineno-7-32" name="__codelineno-7-32"></a>
@@ -2475,18 +2452,6 @@ private transient String pan;
   <a href="https://github.com/bitstep-ie/mango4j-examples/blob/main/mango4j-crypto-example/src/main/java/ie/bitstep/mango/examples/crypto/example/doublehmacstrategy/service/UserProfileService.java#L62">mango4j-examples code</a> to see an example of what this might look like.</p>
 </blockquote>
 <p><br></p>
-<h2 id="encryption-service-delegates_1">Encryption Service Delegates<a class="headerlink" href="#encryption-service-delegates_1" title="Permanent link">&para;</a></h2>
-<p>In mango4j-crypto all the code for cryptographic operations is hidden behind an abstraction we refer to as the ' 
-Encryption Service Delegate'. What this means is that an infinite number of approaches can be used to perform the 
-cryptographic operations by allowing developers to supply their own Encryption Service Delegates. Just create your own 
-subclass of the EncryptionServiceDelegate class and implement the abstract methods. Coupled with the CryptoKey objects 
-this allows applications to support multiple types of cryptographic providers or different cryptographic approaches 
-depending on application requirements. This also allows applications to support different cryptographic providers at 
-the same time (e.g. different regions using different providers) without needing to change any application code. 
-And it also allows keys to be rotated from one provider to another without needing to change any application code 
-(and potentially without even restarting the application).</p>
-<p>Mango4j-crypto comes with a few built-in Encryption Service Delegate implementations which you can find 
-<a href="../delegates">documented here</a>.</p>
 <h2 id="annotations">Annotations<a class="headerlink" href="#annotations" title="Permanent link">&para;</a></h2>
 <p>The main annotations that developers will use are:</p>
 <h3 id="encrypt">@Encrypt<a class="headerlink" href="#encrypt" title="Permanent link">&para;</a></h3>
@@ -2501,7 +2466,7 @@ entity. The only exception to this is when also using the @EnabledMigrationSuppo
 migration
 onto the library for existing applications (this will be explained further in this document).</p>
 </blockquote>
-<h3 id="hmac_1">@Hmac<a class="headerlink" href="#hmac_1" title="Permanent link">&para;</a></h3>
+<h3 id="hmac">@Hmac<a class="headerlink" href="#hmac" title="Permanent link">&para;</a></h3>
 <p>The @Hmac annotation should be placed on fields which must be HMACed for either lookup or unique constraint purposes.
 Depending on the HmacStrategy that your entity is using there needs to be corresponding fields where the library should 
 write the HMACs to. There are currently 3 HMAC strategies supported by the library and each one has slightly different 
