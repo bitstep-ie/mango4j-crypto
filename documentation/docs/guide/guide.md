@@ -282,7 +282,7 @@ KEY_ON or KEY_OFF this RekeyScheduler will trigger the rekeying process the next
 
 ## Encryption Service Delegates
 Mango4J Crypto uses pluggable Encryption Service Delegates to carry out cryptographic operations at runtime. There are several encryption service delegates currently supported (and more to come). Please see the 
-[delegates section](delegates/index.md) for documentation on each. 
+[delegates section](../delegates) for documentation on each. 
 
 You can also create your own EncryptionServiceDelegate implementations by subclassing the
 [EncryptionServiceDelegate](/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/EncryptionServiceDelegate.java) class and
