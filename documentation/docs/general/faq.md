@@ -49,16 +49,14 @@ always unique for any encryption operation makes cryptanalysis more difficult to
 ## Why do I need to HMAC data in order to make it searchable?
 
 When we encrypt a piece of data we should use an [IV](faq.md#whats-an-iv) as well as the secret key - so make sure to
-consider using IVs in any custom EncryptionServiceDelegate implementations you create for your application.
+consider using IVs in any custom [Encryption Service Delegate](https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/EncryptionServiceDelegate.java) implementations you create for your application.
 Due to the fact that each time we encrypt a piece of data it never generates the same ciphertext this means
 that we cannot search on that attribute. It may be tempting to think that for a search operation you could encrypt the
 incoming search value and look for matching ciphertext in the DB. But since the ciphertext just generated for the
 incoming
 search term is guaranteed unique (due to the use of an IV) it won't match anything. The solution is to store a HMAC
 value alongside any attribute that needs to be searchable. HMACs will always give the same HMAC value for the same piece
-of data so they can be used for search purposes. If an encrypted attribute also has a HMAC value stored separately for
-it,
-Their irreversibility makes them very secure.
+of data so they can be used for search purposes. Their irreversibility makes them very secure.
 
 ## Why do I need to HMAC confidential data in order to make it unique?
 
@@ -106,13 +104,11 @@ have to consider re-keying all the data that used that compromised key with a ne
 If your application uses HMACs for data that has a long data retention policy then it's probably unrealistic to keep
 adding more and more HMAC keys over time but never being able
 to remove them from the system. With each addition of a HMAC key the performance of your application will degrade
-because that's one extra HMAC to calculate (and search for/and
-possibly store) for every HMAC operation.
+because that's one extra HMAC to calculate (and search for/and possibly store) for every HMAC operation.
 If your application is multi-instance, caches keys and doesn't use the List HMAC Strategy then you'll need to re-key if
-your application uses HMACs for unique constraint
-enforcement.
+your application uses HMACs for unique constraint enforcement.
 
-## Why does mango4j-crypto-core have the concept of only 1 encryption key but multiple HMAC keys?
+## Why does mango4j-crypto have the concept of only 1 encryption key but multiple HMAC keys?
 
 When a piece of data is encrypted a reference to the encryption key is contained in the actual ciphertext along with the
 encrypted data. This means that it will always be possible

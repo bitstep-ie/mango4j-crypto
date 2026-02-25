@@ -17,7 +17,7 @@ application).
 Mango4j-crypto comes with a few built-in Encryption Service Delegate implementations:
 <br>
 
-* Production: Wrapped Delegate, Cache Wrapped Delegate
+* Production: PBKDF2 Delegate, Wrapped Key Delegate, Cache Wrapped Key Delegate, AWS KMS Delegate
 * Test: Base64 Delegate, Identity Delegate
 
 And developers can create their own Encryption Service Delegate implementations to suit their needs. If you do create
@@ -71,7 +71,11 @@ keyArn" with the value of the AWS Key ID or Key ARN. Each Encryption Service Del
 configuration information it needs to carry out its operations so the application just needs to make sure that the right
 information is present in this map for the given key type.
 
-*keyStartTime:* Optional field which is only used for HMAC CryptoKeys. When used this can alleviate some of the shortcomings with the [Single HMAC Strategy](hmac-strategies/single-hmac.md) that are described further in this document. If you are using this field it should be set when the CryptoKey is created in your application. It's very important to set this to some time in the future which is greater than the key cache time. i.e. by the time this ketStartTime date passes, all application instances should know about this key.
+*keyStartTime:* Optional field which is only used for HMAC CryptoKeys. When used this can alleviate some of the 
+shortcomings with the [Single HMAC Strategy](hmac-strategies/single-hmac.md) that are described further in this document. If you are using this 
+field it should be set when the CryptoKey is created in your application. It's very important to set this to some time 
+in the future which is greater than the key cache time. i.e. by the time this ketStartTime date passes, all application 
+instances should know about this key.
 
 <br>
 <br>
