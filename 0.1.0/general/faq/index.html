@@ -638,6 +638,34 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../rotation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rotation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
     
     
     
@@ -650,10 +678,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
         
           
-          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
             
   
   
@@ -671,8 +699,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_3">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1284,7 +1312,7 @@ data (the IV is actually stored in the clear, inside the data containing the cip
 ciphertext is
 always unique for any encryption operation makes cryptanalysis more difficult to potential attackers.</p>
 <h2 id="why-do-i-need-to-hmac-data-in-order-to-make-it-searchable">Why do I need to HMAC data in order to make it searchable?<a class="headerlink" href="#why-do-i-need-to-hmac-data-in-order-to-make-it-searchable" title="Permanent link">&para;</a></h2>
-<p>When we encrypt a piece of data we should use an <a href="./#Whats-an-IV">IV</a> as well as the secret key - so make sure to
+<p>When we encrypt a piece of data we should use an <a href="./#whats-an-iv">IV</a> as well as the secret key - so make sure to
 consider using IVs in any custom EncryptionServiceDelegate implementations you create for your application.
 Due to the fact that each time we encrypt a piece of data it never generates the same ciphertext this means
 that we cannot search on that attribute. It may be tempting to think that for a search operation you could encrypt the
@@ -1342,7 +1370,7 @@ enforcement.</p>
 encrypted data. This means that it will always be possible
 to decrypt the data even if the current encryption key is changed (i.e. for a key rotation), assuming you didn't delete
 the old key. HMACs however are
-different, <a href="./#Why-dont-HMACs-have-a-reference-to-the-HMAC-key-stored-alongside-them-the-same-way-encrypted-ciphertext-does">HMACs don't have a reference to the HMAC key stored alongside them.</a>
+different, <a href="./#why-dont-hmacs-have-a-reference-to-the-hmac-key-stored-alongside-them-the-same-way-encrypted-ciphertext-does">HMACs don't have a reference to the HMAC key stored alongside them.</a>
 So, once a HMAC key is updated/rotated to a new HMAC key, some
 records will have HMACs calculated using the old key (since they haven't been recalculated yet) and some records will
 have HMACs calculated using the new key (new records and newly

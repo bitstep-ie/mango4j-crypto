@@ -707,6 +707,34 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../rotation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rotation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
     
     
     
@@ -719,10 +747,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
         
           
-          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
             
   
   
@@ -740,8 +768,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_3">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1025,7 +1053,7 @@ HMACs are used for 2 main purposes in an application:</p>
 <ol>
 <li>To support searching on fields that are encrypted</li>
 <li>To support unique constraint enforcement on fields that are encrypted.
-   The <a href="../faq/#why-do-I-need-to-HMAC-data-in-order-to-make-it-searchable">FAQ</a> section at the bottom of this document
+   The <a href="../faq/#why-do-i-need-to-hmac-data-in-order-to-make-it-searchable">FAQ</a> section at the bottom of this document
    explains this in more detail.</li>
 </ol>
 <h2 id="mango-crypto-key-driven-design">Mango Crypto-Key Driven Design<a class="headerlink" href="#mango-crypto-key-driven-design" title="Permanent link">&para;</a></h2>
@@ -1034,7 +1062,7 @@ to
 design only with some specific
 cryptographic provider in mind (e.g. Azure Dedicated HSM) but doing this could introduce complexities later if your
 application needs the potential to use different providers (different regions might have
-different cryptographic providers or regulations). You may need to perform a <a href="../faq/#What-is-a-key-rotation">key rotation</a>
+different cryptographic providers or regulations). You may need to perform a <a href="../faq/#what-is-a-key-rotation">key rotation</a>
 from one key which uses some cryptographic provider to a new
 key which uses some other cryptographic provider. Or even just rotate a key to a stronger algorithm, or whatever. So a more flexible design should be used to support a more generic
 approach to implementing ALE. We call

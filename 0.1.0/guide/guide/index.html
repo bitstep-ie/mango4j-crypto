@@ -867,6 +867,34 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../../general/rotation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rotation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
     
     
     
@@ -879,10 +907,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
         
           
-          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
             
   
   
@@ -900,8 +928,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_3">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1673,7 +1701,7 @@ Likewise, to decrypt an entity you can call:</p>
 added to the system but the old keys are left as they are. Only when no more records are left which were encrypted, or 
 has had HMACs calculated, with an older key should that key be removed from the system. As long as your 
 CryptoKeyProvider implementation works as prescribed then things should be fine. 
-<a href="../../general/general/#hmac-key-rotation-challenges">But make sure you understand how HMACs are different</a>...</p>
+<a href="../../general/rotation/#hmac-key-rotation-challenges">But make sure you understand how HMACs are different</a>...</p>
 <h2 id="rekeying">Rekeying<a class="headerlink" href="#rekeying" title="Permanent link">&para;</a></h2>
 <p>Mango4j-crypto has built in support for rekey jobs (currently in BETA). Encryption rekeying is supported for all 
 entities but for HMACs the RekeyScheduler currently only supports rekeying HMACs for entities which use the List HMAC 
@@ -1732,7 +1760,7 @@ without
 restarting the application. In order to make this periodic RekeyScheduler start rekeying entities you need to make use
 of
 the CryptoKey.rekeyMode field. Mango4j-crypto supports 2 types of rekey modes: KEY_OFF and KEY_ON. Please see the
-<a href="../../general/general/#rekeying-re-encrypting-existing-records-with-the-new-key">general documentation</a> 
+<a href="../../general/rotation/#rekeying-re-encrypting-existing-records-with-the-new-key">general documentation</a> 
 for an explanation of these values. Once the CryptoKey.rekeyMode field is set to either
 KEY_ON or KEY_OFF this RekeyScheduler will trigger the rekeying process the next time it runs (defined by
 <code>withRekeyCheckInterval()</code> as above).</p>

@@ -13,6 +13,10 @@
         <link rel="canonical" href="https://bitstep-ie.github.io/mango4j-crypto/0.1.0/general/rotation/">
       
       
+        <link rel="prev" href="../encryption/">
+      
+      
+        <link rel="next" href="../hmac-strategies/hmac-strategies/">
       
       
         
@@ -23,7 +27,7 @@
     
     
       
-        <title>Key Rotation (Changing the key) - mango4j-crypto</title>
+        <title>Rotation - mango4j-crypto</title>
       
     
     
@@ -111,7 +115,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Key Rotation (Changing the key)
+              Rotation
             
           </span>
         </div>
@@ -259,10 +263,12 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
+      <li class="md-tabs__item md-tabs__item--active">
         <a href="../general/" class="md-tabs__link">
           
   
@@ -519,24 +525,29 @@
       
   
   
+    
   
   
+  
     
     
     
     
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
             
   
   
@@ -554,7 +565,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -625,6 +636,170 @@
                 
   
   
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rotation
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rotation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#encryption-key-rotation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Encryption Key Rotation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hmac-key-rotation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HMAC Key Rotation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rekeying-re-encrypting-existing-records-with-the-new-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rekeying (re-encrypting existing records with the new key)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Rekeying (re-encrypting existing records with the new key)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hmac-key-rotation-challenges" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HMAC Key Rotation Challenges
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="HMAC Key Rotation Challenges">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#searching-operations-after-the-rotation-of-a-hmac-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Searching operations after the rotation of a HMAC key
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-instance-application-with-cached-keys-search-scenario" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-instance application with cached Keys search scenario
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unique-constraint-enforcement-after-the-rotation-of-a-hmac-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Unique constraint enforcement after the rotation of a HMAC key
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
   
   
     
@@ -639,10 +814,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
         
           
-          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
             
   
   
@@ -660,8 +835,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_3">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1054,7 +1229,7 @@ years of records in your system which may be at risk of duplication.</strong></p
 <p>The following section documents the 2 core challenges when it comes to supporting HMAC key rotation in your application.
 It's advised for all developers not familiar with this particular topic to read this section very carefully.
 It may seem easy to not give much attention to the scenario of rotating HMAC keys, possibly thinking <em>"when are we
-really going to need to change a <a href="../faq/#Whats-a-tenant">tenant's</a> HMAC key?!"</em> or <em>"I can worry about it later"</em>. But
+really going to need to change a <a href="../faq/#whats-a-tenant">tenant's</a> HMAC key?!"</em> or <em>"I can worry about it later"</em>. But
 hopefully as you
 can see below, in order to support this functionality there are very important considerations to take into account for
 the way that you design your application. And the challenges presented by HMAC key rotation can be very difficult to
@@ -1174,7 +1349,7 @@ This could have serious repercussions for your system and its data integrity.</p
 <ol>
 <li>A user exists in your application with username <code>john.doe@test.com</code></li>
 <li>You change your tenant's HMAC key to the new HMAC key (or if you've followed
-   the <a href="#Searching-operations-after-the-rotation-of-a-HMAC-key">above</a> approach
+   the <a href="#searching-operations-after-the-rotation-of-a-hmac-key">above</a> approach
    to solve the search challenge, you've added the new HMAC key into your tenant's list of HMAC keys)</li>
 <li>A request to create a new user (or change an existing username) is sent to your application with the username
    <code>john.doe@test.com</code>.</li>
