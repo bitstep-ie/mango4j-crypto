@@ -39,7 +39,6 @@ extra:
 nav:
   - Guide: guide/guide.md
   - Delegates:
-      - Delegates: delegates/index.md
       - Test Delegates: delegates/test-delegates.md
       - Core Delegates: delegates/core-delegates.md
       - AWS Delegate: delegates/aws-delegate.md
