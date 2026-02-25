@@ -402,7 +402,7 @@ there would still exist a race condition in your code which can result in 2 user
 
 To remedy this you need to implement particular approaches to calculating and storing the HMACs for your entity fields.
 The following sections detail some of these approaches, all of which are supported in
-the [mango4j-crypto](https://github.com/bitstep-ie/mango4j-crypto/blob/main/README.md) library.
+the [mango4j-crypto](https://github.com/bitstep-ie/mango4j-crypto) library.
 
 
 ## HMAC Strategies
