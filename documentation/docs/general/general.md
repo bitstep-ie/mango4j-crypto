@@ -118,7 +118,7 @@ desired [EncryptionServiceDelegate.supportedCryptoKeyType()](https://github.com/
 implementation.
 <br>
 For example: The
-included [CacheWrappedKeyEncryptionService.supportedCryptoKeyType()](/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/wrapped/CachedWrappedKeyEncryptionService.java#251)
+included [CacheWrappedKeyEncryptionService.supportedCryptoKeyType()](https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/wrapped/CachedWrappedKeyEncryptionService.java#251)
 returns the value "CACHED_WRAPPED", so if you wanted to use that Encryption Service Delegate implementation then you
 would have a CryptoKey object with this 'type' field set to "CACHED_WRAPPED". At runtime the library matches the
 CryptoKeys with their corresponding EncryptionServiceDelegates by comparing this 'type' field. If you create you own
@@ -142,9 +142,9 @@ encryption delegates in different regions without having to write any custom app
 
 ### Ciphertext representation
 
-When [CryptoShield.encrypt()](/mango4j-crypto/src/main/java/ie/bitstep/mango/crypto/CryptoShield.java#L202)
+When [CryptoShield.encrypt()](https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto/src/main/java/ie/bitstep/mango/crypto/CryptoShield.java#L202)
 is called on an object the library will set
-the [@EncryptedData](/mango4j-crypto/src/main/java/ie/bitstep/mango/crypto/annotations/EncryptedData.java)
+the [@EncryptedData](https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto/src/main/java/ie/bitstep/mango/crypto/annotations/EncryptedData.java)
 field in the object to the calculated ciphertext.
 This final ciphertext is represented in a standardised way for encryption (not HMACs). Instead of just returning the
 straight
@@ -402,7 +402,7 @@ there would still exist a race condition in your code which can result in 2 user
 
 To remedy this you need to implement particular approaches to calculating and storing the HMACs for your entity fields.
 The following sections detail some of these approaches, all of which are supported in
-the [mango4j-crypto](/README.md) library.
+the [mango4j-crypto](https://github.com/bitstep-ie/mango4j-crypto/blob/main/README.md) library.
 
 
 ## HMAC Strategies
@@ -889,7 +889,7 @@ searches to find a PAN whether it has dashes/spaces in it or not.
 
 #### A: Decisioning diagram for which HMAC strategy to use
 
-![rekeying-decision-flow-diagram](/documentation/docs/assets/rekeying-decision-flow-diagram_v2.png)
+![rekeying-decision-flow-diagram](../assets/rekeying-decision-flow-diagram_v2.png)
 
 #### B: Possible re-keying process when using list HMAC strategy when the application need to delete a specific HMAC key
 

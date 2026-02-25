@@ -101,7 +101,7 @@ public class UserProfileEntity {
 ### CryptoKey Provider
 
 Before we enable mango4j-crypto to encrypt/decrypt our UserProfile entity we need to create our implementation of the 
-[CryptoKeyProvider](/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/providers/CryptoKeyProvider.java) 
+[CryptoKeyProvider](https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/providers/CryptoKeyProvider.java) 
 interface for our application. If you store your CryptoKey objects in a database it might look something like this:
 
 ```java
@@ -199,7 +199,7 @@ public CryptoShield cryptoShield(CryptoKeyProvider cryptoKeyProvider) {
 > carries out encryption operations using a cryptographic provider that you use in whatever way you need.
 > * We register our UserProfile entity (and any others) with the library using the withAnnotationEntities() method.
 > * ConfigurableObjectMapperFactory is a default implementation of
->   [ObjectMapperFactory](/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/factories/ObjectMapperFactory.java) 
+>   [ObjectMapperFactory](https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/factories/ObjectMapperFactory.java) 
 >   that comes with the library to provide a Jackson ObjectMapper that it can use for formatting and parsing of the ciphertext. 
 >   You can supply your own ObjectMapperFactory implementation instead if needed.
 
@@ -227,7 +227,7 @@ Key rotation is almost fairly straightforward when you just think of it as an ad
 added to the system but the old keys are left as they are. Only when no more records are left which were encrypted, or 
 has had HMACs calculated, with an older key should that key be removed from the system. As long as your 
 CryptoKeyProvider implementation works as prescribed then things should be fine. 
-[But make sure you understand how HMACs are different](/documentation/docs/general/general.md#hmac-key-rotation-challenges)...
+[But make sure you understand how HMACs are different](../general/general.md#hmac-key-rotation-challenges)...
 
 ## Rekeying
 Mango4j-crypto has built in support for rekey jobs (currently in BETA). Encryption rekeying is supported for all 
@@ -270,7 +270,7 @@ without
 restarting the application. In order to make this periodic RekeyScheduler start rekeying entities you need to make use
 of
 the CryptoKey.rekeyMode field. Mango4j-crypto supports 2 types of rekey modes: KEY_OFF and KEY_ON. Please see the
-[general documentation](general/general.md#rekeying-re-encrypting-existing-records-with-the-new-key) 
+[general documentation](../general/general.md#rekeying-re-encrypting-existing-records-with-the-new-key) 
 for an explanation of these values. Once the CryptoKey.rekeyMode field is set to either
 KEY_ON or KEY_OFF this RekeyScheduler will trigger the rekeying process the next time it runs (defined by
 `withRekeyCheckInterval()` as above).
@@ -285,7 +285,7 @@ Mango4J Crypto uses pluggable Encryption Service Delegates to carry out cryptogr
 [delegates section](../delegates) for documentation on each. 
 
 You can also create your own EncryptionServiceDelegate implementations by subclassing the
-[EncryptionServiceDelegate](/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/EncryptionServiceDelegate.java) class and
+[EncryptionServiceDelegate](https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/EncryptionServiceDelegate.java) class and
 implementing the abstract methods with your own logic using your cryptographic provider of choice.
 
 ## HMAC
