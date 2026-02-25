@@ -42,7 +42,11 @@ nav:
       - Test Delegates: delegates/test-delegates.md
       - Core Delegates: delegates/core-delegates.md
       - AWS Delegate: delegates/aws-delegate.md
-  - General Documentation: general/general.md
+  - General Documentation:
+      - Encryption:
+        - Delegates: delegates/test-delegates.md 
+        - Rotation: delegates/aws-delegates.md
+
 
 markdown_extensions:
   - toc:
