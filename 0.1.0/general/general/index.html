@@ -744,95 +744,17 @@
   
 </li>
         
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#key-rotation-changing-the-key" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Key Rotation (Changing the key)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#encryption-key-rotation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Encryption Key Rotation
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#hmac-key-rotation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        HMAC Key Rotation
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#rekeying-re-encrypting-existing-records-with-the-new-key" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Rekeying (re-encrypting existing records with the new key)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Rekeying (re-encrypting existing records with the new key)">
-      <ul class="md-nav__list">
-        
           <li class="md-nav__item">
-  <a href="#hmac-key-rotation-challenges" class="md-nav__link">
+  <a href="#ciphertext-representation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        HMAC Key Rotation Challenges
+        Ciphertext representation
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="HMAC Key Rotation Challenges">
+    <nav class="md-nav" aria-label="Ciphertext representation">
       <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#searching-operations-after-the-rotation-of-a-hmac-key" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Searching operations after the rotation of a HMAC key
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Searching operations after the rotation of a HMAC key">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#however-the-previous-solution-still-has-major-flaws" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        However, the previous solution still has major flaws!
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
         
           <li class="md-nav__item">
   <a href="#multi-instance-application-with-cached-keys-search-scenario" class="md-nav__link">
@@ -1278,95 +1200,17 @@
   
 </li>
         
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#key-rotation-changing-the-key" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Key Rotation (Changing the key)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#encryption-key-rotation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Encryption Key Rotation
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#hmac-key-rotation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        HMAC Key Rotation
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#rekeying-re-encrypting-existing-records-with-the-new-key" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Rekeying (re-encrypting existing records with the new key)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Rekeying (re-encrypting existing records with the new key)">
-      <ul class="md-nav__list">
-        
           <li class="md-nav__item">
-  <a href="#hmac-key-rotation-challenges" class="md-nav__link">
+  <a href="#ciphertext-representation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        HMAC Key Rotation Challenges
+        Ciphertext representation
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="HMAC Key Rotation Challenges">
+    <nav class="md-nav" aria-label="Ciphertext representation">
       <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#searching-operations-after-the-rotation-of-a-hmac-key" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Searching operations after the rotation of a HMAC key
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Searching operations after the rotation of a HMAC key">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#however-the-previous-solution-still-has-major-flaws" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        However, the previous solution still has major flaws!
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
         
           <li class="md-nav__item">
   <a href="#multi-instance-application-with-cached-keys-search-scenario" class="md-nav__link">
@@ -1836,17 +1680,6 @@ We often see applications representing their encryption/HMAC keys in their code 
 KMS key ID or key ARN for example) rather than key objects, but representing your key information with objects instead
 provides much more flexibility with how your encryption works. For example, this library represents keys in the code
 with the following object:</p>
-<p>```java language=java
-public class CryptoKey {
-    private String id;
-    private CryptoKeyUsage usage;
-    private String type;
-    private Map<String, Object> configuration;
-    private Instant keyStartTime;
-    private RekeyMode rekeyMode;
-    private Instant createdDate;
-    private Instant lastModifiedDate;
-}
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1"> 1</a></span>
 <span class="normal"><a href="#__codelineno-0-2"> 2</a></span>
 <span class="normal"><a href="#__codelineno-0-3"> 3</a></span>
@@ -1856,252 +1689,387 @@ public class CryptoKey {
 <span class="normal"><a href="#__codelineno-0-7"> 7</a></span>
 <span class="normal"><a href="#__codelineno-0-8"> 8</a></span>
 <span class="normal"><a href="#__codelineno-0-9"> 9</a></span>
-<span class="normal"><a href="#__codelineno-0-10">10</a></span>
-<span class="normal"><a href="#__codelineno-0-11">11</a></span>
-<span class="normal"><a href="#__codelineno-0-12">12</a></span>
-<span class="normal"><a href="#__codelineno-0-13">13</a></span>
-<span class="normal"><a href="#__codelineno-0-14">14</a></span>
-<span class="normal"><a href="#__codelineno-0-15">15</a></span>
-<span class="normal"><a href="#__codelineno-0-16">16</a></span>
-<span class="normal"><a href="#__codelineno-0-17">17</a></span>
-<span class="normal"><a href="#__codelineno-0-18">18</a></span>
-<span class="normal"><a href="#__codelineno-0-19">19</a></span>
-<span class="normal"><a href="#__codelineno-0-20">20</a></span>
-<span class="normal"><a href="#__codelineno-0-21">21</a></span>
-<span class="normal"><a href="#__codelineno-0-22">22</a></span>
-<span class="normal"><a href="#__codelineno-0-23">23</a></span>
-<span class="normal"><a href="#__codelineno-0-24">24</a></span>
-<span class="normal"><a href="#__codelineno-0-25">25</a></span>
-<span class="normal"><a href="#__codelineno-0-26">26</a></span>
-<span class="normal"><a href="#__codelineno-0-27">27</a></span>
-<span class="normal"><a href="#__codelineno-0-28">28</a></span>
-<span class="normal"><a href="#__codelineno-0-29">29</a></span>
-<span class="normal"><a href="#__codelineno-0-30">30</a></span>
-<span class="normal"><a href="#__codelineno-0-31">31</a></span>
-<span class="normal"><a href="#__codelineno-0-32">32</a></span>
-<span class="normal"><a href="#__codelineno-0-33">33</a></span>
-<span class="normal"><a href="#__codelineno-0-34">34</a></span>
-<span class="normal"><a href="#__codelineno-0-35">35</a></span>
-<span class="normal"><a href="#__codelineno-0-36">36</a></span>
-<span class="normal"><a href="#__codelineno-0-37">37</a></span>
-<span class="normal"><a href="#__codelineno-0-38">38</a></span>
-<span class="normal"><a href="#__codelineno-0-39">39</a></span>
-<span class="normal"><a href="#__codelineno-0-40">40</a></span>
-<span class="normal"><a href="#__codelineno-0-41">41</a></span>
-<span class="normal"><a href="#__codelineno-0-42">42</a></span>
-<span class="normal"><a href="#__codelineno-0-43">43</a></span>
-<span class="normal"><a href="#__codelineno-0-44">44</a></span>
-<span class="normal"><a href="#__codelineno-0-45">45</a></span>
-<span class="normal"><a href="#__codelineno-0-46">46</a></span>
-<span class="normal"><a href="#__codelineno-0-47">47</a></span>
-<span class="normal"><a href="#__codelineno-0-48">48</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a>*id:* Just a plain old random GUID
-<a id="__codelineno-0-2" name="__codelineno-0-2"></a>
-<a id="__codelineno-0-3" name="__codelineno-0-3"></a>*usage:* What this key will be used for (either encryption or HMAC)
-<a id="__codelineno-0-4" name="__codelineno-0-4"></a>
-<a id="__codelineno-0-5" name="__codelineno-0-5"></a>*type:* The type of the Encryption Service Delegate that this key will use to carry out its cryptographic operations.
-<a id="__codelineno-0-6" name="__codelineno-0-6"></a>This must match the value returned from the
-<a id="__codelineno-0-7" name="__codelineno-0-7"></a>desired [EncryptionServiceDelegate.supportedCryptoKeyType()](/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/EncryptionServiceDelegate.java#L17)
-<a id="__codelineno-0-8" name="__codelineno-0-8"></a>implementation.
-<a id="__codelineno-0-9" name="__codelineno-0-9"></a>&lt;br&gt;
-<a id="__codelineno-0-10" name="__codelineno-0-10"></a>For example: The
-<a id="__codelineno-0-11" name="__codelineno-0-11"></a>included [CacheWrappedKeyEncryptionService.supportedCryptoKeyType()](/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/wrapped/CachedWrappedKeyEncryptionService.java#251)
-<a id="__codelineno-0-12" name="__codelineno-0-12"></a>returns the value &quot;CACHED_WRAPPED&quot;, so if you wanted to use that Encryption Service Delegate implementation then you
-<a id="__codelineno-0-13" name="__codelineno-0-13"></a>would have a CryptoKey object with this &#39;type&#39; field set to &quot;CACHED_WRAPPED&quot;. At runtime the library matches the
-<a id="__codelineno-0-14" name="__codelineno-0-14"></a>CryptoKeys with their corresponding EncryptionServiceDelegates by comparing this &#39;type&#39; field. If you create you own
-<a id="__codelineno-0-15" name="__codelineno-0-15"></a>Encryption Service Delegate implementation, you can define this field however you like.
-<a id="__codelineno-0-16" name="__codelineno-0-16"></a>
-<a id="__codelineno-0-17" name="__codelineno-0-17"></a>*Configuration:* This field stores the information about the key that the Encryption Service Delegates use to carry out
-<a id="__codelineno-0-18" name="__codelineno-0-18"></a>their operations. It would never contain the actual
-<a id="__codelineno-0-19" name="__codelineno-0-19"></a>bytes of the key or related confidential information (at least not in the clear). Instead, it would usually contain a
-<a id="__codelineno-0-20" name="__codelineno-0-20"></a>reference to the key. For example: if the &#39;type&#39; of this key was AWS_KMS then this map would have an entry called &quot;
-<a id="__codelineno-0-21" name="__codelineno-0-21"></a>keyArn&quot; with the value of the AWS Key ID or Key ARN. Each Encryption Service Delegate implementation will know what
-<a id="__codelineno-0-22" name="__codelineno-0-22"></a>configuration information it needs to carry out its operations so the application just needs to make sure that the right
-<a id="__codelineno-0-23" name="__codelineno-0-23"></a>information is present in this map for the given key type.
-<a id="__codelineno-0-24" name="__codelineno-0-24"></a>
-<a id="__codelineno-0-25" name="__codelineno-0-25"></a>*keyStartTime:* Optional field which is only used for HMAC CryptoKeys. When used this can alleviate some of the shortcomings with the [Single HMAC Strategy](#single-hmac-strategy) that are described further in this document. If you are using this field it should be set when the CryptoKey is created in your application. It&#39;s very important to set this to some time in the future which is greater than the key cache time. i.e. by the time this ketStartTime date passes, all application instances should know about this key. 
-<a id="__codelineno-0-26" name="__codelineno-0-26"></a>
-<a id="__codelineno-0-27" name="__codelineno-0-27"></a>&lt;br&gt;
-<a id="__codelineno-0-28" name="__codelineno-0-28"></a>&lt;br&gt;
-<a id="__codelineno-0-29" name="__codelineno-0-29"></a>A big advantage of using CryptoKey objects to represent cryptographic key information is that it allows applications to easily support multiple cryptographic providers while keeping code clean and encryption code
-<a id="__codelineno-0-30" name="__codelineno-0-30"></a>abstracted. It could also allow you to rotate from one type of key to another (e.g. AWS_KMS to AZURE_DEDICATED_HSM) with no application code changes. Or you could support different
-<a id="__codelineno-0-31" name="__codelineno-0-31"></a>encryption delegates in different regions without having to write any custom application code to support that.
-<a id="__codelineno-0-32" name="__codelineno-0-32"></a>
-<a id="__codelineno-0-33" name="__codelineno-0-33"></a>### Ciphertext representation
-<a id="__codelineno-0-34" name="__codelineno-0-34"></a>
-<a id="__codelineno-0-35" name="__codelineno-0-35"></a>When [CryptoShield.encrypt()](/mango4j-crypto/src/main/java/ie/bitstep/mango/crypto/CryptoShield.java#L202)
-<a id="__codelineno-0-36" name="__codelineno-0-36"></a>is called on an object the library will set
-<a id="__codelineno-0-37" name="__codelineno-0-37"></a>the [@EncryptedData](/mango4j-crypto/src/main/java/ie/bitstep/mango/crypto/annotations/EncryptedData.java)
-<a id="__codelineno-0-38" name="__codelineno-0-38"></a>field in the object to the calculated ciphertext.
-<a id="__codelineno-0-39" name="__codelineno-0-39"></a>This final ciphertext is represented in a standardised way for encryption (not HMACs). Instead of just returning the
-<a id="__codelineno-0-40" name="__codelineno-0-40"></a>straight
-<a id="__codelineno-0-41" name="__codelineno-0-41"></a>ciphertext output it will return it as a JSON String with the following definition:
-<a id="__codelineno-0-42" name="__codelineno-0-42"></a>
-<a id="__codelineno-0-43" name="__codelineno-0-43"></a>```json language=json
-<a id="__codelineno-0-44" name="__codelineno-0-44"></a>{
-<a id="__codelineno-0-45" name="__codelineno-0-45"></a>  &quot;cryptoKeyId&quot;: &quot;someKeyId&quot;,
-<a id="__codelineno-0-46" name="__codelineno-0-46"></a>  &quot;iv&quot;: &quot;someInitializationVector&quot;,
-<a id="__codelineno-0-47" name="__codelineno-0-47"></a>  &quot;data&quot;: {}
-<a id="__codelineno-0-48" name="__codelineno-0-48"></a>}
-</code></pre></div></td></tr></table></div></p>
-<p>where:</p>
-<ul>
-<li><em>cryptoKeyId</em> is the identifier of the crypto key object (e.g. the CryptoKey.id field) in your system that was used to
-  carry out the cryptographic operation</li>
-<li><em>iv</em> is the <a href="#Whats-an-IV">Initialization Vector</a> that was used for the cryptographic operation</li>
-<li><em>data</em> is the actual output that was returned from the Encryption Service Delegate's encrypt() method, the ciphertext
-  will be included here.
-  Each delegate may return different data here depending on the cryptographic provider or method that it uses, or what
-  information it
-  defines as necessary to include. This is why it's a map, because it needs to be flexible enough to accommodate
-  different ciphertext data structures that different EncryptionServiceDelegates define.</li>
-</ul>
-<h2 id="key-rotation-changing-the-key">Key Rotation (Changing the key)<a class="headerlink" href="#key-rotation-changing-the-key" title="Permanent link">&para;</a></h2>
-<p>Key rotation is the process of changing a CryptoKey to a new CryptoKey. After a key is rotated, create and update
-operations should use the new key to perform the encryption operations. After a key is rotated, some records will have
-been encrypted with the previous key (or keys) while some will have been encrypted with the new key. So previous keys
-should still be
-available for decryption until there are no more records associated with them.</p>
-<p>When applications implement Application Level Encryption, they will commonly have to support key rotation.
-They may have different requirements around how often the CryptoKeys need to be rotated or what conditions trigger a key
-rotation.
-But a key rotation should be something which an application can do at short notice on the fly. This is necessary to
-ensure that no more ciphertext is generated with an old key after we have introduced a new key into the system.
-Although rotating an encryption key is relatively straight forward, rotating a HMAC key on the other hand can pose
-considerable challenges (discussed at length further in this documentation)</p>
-<h2 id="encryption-key-rotation">Encryption Key Rotation<a class="headerlink" href="#encryption-key-rotation" title="Permanent link">&para;</a></h2>
-<p>Changing an encryption key is relatively straightforward. Just add the new encryption key to your tenant/system and use
-it for all write operations going forward. Just make sure to keep the older encryption keys available until no more
-records exist that were encrypted with those keys. This is also why mango4j-crypto includes the CryptoKey ID in the
-ciphertext that it generates, so that we always know what key we need to use to decrypt any given piece of ciphertext.</p>
-<h2 id="hmac-key-rotation">HMAC Key Rotation<a class="headerlink" href="#hmac-key-rotation" title="Permanent link">&para;</a></h2>
-<p>HMAC key rotation is a completely different beast and supporting it successfully requires serious application design
-considerations. Due to this material being so involved we've given it a large section all of its own further in this
-document.
-Please read the discussion carefully.</p>
-<h2 id="rekeying-re-encrypting-existing-records-with-the-new-key">Rekeying (re-encrypting existing records with the new key)<a class="headerlink" href="#rekeying-re-encrypting-existing-records-with-the-new-key" title="Permanent link">&para;</a></h2>
-<p>Rekeying is the process whereby after a key rotation we have a background task which decrypts existing records
-(that were encrypted with some older key) and re-encrypt them with the new key.
-This is done when you want to completely remove an older key from the system after a key rotation but there are still
-older records which were encrypted (or have had HMACs calculated) with the older key.
-In this scenario we cannot remove the older key until there are no more records that have been encrypted with that key.
-So in order to support the removal of the old key we need to rekey the records which were encrypted with that key onto
-the new key until there are no more records remaining which were encrypted with the old key.
-Rekeying is an extremely important function which is needed to handle the scenario in which a key is no longer
-considered secure, and thus we can no longer tolerate any records having ciphertext which used that key.</p>
-<p>Mango4j-crypto supports 2 types of rekey modes which are specified using the rekeyMode field on a CryptoKey
-(please see the relevant section on how to configure the mango4j-crypto automatic rekey job):</p>
-<p><strong>KEY_OFF:</strong> This type of rekey is where we have some encryption/HMAC key that we want to completely remove from our
-system but there might still be some entities which used that key.</p>
-<blockquote>
-<p><strong>NOTE:</strong> If rekeyMode is set to 'KEY_OFF' on the current encryption or current HMAC CryptoKey it is ignored.
-It doesn't really make sense to key off the current key.</p>
-</blockquote>
-<p><strong>KEY_ON:</strong> This type of rekey is where we want all other encryption/HMAC keys (apart from this one) to be completely
-removed from the system. This type of rekeying should be strongly reconsidered before initiating it because it will most
-likely
-rekey a very large portion of your entities which may have a notable impact on performance. Also, keep in mind that you
-may need to make
-sure any external cryptographic providers that you use are aware that they will experience a higher volume of traffic
-for the period of time that the rekey takes.</p>
-<blockquote>
-<p><strong>NOTE:</strong> If rekeyMode is set to 'KEY_ON' on a key that is not the current encryption or current HMAC CryptoKey it is
-ignored. It doesn't really make sense to rekey everything onto some old key.</p>
-</blockquote>
-<p><strong>IMPORTANT: Avoid falling into the trap of thinking that shorter data retention rules can save you from having to
-support
-rekeying functionality in your application. We've often heard the idea that if an application has a key period of say 10
-years but
-our data retention period is only 5 years that rekey support will not be required and we can just swap the key every 10
-years.
-An easy way to see the flaw in this logic is to ask yourself what happens in year 11 when you change the HMAC key?
-What about all the records from year 6 to year 10? You now can't find them! Also, with unique constraints you have 5
-years of records in your system which may be at risk of duplication.</strong></p>
-<h3 id="hmac-key-rotation-challenges">HMAC Key Rotation Challenges<a class="headerlink" href="#hmac-key-rotation-challenges" title="Permanent link">&para;</a></h3>
-<p>The following section documents the 2 core challenges when it comes to supporting HMAC key rotation in your application.
-It's advised for all developers not familiar with this particular topic to read this section very carefully.
-It may seem easy to not give much attention to the scenario of rotating HMAC keys, possibly thinking <em>"when are we
-really going to need to change a <a href="#Whats-a-tenant">tenant's</a> HMAC key?!"</em> or <em>"I can worry about it later"</em>. But
-hopefully as you
-can see below, in order to support this functionality there are very important considerations to take into account for
-the way that you design your application. And the challenges presented by HMAC key rotation can be very difficult to
-retrofit into an application further down the line.</p>
-<h4 id="searching-operations-after-the-rotation-of-a-hmac-key">Searching operations after the rotation of a HMAC key<a class="headerlink" href="#searching-operations-after-the-rotation-of-a-hmac-key" title="Permanent link">&para;</a></h4>
-<p>If your application has the concept of a single HMAC key per tenant, it's extremely likely that you'll need to stop
-doing this and change this design approach. Unless for some reason you don't have to support HMAC key rotation in your
-application.
-The reason being that if you change a tenant (or system) HMAC key during normal application operation you won't be able
-to find any of the existing records.
-The only way that you could change a tenants HMAC key is if it's acceptable to take your system offline until all
-records have been re-keyed with the new key by some background job. Or (for some reason) you are able to tolerate a lot
-of search misses for existing records until such a background job was complete while the application was running.
-Both of these scenarios are very unlikely to be tolerated in most modern applications.</p>
-<p>To break down this sample scenario into steps:</p>
-<ol>
-<li>You change the HMAC key for your tenant.</li>
-<li>All application searches going forward will use the new HMAC key.</li>
-<li>Immediately you won't be able to find any records in your system because all existing HMACs have been calculated with
-   the old HMAC key</li>
-<li>You kick off a background job which goes from record to record decrypting and re-keying the fields with the new HMAC
-   key.</li>
-<li>Your application searches gradually start to become more and more successful over time.</li>
-<li>Once the background rotation job is complete your application search functionality is now back online.</li>
-</ol>
-<p>The functional search outage from your application is most likely unacceptable. Re-keying all records in your system may
-take a very large amount of time. You may have a very large number of records in your system and even with a modest
-number
-of records, it's generally not acceptable to have this background re-keying job run as fast as it can due to
-performance degradation of your system. Increased number of calls to the DB (2 extra calls in the background for every
-record). Not to mention if you're using an external
-cryptographic provider (like Azure Dedicated HSM) it might not handle (or even allow) the extra traffic without its own
-performance problems.
-It may be tempting to think along the lines of running the background job until all records are re-keyed with the new
-HMAC key before changing the key on the tenant. But this is just the same scenario in reverse. Your application searches
-will begin successfully but immediately will become less and less successful over time until the background job is
-finished and you change the tenants HMAC key to the new one.</p>
-<p>To remedy this you need to implement 2 simple concepts:</p>
-<ol>
-<li>Change your design approach so that a tenant has a <ins><strong>list</strong></ins> of HMAC keys rather than a single HMAC key.
-   Depending on your application requirements this list may contain anywhere from a single HMAC key to N HMAC keys.
-   During HMAC key rotations you will <em>add</em> the new HMAC key to the list, instead of <em>replacing</em> the old HMAC key.
-   If your application doesn't support rekeying then this list of HMAC keys will keep getting larger until one
-   of the following 2 scenarios happen:
-   <br>
-   a). Older data that has HMACs calculated with an old key is deleted due to data retention rules. Once there are no
-   more HMACs in the DB that were calculated with that old HMAC key, it can be removed from the list.
-   <br>
-   b). You rekey all records onto the new HMAC key. HMAC Rekeying can get tricky and there are multiple ways of doing it
-   depending on which HMAC strategy you use (described below).</li>
-</ol>
+<span class="normal"><a href="#__codelineno-0-10">10</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">CryptoKey</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">id</span><span class="p">;</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">CryptoKeyUsage</span><span class="w"> </span><span class="n">usage</span><span class="p">;</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">type</span><span class="p">;</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">configuration</span><span class="p">;</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Instant</span><span class="w"> </span><span class="n">keyStartTime</span><span class="p">;</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">RekeyMode</span><span class="w"> </span><span class="n">rekeyMode</span><span class="p">;</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Instant</span><span class="w"> </span><span class="n">createdDate</span><span class="p">;</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Instant</span><span class="w"> </span><span class="n">lastModifiedDate</span><span class="p">;</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10"></a><span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+<p><em>id:</em> Just a plain old random GUID</p>
+<p><em>usage:</em> What this key will be used for (either encryption or HMAC)</p>
+<p><em>type:</em> The type of the Encryption Service Delegate that this key will use to carry out its cryptographic operations.
+This must match the value returned from the
+desired <a href="/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/EncryptionServiceDelegate.java#L17">EncryptionServiceDelegate.supportedCryptoKeyType()</a>
+implementation.
+<br>
+For example: The
+included <a href="/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/wrapped/CachedWrappedKeyEncryptionService.java#251">CacheWrappedKeyEncryptionService.supportedCryptoKeyType()</a>
+returns the value "CACHED_WRAPPED", so if you wanted to use that Encryption Service Delegate implementation then you
+would have a CryptoKey object with this 'type' field set to "CACHED_WRAPPED". At runtime the library matches the
+CryptoKeys with their corresponding EncryptionServiceDelegates by comparing this 'type' field. If you create you own
+Encryption Service Delegate implementation, you can define this field however you like.</p>
+<p><em>Configuration:</em> This field stores the information about the key that the Encryption Service Delegates use to carry out
+their operations. It would never contain the actual
+bytes of the key or related confidential information (at least not in the clear). Instead, it would usually contain a
+reference to the key. For example: if the 'type' of this key was AWS_KMS then this map would have an entry called "
+keyArn" with the value of the AWS Key ID or Key ARN. Each Encryption Service Delegate implementation will know what
+configuration information it needs to carry out its operations so the application just needs to make sure that the right
+information is present in this map for the given key type.</p>
+<p><em>keyStartTime:</em> Optional field which is only used for HMAC CryptoKeys. When used this can alleviate some of the shortcomings with the <a href="#single-hmac-strategy">Single HMAC Strategy</a> that are described further in this document. If you are using this field it should be set when the CryptoKey is created in your application. It's very important to set this to some time in the future which is greater than the key cache time. i.e. by the time this ketStartTime date passes, all application instances should know about this key. </p>
 <p><br>
-2. For your application's search operations, change the logic to look for matches with a <em>list</em> of HMACs instead of
-   trying
-   to match a single HMAC. The number of HMACs generated for the search will be equal to the number of HMAC keys in the
-   tenants HMAC key list.
-   So your code needs to be prepared for this scenario by matching across a list of HMACs rather than a single HMAC.</p>
-<p>So the steps for converting your design approach to accommodate the above approach would become:</p>
-<ol>
-<li>Update your tenant record to have a list of HMACs</li>
-<li>Modify your application search code in such a way that instead of looking for a HMAC field value equal to the
-   generated HMAC (e.g. in JpaRepository):</li>
-</ol>
-<p>```java language=java
-findByUsernameHmac(String userNameHmac);
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
-<span class="normal"><a href="#__codelineno-1-2">2</a></span>
-<span class="normal"><a href="#__codelineno-1-3">3</a></span>
-<span class="normal"><a href="#__codelineno-1-4">4</a></span>
-<span class="normal"><a href="#__codelineno-1-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a>Change it to generate a list of HMAC values (using the tenant&#39;s _list_ of HMAC keys) and look for a HMAC value which is
-<a id="__codelineno-1-2" name="__codelineno-1-2"></a>in that list of HMACs (e.g. in JpaRepository):
-<a id="__codelineno-1-3" name="__codelineno-1-3"></a>
-<a id="__codelineno-1-4" name="__codelineno-1-4"></a>```java language=java
-<a id="__codelineno-1-5" name="__codelineno-1-5"></a>findByUsernameHmacIn(Collection&lt;String&gt; userNameHmacs);
+<br>
+A big advantage of using CryptoKey objects to represent cryptographic key information is that it allows applications to easily support multiple cryptographic providers while keeping code clean and encryption code
+abstracted. It could also allow you to rotate from one type of key to another (e.g. AWS_KMS to AZURE_DEDICATED_HSM) with no application code changes. Or you could support different
+encryption delegates in different regions without having to write any custom application code to support that.</p>
+<h3 id="ciphertext-representation">Ciphertext representation<a class="headerlink" href="#ciphertext-representation" title="Permanent link">&para;</a></h3>
+<p>When <a href="/mango4j-crypto/src/main/java/ie/bitstep/mango/crypto/CryptoShield.java#L202">CryptoShield.encrypt()</a>
+is called on an object the library will set
+the <a href="/mango4j-crypto/src/main/java/ie/bitstep/mango/crypto/annotations/EncryptedData.java">@EncryptedData</a>
+field in the object to the calculated ciphertext.
+This final ciphertext is represented in a standardised way for encryption (not HMACs). Instead of just returning the
+straight
+ciphertext output it will return it as a JSON String with the following definition:</p>
+<p>```json language=json
+{
+  "cryptoKeyId": "someKeyId",
+  "iv": "someInitializationVector",
+  "data": {}
+}
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">  1</a></span>
+<span class="normal"><a href="#__codelineno-1-2">  2</a></span>
+<span class="normal"><a href="#__codelineno-1-3">  3</a></span>
+<span class="normal"><a href="#__codelineno-1-4">  4</a></span>
+<span class="normal"><a href="#__codelineno-1-5">  5</a></span>
+<span class="normal"><a href="#__codelineno-1-6">  6</a></span>
+<span class="normal"><a href="#__codelineno-1-7">  7</a></span>
+<span class="normal"><a href="#__codelineno-1-8">  8</a></span>
+<span class="normal"><a href="#__codelineno-1-9">  9</a></span>
+<span class="normal"><a href="#__codelineno-1-10"> 10</a></span>
+<span class="normal"><a href="#__codelineno-1-11"> 11</a></span>
+<span class="normal"><a href="#__codelineno-1-12"> 12</a></span>
+<span class="normal"><a href="#__codelineno-1-13"> 13</a></span>
+<span class="normal"><a href="#__codelineno-1-14"> 14</a></span>
+<span class="normal"><a href="#__codelineno-1-15"> 15</a></span>
+<span class="normal"><a href="#__codelineno-1-16"> 16</a></span>
+<span class="normal"><a href="#__codelineno-1-17"> 17</a></span>
+<span class="normal"><a href="#__codelineno-1-18"> 18</a></span>
+<span class="normal"><a href="#__codelineno-1-19"> 19</a></span>
+<span class="normal"><a href="#__codelineno-1-20"> 20</a></span>
+<span class="normal"><a href="#__codelineno-1-21"> 21</a></span>
+<span class="normal"><a href="#__codelineno-1-22"> 22</a></span>
+<span class="normal"><a href="#__codelineno-1-23"> 23</a></span>
+<span class="normal"><a href="#__codelineno-1-24"> 24</a></span>
+<span class="normal"><a href="#__codelineno-1-25"> 25</a></span>
+<span class="normal"><a href="#__codelineno-1-26"> 26</a></span>
+<span class="normal"><a href="#__codelineno-1-27"> 27</a></span>
+<span class="normal"><a href="#__codelineno-1-28"> 28</a></span>
+<span class="normal"><a href="#__codelineno-1-29"> 29</a></span>
+<span class="normal"><a href="#__codelineno-1-30"> 30</a></span>
+<span class="normal"><a href="#__codelineno-1-31"> 31</a></span>
+<span class="normal"><a href="#__codelineno-1-32"> 32</a></span>
+<span class="normal"><a href="#__codelineno-1-33"> 33</a></span>
+<span class="normal"><a href="#__codelineno-1-34"> 34</a></span>
+<span class="normal"><a href="#__codelineno-1-35"> 35</a></span>
+<span class="normal"><a href="#__codelineno-1-36"> 36</a></span>
+<span class="normal"><a href="#__codelineno-1-37"> 37</a></span>
+<span class="normal"><a href="#__codelineno-1-38"> 38</a></span>
+<span class="normal"><a href="#__codelineno-1-39"> 39</a></span>
+<span class="normal"><a href="#__codelineno-1-40"> 40</a></span>
+<span class="normal"><a href="#__codelineno-1-41"> 41</a></span>
+<span class="normal"><a href="#__codelineno-1-42"> 42</a></span>
+<span class="normal"><a href="#__codelineno-1-43"> 43</a></span>
+<span class="normal"><a href="#__codelineno-1-44"> 44</a></span>
+<span class="normal"><a href="#__codelineno-1-45"> 45</a></span>
+<span class="normal"><a href="#__codelineno-1-46"> 46</a></span>
+<span class="normal"><a href="#__codelineno-1-47"> 47</a></span>
+<span class="normal"><a href="#__codelineno-1-48"> 48</a></span>
+<span class="normal"><a href="#__codelineno-1-49"> 49</a></span>
+<span class="normal"><a href="#__codelineno-1-50"> 50</a></span>
+<span class="normal"><a href="#__codelineno-1-51"> 51</a></span>
+<span class="normal"><a href="#__codelineno-1-52"> 52</a></span>
+<span class="normal"><a href="#__codelineno-1-53"> 53</a></span>
+<span class="normal"><a href="#__codelineno-1-54"> 54</a></span>
+<span class="normal"><a href="#__codelineno-1-55"> 55</a></span>
+<span class="normal"><a href="#__codelineno-1-56"> 56</a></span>
+<span class="normal"><a href="#__codelineno-1-57"> 57</a></span>
+<span class="normal"><a href="#__codelineno-1-58"> 58</a></span>
+<span class="normal"><a href="#__codelineno-1-59"> 59</a></span>
+<span class="normal"><a href="#__codelineno-1-60"> 60</a></span>
+<span class="normal"><a href="#__codelineno-1-61"> 61</a></span>
+<span class="normal"><a href="#__codelineno-1-62"> 62</a></span>
+<span class="normal"><a href="#__codelineno-1-63"> 63</a></span>
+<span class="normal"><a href="#__codelineno-1-64"> 64</a></span>
+<span class="normal"><a href="#__codelineno-1-65"> 65</a></span>
+<span class="normal"><a href="#__codelineno-1-66"> 66</a></span>
+<span class="normal"><a href="#__codelineno-1-67"> 67</a></span>
+<span class="normal"><a href="#__codelineno-1-68"> 68</a></span>
+<span class="normal"><a href="#__codelineno-1-69"> 69</a></span>
+<span class="normal"><a href="#__codelineno-1-70"> 70</a></span>
+<span class="normal"><a href="#__codelineno-1-71"> 71</a></span>
+<span class="normal"><a href="#__codelineno-1-72"> 72</a></span>
+<span class="normal"><a href="#__codelineno-1-73"> 73</a></span>
+<span class="normal"><a href="#__codelineno-1-74"> 74</a></span>
+<span class="normal"><a href="#__codelineno-1-75"> 75</a></span>
+<span class="normal"><a href="#__codelineno-1-76"> 76</a></span>
+<span class="normal"><a href="#__codelineno-1-77"> 77</a></span>
+<span class="normal"><a href="#__codelineno-1-78"> 78</a></span>
+<span class="normal"><a href="#__codelineno-1-79"> 79</a></span>
+<span class="normal"><a href="#__codelineno-1-80"> 80</a></span>
+<span class="normal"><a href="#__codelineno-1-81"> 81</a></span>
+<span class="normal"><a href="#__codelineno-1-82"> 82</a></span>
+<span class="normal"><a href="#__codelineno-1-83"> 83</a></span>
+<span class="normal"><a href="#__codelineno-1-84"> 84</a></span>
+<span class="normal"><a href="#__codelineno-1-85"> 85</a></span>
+<span class="normal"><a href="#__codelineno-1-86"> 86</a></span>
+<span class="normal"><a href="#__codelineno-1-87"> 87</a></span>
+<span class="normal"><a href="#__codelineno-1-88"> 88</a></span>
+<span class="normal"><a href="#__codelineno-1-89"> 89</a></span>
+<span class="normal"><a href="#__codelineno-1-90"> 90</a></span>
+<span class="normal"><a href="#__codelineno-1-91"> 91</a></span>
+<span class="normal"><a href="#__codelineno-1-92"> 92</a></span>
+<span class="normal"><a href="#__codelineno-1-93"> 93</a></span>
+<span class="normal"><a href="#__codelineno-1-94"> 94</a></span>
+<span class="normal"><a href="#__codelineno-1-95"> 95</a></span>
+<span class="normal"><a href="#__codelineno-1-96"> 96</a></span>
+<span class="normal"><a href="#__codelineno-1-97"> 97</a></span>
+<span class="normal"><a href="#__codelineno-1-98"> 98</a></span>
+<span class="normal"><a href="#__codelineno-1-99"> 99</a></span>
+<span class="normal"><a href="#__codelineno-1-100">100</a></span>
+<span class="normal"><a href="#__codelineno-1-101">101</a></span>
+<span class="normal"><a href="#__codelineno-1-102">102</a></span>
+<span class="normal"><a href="#__codelineno-1-103">103</a></span>
+<span class="normal"><a href="#__codelineno-1-104">104</a></span>
+<span class="normal"><a href="#__codelineno-1-105">105</a></span>
+<span class="normal"><a href="#__codelineno-1-106">106</a></span>
+<span class="normal"><a href="#__codelineno-1-107">107</a></span>
+<span class="normal"><a href="#__codelineno-1-108">108</a></span>
+<span class="normal"><a href="#__codelineno-1-109">109</a></span>
+<span class="normal"><a href="#__codelineno-1-110">110</a></span>
+<span class="normal"><a href="#__codelineno-1-111">111</a></span>
+<span class="normal"><a href="#__codelineno-1-112">112</a></span>
+<span class="normal"><a href="#__codelineno-1-113">113</a></span>
+<span class="normal"><a href="#__codelineno-1-114">114</a></span>
+<span class="normal"><a href="#__codelineno-1-115">115</a></span>
+<span class="normal"><a href="#__codelineno-1-116">116</a></span>
+<span class="normal"><a href="#__codelineno-1-117">117</a></span>
+<span class="normal"><a href="#__codelineno-1-118">118</a></span>
+<span class="normal"><a href="#__codelineno-1-119">119</a></span>
+<span class="normal"><a href="#__codelineno-1-120">120</a></span>
+<span class="normal"><a href="#__codelineno-1-121">121</a></span>
+<span class="normal"><a href="#__codelineno-1-122">122</a></span>
+<span class="normal"><a href="#__codelineno-1-123">123</a></span>
+<span class="normal"><a href="#__codelineno-1-124">124</a></span>
+<span class="normal"><a href="#__codelineno-1-125">125</a></span>
+<span class="normal"><a href="#__codelineno-1-126">126</a></span>
+<span class="normal"><a href="#__codelineno-1-127">127</a></span>
+<span class="normal"><a href="#__codelineno-1-128">128</a></span>
+<span class="normal"><a href="#__codelineno-1-129">129</a></span>
+<span class="normal"><a href="#__codelineno-1-130">130</a></span>
+<span class="normal"><a href="#__codelineno-1-131">131</a></span>
+<span class="normal"><a href="#__codelineno-1-132">132</a></span>
+<span class="normal"><a href="#__codelineno-1-133">133</a></span>
+<span class="normal"><a href="#__codelineno-1-134">134</a></span>
+<span class="normal"><a href="#__codelineno-1-135">135</a></span>
+<span class="normal"><a href="#__codelineno-1-136">136</a></span>
+<span class="normal"><a href="#__codelineno-1-137">137</a></span>
+<span class="normal"><a href="#__codelineno-1-138">138</a></span>
+<span class="normal"><a href="#__codelineno-1-139">139</a></span>
+<span class="normal"><a href="#__codelineno-1-140">140</a></span>
+<span class="normal"><a href="#__codelineno-1-141">141</a></span>
+<span class="normal"><a href="#__codelineno-1-142">142</a></span>
+<span class="normal"><a href="#__codelineno-1-143">143</a></span>
+<span class="normal"><a href="#__codelineno-1-144">144</a></span>
+<span class="normal"><a href="#__codelineno-1-145">145</a></span>
+<span class="normal"><a href="#__codelineno-1-146">146</a></span>
+<span class="normal"><a href="#__codelineno-1-147">147</a></span>
+<span class="normal"><a href="#__codelineno-1-148">148</a></span>
+<span class="normal"><a href="#__codelineno-1-149">149</a></span>
+<span class="normal"><a href="#__codelineno-1-150">150</a></span>
+<span class="normal"><a href="#__codelineno-1-151">151</a></span>
+<span class="normal"><a href="#__codelineno-1-152">152</a></span>
+<span class="normal"><a href="#__codelineno-1-153">153</a></span>
+<span class="normal"><a href="#__codelineno-1-154">154</a></span>
+<span class="normal"><a href="#__codelineno-1-155">155</a></span>
+<span class="normal"><a href="#__codelineno-1-156">156</a></span>
+<span class="normal"><a href="#__codelineno-1-157">157</a></span>
+<span class="normal"><a href="#__codelineno-1-158">158</a></span>
+<span class="normal"><a href="#__codelineno-1-159">159</a></span>
+<span class="normal"><a href="#__codelineno-1-160">160</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a>where:
+<a id="__codelineno-1-2" name="__codelineno-1-2"></a>
+<a id="__codelineno-1-3" name="__codelineno-1-3"></a>- *cryptoKeyId* is the identifier of the crypto key object (e.g. the CryptoKey.id field) in your system that was used to
+<a id="__codelineno-1-4" name="__codelineno-1-4"></a>  carry out the cryptographic operation
+<a id="__codelineno-1-5" name="__codelineno-1-5"></a>- *iv* is the [Initialization Vector](#Whats-an-IV) that was used for the cryptographic operation
+<a id="__codelineno-1-6" name="__codelineno-1-6"></a>- *data* is the actual output that was returned from the Encryption Service Delegate&#39;s encrypt() method, the ciphertext
+<a id="__codelineno-1-7" name="__codelineno-1-7"></a>  will be included here.
+<a id="__codelineno-1-8" name="__codelineno-1-8"></a>  Each delegate may return different data here depending on the cryptographic provider or method that it uses, or what
+<a id="__codelineno-1-9" name="__codelineno-1-9"></a>  information it
+<a id="__codelineno-1-10" name="__codelineno-1-10"></a>  defines as necessary to include. This is why it&#39;s a map, because it needs to be flexible enough to accommodate
+<a id="__codelineno-1-11" name="__codelineno-1-11"></a>  different ciphertext data structures that different EncryptionServiceDelegates define.
+<a id="__codelineno-1-12" name="__codelineno-1-12"></a>
+<a id="__codelineno-1-13" name="__codelineno-1-13"></a>## Key Rotation (Changing the key)
+<a id="__codelineno-1-14" name="__codelineno-1-14"></a>
+<a id="__codelineno-1-15" name="__codelineno-1-15"></a>Key rotation is the process of changing a CryptoKey to a new CryptoKey. After a key is rotated, create and update
+<a id="__codelineno-1-16" name="__codelineno-1-16"></a>operations should use the new key to perform the encryption operations. After a key is rotated, some records will have
+<a id="__codelineno-1-17" name="__codelineno-1-17"></a>been encrypted with the previous key (or keys) while some will have been encrypted with the new key. So previous keys
+<a id="__codelineno-1-18" name="__codelineno-1-18"></a>should still be
+<a id="__codelineno-1-19" name="__codelineno-1-19"></a>available for decryption until there are no more records associated with them.
+<a id="__codelineno-1-20" name="__codelineno-1-20"></a>
+<a id="__codelineno-1-21" name="__codelineno-1-21"></a>When applications implement Application Level Encryption, they will commonly have to support key rotation.
+<a id="__codelineno-1-22" name="__codelineno-1-22"></a>They may have different requirements around how often the CryptoKeys need to be rotated or what conditions trigger a key
+<a id="__codelineno-1-23" name="__codelineno-1-23"></a>rotation.
+<a id="__codelineno-1-24" name="__codelineno-1-24"></a>But a key rotation should be something which an application can do at short notice on the fly. This is necessary to
+<a id="__codelineno-1-25" name="__codelineno-1-25"></a>ensure that no more ciphertext is generated with an old key after we have introduced a new key into the system.
+<a id="__codelineno-1-26" name="__codelineno-1-26"></a>Although rotating an encryption key is relatively straight forward, rotating a HMAC key on the other hand can pose
+<a id="__codelineno-1-27" name="__codelineno-1-27"></a>considerable challenges (discussed at length further in this documentation)
+<a id="__codelineno-1-28" name="__codelineno-1-28"></a>
+<a id="__codelineno-1-29" name="__codelineno-1-29"></a>## Encryption Key Rotation
+<a id="__codelineno-1-30" name="__codelineno-1-30"></a>
+<a id="__codelineno-1-31" name="__codelineno-1-31"></a>Changing an encryption key is relatively straightforward. Just add the new encryption key to your tenant/system and use
+<a id="__codelineno-1-32" name="__codelineno-1-32"></a>it for all write operations going forward. Just make sure to keep the older encryption keys available until no more
+<a id="__codelineno-1-33" name="__codelineno-1-33"></a>records exist that were encrypted with those keys. This is also why mango4j-crypto includes the CryptoKey ID in the
+<a id="__codelineno-1-34" name="__codelineno-1-34"></a>ciphertext that it generates, so that we always know what key we need to use to decrypt any given piece of ciphertext.
+<a id="__codelineno-1-35" name="__codelineno-1-35"></a>
+<a id="__codelineno-1-36" name="__codelineno-1-36"></a>## HMAC Key Rotation
+<a id="__codelineno-1-37" name="__codelineno-1-37"></a>
+<a id="__codelineno-1-38" name="__codelineno-1-38"></a>HMAC key rotation is a completely different beast and supporting it successfully requires serious application design
+<a id="__codelineno-1-39" name="__codelineno-1-39"></a>considerations. Due to this material being so involved we&#39;ve given it a large section all of its own further in this
+<a id="__codelineno-1-40" name="__codelineno-1-40"></a>document.
+<a id="__codelineno-1-41" name="__codelineno-1-41"></a>Please read the discussion carefully.
+<a id="__codelineno-1-42" name="__codelineno-1-42"></a>
+<a id="__codelineno-1-43" name="__codelineno-1-43"></a>## Rekeying (re-encrypting existing records with the new key)
+<a id="__codelineno-1-44" name="__codelineno-1-44"></a>
+<a id="__codelineno-1-45" name="__codelineno-1-45"></a>Rekeying is the process whereby after a key rotation we have a background task which decrypts existing records
+<a id="__codelineno-1-46" name="__codelineno-1-46"></a>(that were encrypted with some older key) and re-encrypt them with the new key.
+<a id="__codelineno-1-47" name="__codelineno-1-47"></a>This is done when you want to completely remove an older key from the system after a key rotation but there are still
+<a id="__codelineno-1-48" name="__codelineno-1-48"></a>older records which were encrypted (or have had HMACs calculated) with the older key.
+<a id="__codelineno-1-49" name="__codelineno-1-49"></a>In this scenario we cannot remove the older key until there are no more records that have been encrypted with that key.
+<a id="__codelineno-1-50" name="__codelineno-1-50"></a>So in order to support the removal of the old key we need to rekey the records which were encrypted with that key onto
+<a id="__codelineno-1-51" name="__codelineno-1-51"></a>the new key until there are no more records remaining which were encrypted with the old key.
+<a id="__codelineno-1-52" name="__codelineno-1-52"></a>Rekeying is an extremely important function which is needed to handle the scenario in which a key is no longer
+<a id="__codelineno-1-53" name="__codelineno-1-53"></a>considered secure, and thus we can no longer tolerate any records having ciphertext which used that key.
+<a id="__codelineno-1-54" name="__codelineno-1-54"></a>
+<a id="__codelineno-1-55" name="__codelineno-1-55"></a>Mango4j-crypto supports 2 types of rekey modes which are specified using the rekeyMode field on a CryptoKey
+<a id="__codelineno-1-56" name="__codelineno-1-56"></a>(please see the relevant section on how to configure the mango4j-crypto automatic rekey job):
+<a id="__codelineno-1-57" name="__codelineno-1-57"></a>
+<a id="__codelineno-1-58" name="__codelineno-1-58"></a>**KEY_OFF:** This type of rekey is where we have some encryption/HMAC key that we want to completely remove from our
+<a id="__codelineno-1-59" name="__codelineno-1-59"></a>system but there might still be some entities which used that key.
+<a id="__codelineno-1-60" name="__codelineno-1-60"></a>&gt; **NOTE:** If rekeyMode is set to &#39;KEY_OFF&#39; on the current encryption or current HMAC CryptoKey it is ignored.
+<a id="__codelineno-1-61" name="__codelineno-1-61"></a>&gt; It doesn&#39;t really make sense to key off the current key.
+<a id="__codelineno-1-62" name="__codelineno-1-62"></a>
+<a id="__codelineno-1-63" name="__codelineno-1-63"></a>
+<a id="__codelineno-1-64" name="__codelineno-1-64"></a>**KEY_ON:** This type of rekey is where we want all other encryption/HMAC keys (apart from this one) to be completely
+<a id="__codelineno-1-65" name="__codelineno-1-65"></a>removed from the system. This type of rekeying should be strongly reconsidered before initiating it because it will most
+<a id="__codelineno-1-66" name="__codelineno-1-66"></a>likely
+<a id="__codelineno-1-67" name="__codelineno-1-67"></a>rekey a very large portion of your entities which may have a notable impact on performance. Also, keep in mind that you
+<a id="__codelineno-1-68" name="__codelineno-1-68"></a>may need to make
+<a id="__codelineno-1-69" name="__codelineno-1-69"></a>sure any external cryptographic providers that you use are aware that they will experience a higher volume of traffic
+<a id="__codelineno-1-70" name="__codelineno-1-70"></a>for the period of time that the rekey takes.
+<a id="__codelineno-1-71" name="__codelineno-1-71"></a>
+<a id="__codelineno-1-72" name="__codelineno-1-72"></a>&gt; **NOTE:** If rekeyMode is set to &#39;KEY_ON&#39; on a key that is not the current encryption or current HMAC CryptoKey it is
+<a id="__codelineno-1-73" name="__codelineno-1-73"></a>&gt; ignored. It doesn&#39;t really make sense to rekey everything onto some old key.
+<a id="__codelineno-1-74" name="__codelineno-1-74"></a>
+<a id="__codelineno-1-75" name="__codelineno-1-75"></a>**IMPORTANT: Avoid falling into the trap of thinking that shorter data retention rules can save you from having to
+<a id="__codelineno-1-76" name="__codelineno-1-76"></a>support
+<a id="__codelineno-1-77" name="__codelineno-1-77"></a>rekeying functionality in your application. We&#39;ve often heard the idea that if an application has a key period of say 10
+<a id="__codelineno-1-78" name="__codelineno-1-78"></a>years but
+<a id="__codelineno-1-79" name="__codelineno-1-79"></a>our data retention period is only 5 years that rekey support will not be required and we can just swap the key every 10
+<a id="__codelineno-1-80" name="__codelineno-1-80"></a>years.
+<a id="__codelineno-1-81" name="__codelineno-1-81"></a>An easy way to see the flaw in this logic is to ask yourself what happens in year 11 when you change the HMAC key?
+<a id="__codelineno-1-82" name="__codelineno-1-82"></a>What about all the records from year 6 to year 10? You now can&#39;t find them! Also, with unique constraints you have 5
+<a id="__codelineno-1-83" name="__codelineno-1-83"></a>years of records in your system which may be at risk of duplication.**
+<a id="__codelineno-1-84" name="__codelineno-1-84"></a>
+<a id="__codelineno-1-85" name="__codelineno-1-85"></a>### HMAC Key Rotation Challenges
+<a id="__codelineno-1-86" name="__codelineno-1-86"></a>
+<a id="__codelineno-1-87" name="__codelineno-1-87"></a>The following section documents the 2 core challenges when it comes to supporting HMAC key rotation in your application.
+<a id="__codelineno-1-88" name="__codelineno-1-88"></a>It&#39;s advised for all developers not familiar with this particular topic to read this section very carefully.
+<a id="__codelineno-1-89" name="__codelineno-1-89"></a>It may seem easy to not give much attention to the scenario of rotating HMAC keys, possibly thinking _&quot;when are we
+<a id="__codelineno-1-90" name="__codelineno-1-90"></a>really going to need to change a [tenant&#39;s](#Whats-a-tenant) HMAC key?!&quot;_ or _&quot;I can worry about it later&quot;_. But
+<a id="__codelineno-1-91" name="__codelineno-1-91"></a>hopefully as you
+<a id="__codelineno-1-92" name="__codelineno-1-92"></a>can see below, in order to support this functionality there are very important considerations to take into account for
+<a id="__codelineno-1-93" name="__codelineno-1-93"></a>the way that you design your application. And the challenges presented by HMAC key rotation can be very difficult to
+<a id="__codelineno-1-94" name="__codelineno-1-94"></a>retrofit into an application further down the line.
+<a id="__codelineno-1-95" name="__codelineno-1-95"></a>
+<a id="__codelineno-1-96" name="__codelineno-1-96"></a>#### Searching operations after the rotation of a HMAC key
+<a id="__codelineno-1-97" name="__codelineno-1-97"></a>
+<a id="__codelineno-1-98" name="__codelineno-1-98"></a>If your application has the concept of a single HMAC key per tenant, it&#39;s extremely likely that you&#39;ll need to stop
+<a id="__codelineno-1-99" name="__codelineno-1-99"></a>doing this and change this design approach. Unless for some reason you don&#39;t have to support HMAC key rotation in your
+<a id="__codelineno-1-100" name="__codelineno-1-100"></a>application.
+<a id="__codelineno-1-101" name="__codelineno-1-101"></a>The reason being that if you change a tenant (or system) HMAC key during normal application operation you won&#39;t be able
+<a id="__codelineno-1-102" name="__codelineno-1-102"></a>to find any of the existing records.
+<a id="__codelineno-1-103" name="__codelineno-1-103"></a>The only way that you could change a tenants HMAC key is if it&#39;s acceptable to take your system offline until all
+<a id="__codelineno-1-104" name="__codelineno-1-104"></a>records have been re-keyed with the new key by some background job. Or (for some reason) you are able to tolerate a lot
+<a id="__codelineno-1-105" name="__codelineno-1-105"></a>of search misses for existing records until such a background job was complete while the application was running.
+<a id="__codelineno-1-106" name="__codelineno-1-106"></a>Both of these scenarios are very unlikely to be tolerated in most modern applications.
+<a id="__codelineno-1-107" name="__codelineno-1-107"></a>
+<a id="__codelineno-1-108" name="__codelineno-1-108"></a>To break down this sample scenario into steps:
+<a id="__codelineno-1-109" name="__codelineno-1-109"></a>
+<a id="__codelineno-1-110" name="__codelineno-1-110"></a>1. You change the HMAC key for your tenant.
+<a id="__codelineno-1-111" name="__codelineno-1-111"></a>2. All application searches going forward will use the new HMAC key.
+<a id="__codelineno-1-112" name="__codelineno-1-112"></a>3. Immediately you won&#39;t be able to find any records in your system because all existing HMACs have been calculated with
+<a id="__codelineno-1-113" name="__codelineno-1-113"></a>   the old HMAC key
+<a id="__codelineno-1-114" name="__codelineno-1-114"></a>4. You kick off a background job which goes from record to record decrypting and re-keying the fields with the new HMAC
+<a id="__codelineno-1-115" name="__codelineno-1-115"></a>   key.
+<a id="__codelineno-1-116" name="__codelineno-1-116"></a>5. Your application searches gradually start to become more and more successful over time.
+<a id="__codelineno-1-117" name="__codelineno-1-117"></a>6. Once the background rotation job is complete your application search functionality is now back online.
+<a id="__codelineno-1-118" name="__codelineno-1-118"></a>
+<a id="__codelineno-1-119" name="__codelineno-1-119"></a>The functional search outage from your application is most likely unacceptable. Re-keying all records in your system may
+<a id="__codelineno-1-120" name="__codelineno-1-120"></a>take a very large amount of time. You may have a very large number of records in your system and even with a modest
+<a id="__codelineno-1-121" name="__codelineno-1-121"></a>number
+<a id="__codelineno-1-122" name="__codelineno-1-122"></a>of records, it&#39;s generally not acceptable to have this background re-keying job run as fast as it can due to
+<a id="__codelineno-1-123" name="__codelineno-1-123"></a>performance degradation of your system. Increased number of calls to the DB (2 extra calls in the background for every
+<a id="__codelineno-1-124" name="__codelineno-1-124"></a>record). Not to mention if you&#39;re using an external
+<a id="__codelineno-1-125" name="__codelineno-1-125"></a>cryptographic provider (like Azure Dedicated HSM) it might not handle (or even allow) the extra traffic without its own
+<a id="__codelineno-1-126" name="__codelineno-1-126"></a>performance problems.
+<a id="__codelineno-1-127" name="__codelineno-1-127"></a>It may be tempting to think along the lines of running the background job until all records are re-keyed with the new
+<a id="__codelineno-1-128" name="__codelineno-1-128"></a>HMAC key before changing the key on the tenant. But this is just the same scenario in reverse. Your application searches
+<a id="__codelineno-1-129" name="__codelineno-1-129"></a>will begin successfully but immediately will become less and less successful over time until the background job is
+<a id="__codelineno-1-130" name="__codelineno-1-130"></a>finished and you change the tenants HMAC key to the new one.
+<a id="__codelineno-1-131" name="__codelineno-1-131"></a>
+<a id="__codelineno-1-132" name="__codelineno-1-132"></a>To remedy this you need to implement 2 simple concepts:
+<a id="__codelineno-1-133" name="__codelineno-1-133"></a>
+<a id="__codelineno-1-134" name="__codelineno-1-134"></a>1. Change your design approach so that a tenant has a &lt;ins&gt;**list**&lt;/ins&gt; of HMAC keys rather than a single HMAC key.
+<a id="__codelineno-1-135" name="__codelineno-1-135"></a>   Depending on your application requirements this list may contain anywhere from a single HMAC key to N HMAC keys.
+<a id="__codelineno-1-136" name="__codelineno-1-136"></a>   During HMAC key rotations you will _add_ the new HMAC key to the list, instead of _replacing_ the old HMAC key.
+<a id="__codelineno-1-137" name="__codelineno-1-137"></a>   If your application doesn&#39;t support rekeying then this list of HMAC keys will keep getting larger until one
+<a id="__codelineno-1-138" name="__codelineno-1-138"></a>   of the following 2 scenarios happen:
+<a id="__codelineno-1-139" name="__codelineno-1-139"></a>   &lt;br&gt;
+<a id="__codelineno-1-140" name="__codelineno-1-140"></a>   a). Older data that has HMACs calculated with an old key is deleted due to data retention rules. Once there are no
+<a id="__codelineno-1-141" name="__codelineno-1-141"></a>   more HMACs in the DB that were calculated with that old HMAC key, it can be removed from the list.
+<a id="__codelineno-1-142" name="__codelineno-1-142"></a>   &lt;br&gt;
+<a id="__codelineno-1-143" name="__codelineno-1-143"></a>   b). You rekey all records onto the new HMAC key. HMAC Rekeying can get tricky and there are multiple ways of doing it
+<a id="__codelineno-1-144" name="__codelineno-1-144"></a>   depending on which HMAC strategy you use (described below).
+<a id="__codelineno-1-145" name="__codelineno-1-145"></a>
+<a id="__codelineno-1-146" name="__codelineno-1-146"></a>   &lt;br&gt;
+<a id="__codelineno-1-147" name="__codelineno-1-147"></a>2. For your application&#39;s search operations, change the logic to look for matches with a _list_ of HMACs instead of
+<a id="__codelineno-1-148" name="__codelineno-1-148"></a>   trying
+<a id="__codelineno-1-149" name="__codelineno-1-149"></a>   to match a single HMAC. The number of HMACs generated for the search will be equal to the number of HMAC keys in the
+<a id="__codelineno-1-150" name="__codelineno-1-150"></a>   tenants HMAC key list.
+<a id="__codelineno-1-151" name="__codelineno-1-151"></a>   So your code needs to be prepared for this scenario by matching across a list of HMACs rather than a single HMAC.
+<a id="__codelineno-1-152" name="__codelineno-1-152"></a>
+<a id="__codelineno-1-153" name="__codelineno-1-153"></a>So the steps for converting your design approach to accommodate the above approach would become:
+<a id="__codelineno-1-154" name="__codelineno-1-154"></a>
+<a id="__codelineno-1-155" name="__codelineno-1-155"></a>1. Update your tenant record to have a list of HMACs
+<a id="__codelineno-1-156" name="__codelineno-1-156"></a>2. Modify your application search code in such a way that instead of looking for a HMAC field value equal to the
+<a id="__codelineno-1-157" name="__codelineno-1-157"></a>   generated HMAC (e.g. in JpaRepository):
+<a id="__codelineno-1-158" name="__codelineno-1-158"></a>
+<a id="__codelineno-1-159" name="__codelineno-1-159"></a>```java
+<a id="__codelineno-1-160" name="__codelineno-1-160"></a>findByUsernameHmac(String userNameHmac);
 </code></pre></div></td></tr></table></div></p>
+<p>Change it to generate a list of HMAC values (using the tenant's <em>list</em> of HMAC keys) and look for a HMAC value which is
+in that list of HMACs (e.g. in JpaRepository):</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="n">findByUsernameHmacIn</span><span class="p">(</span><span class="n">Collection</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">userNameHmacs</span><span class="p">);</span>
+</code></pre></div></td></tr></table></div>
 <ol>
 <li>Modify your normal application HMAC code for <em><em>write</em></em> operations to choose the active HMAC key for the HMAC
    operations from the tenant's HMAC key list (that would be the HMAC key with the most recent CryptoKey.createdDate
    field).</li>
 </ol>
-<h5 id="however-the-previous-solution-still-has-major-flaws">However, the previous solution still has major flaws!<a class="headerlink" href="#however-the-previous-solution-still-has-major-flaws" title="Permanent link">&para;</a></h5>
+<p><strong>However, the previous solution still has major flaws!</strong></p>
 <p>If your application is a multi-instance application and caches key information (both very likely in modern applications)
 then very big issues still remain.
 <br>
@@ -2235,23 +2203,25 @@ This solution will be unacceptable to many applications as the necessity of perf
 single write operation will have a negative impact on performance. As an aside, it also makes any unique constraint 
 definitions on the database irrelevant for most cases (but not all - so they're still needed).</p>
 <p>Imagine the following scenario (for even just a single instance application):
-<br>
-* Username <code>john.doe@test.com</code> is not in the system
-* A new HMAC key has been created in the application with a valid key start time
-* A request comes in to create a new record for username <code>john.doe@test.com</code> (on thread 1) 1 millisecond <em><ins>before</ins></em> 
-"key start time"
-* Thread 1 searches for username <code>john.doe@test.com</code> with both HMAC keys 
-* Username with that HMAC doesn't exist so Thread 1 doesn't find it
-* Thread 1 decides to insert record using HMAC key 1 (since it's still before the "HMAC key start time")
-* Thread 1 gets paused before insert
-* A request comes in to create a new record for username <code>john.doe@test.com</code> (on thread 2) 1 millisecond <em><ins>after</ins></em> 
-"key start time"
-* Thread 2 searches for username <code>john.doe@test.com</code> with both HMAC keys
-* Username with that HMAC doesn't exist so Thread 2 doesn't find it
-* Thread 2 decides to insert record using HMAC key 2 (since it's now after the "HMAC key start time")
-* Thread 1 wakes up and inserts the record with HMAC key 1
-* Thread 2 inserts the record with HMAC key 2
-* Username <code>john.doe@test.com</code> is now duplicated in the system</p>
+<br></p>
+<ul>
+<li>Username <code>john.doe@test.com</code> is not in the system</li>
+<li>A new HMAC key has been created in the application with a valid key start time</li>
+<li>A request comes in to create a new record for username <code>john.doe@test.com</code> (on thread 1) 1 millisecond <em><ins>before</ins></em> 
+"key start time"</li>
+<li>Thread 1 searches for username <code>john.doe@test.com</code> with both HMAC keys </li>
+<li>Username with that HMAC doesn't exist so Thread 1 doesn't find it</li>
+<li>Thread 1 decides to insert record using HMAC key 1 (since it's still before the "HMAC key start time")</li>
+<li>Thread 1 gets paused before insert</li>
+<li>A request comes in to create a new record for username <code>john.doe@test.com</code> (on thread 2) 1 millisecond <em><ins>after</ins></em> 
+"key start time"</li>
+<li>Thread 2 searches for username <code>john.doe@test.com</code> with both HMAC keys</li>
+<li>Username with that HMAC doesn't exist so Thread 2 doesn't find it</li>
+<li>Thread 2 decides to insert record using HMAC key 2 (since it's now after the "HMAC key start time")</li>
+<li>Thread 1 wakes up and inserts the record with HMAC key 1</li>
+<li>Thread 2 inserts the record with HMAC key 2</li>
+<li>Username <code>john.doe@test.com</code> is now duplicated in the system</li>
+</ul>
 <p>As mentioned previously the Single HMAC Strategy should only be used for applications which do not use HMACs for unique 
 constraint requirements. Even then there's a better strategy for not only unique constraint integrity but also for 
 a more powerful search support. But please consider the challenges above when deciding which HMAC strategy is right for your application.</p>
