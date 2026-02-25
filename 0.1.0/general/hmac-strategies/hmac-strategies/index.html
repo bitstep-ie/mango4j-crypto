@@ -10,31 +10,31 @@
       
       
       
-        <link rel="canonical" href="https://bitstep-ie.github.io/mango4j-crypto/0.1.0/delegates/test-delegates/">
+        <link rel="canonical" href="https://bitstep-ie.github.io/mango4j-crypto/0.1.0/general/hmac-strategies/hmac-strategies/">
       
       
-        <link rel="prev" href="../../guide/guide/">
+        <link rel="prev" href="../../encryption/">
       
       
-        <link rel="next" href="../core-delegates/">
+        <link rel="next" href="../single-hmac/">
       
       
         
       
       
-      <link rel="icon" href="../../assets/images/favicon.png">
+      <link rel="icon" href="../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
     
     
       
-        <title>Test Delegates - mango4j-crypto</title>
+        <title>Strategies - mango4j-crypto</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -53,7 +53,7 @@
       
     
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#testing-delegates" class="md-skip">
+        <a href="#hmac-strategies" class="md-skip">
           Skip to content
         </a>
       
@@ -96,9 +96,9 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="mango4j-crypto" class="md-header__button md-logo" aria-label="mango4j-crypto" data-md-component="logo">
+    <a href="../../.." title="mango4j-crypto" class="md-header__button md-logo" aria-label="mango4j-crypto" data-md-component="logo">
       
-  <img src="../../assets/mango-black.png" alt="logo">
+  <img src="../../../assets/mango-black.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -115,7 +115,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Test Delegates
+              Strategies
             
           </span>
         </div>
@@ -226,7 +226,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../guide/guide/" class="md-tabs__link">
+      <a href="../../../guide/guide/" class="md-tabs__link">
         
   
   
@@ -243,13 +243,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="./" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../../delegates/test-delegates/" class="md-tabs__link">
           
   
   
@@ -265,11 +263,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../general/general/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../general/" class="md-tabs__link">
           
   
   
@@ -303,9 +303,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="mango4j-crypto" class="md-nav__button md-logo" aria-label="mango4j-crypto" data-md-component="logo">
+    <a href="../../.." title="mango4j-crypto" class="md-nav__button md-logo" aria-label="mango4j-crypto" data-md-component="logo">
       
-  <img src="../../assets/mango-black.png" alt="logo">
+  <img src="../../../assets/mango-black.png" alt="logo">
 
     </a>
     mango4j-crypto
@@ -332,7 +332,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/guide/" class="md-nav__link">
+      <a href="../../../guide/guide/" class="md-nav__link">
         
   
   
@@ -356,29 +356,24 @@
       
   
   
-    
   
   
-  
     
     
     
     
       
-        
-        
-      
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
             
   
   
@@ -396,7 +391,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -411,37 +406,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Test Delegates
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../../delegates/test-delegates/" class="md-nav__link">
         
   
   
@@ -457,48 +425,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#base64-encryption-service-delegate" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Base64 Encryption Service Delegate
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#identity-encryption-service-delegate" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Identity Encryption Service Delegate
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -511,7 +437,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../core-delegates/" class="md-nav__link">
+      <a href="../../../delegates/core-delegates/" class="md-nav__link">
         
   
   
@@ -539,7 +465,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../aws-delegate/" class="md-nav__link">
+      <a href="../../../delegates/aws-delegate/" class="md-nav__link">
         
   
   
@@ -571,24 +497,29 @@
       
   
   
+    
   
   
+  
     
     
     
     
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
             
   
   
@@ -606,7 +537,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -624,7 +555,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../general/general/" class="md-nav__link">
+      <a href="../../general/" class="md-nav__link">
         
   
   
@@ -652,7 +583,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../general/encryption/" class="md-nav__link">
+      <a href="../../encryption/" class="md-nav__link">
         
   
   
@@ -677,6 +608,8 @@
                 
   
   
+    
+  
   
   
     
@@ -687,11 +620,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" checked>
         
           
           <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
@@ -712,7 +645,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -727,10 +660,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../general/hmac-strategies/hmac-strategies/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Strategies
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -746,6 +706,37 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#some-final-considerations-for-application-designs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Some final considerations for application designs
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -758,7 +749,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../general/hmac-strategies/single-hmac/" class="md-nav__link">
+      <a href="../single-hmac/" class="md-nav__link">
         
   
   
@@ -786,7 +777,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../general/hmac-strategies/list-hmac/" class="md-nav__link">
+      <a href="../list-hmac/" class="md-nav__link">
         
   
   
@@ -814,7 +805,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../general/hmac-strategies/double-hmac/" class="md-nav__link">
+      <a href="../double-hmac/" class="md-nav__link">
         
   
   
@@ -850,7 +841,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../general/faq/" class="md-nav__link">
+      <a href="../../faq/" class="md-nav__link">
         
   
   
@@ -878,7 +869,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../general/appendixes/" class="md-nav__link">
+      <a href="../../appendixes/" class="md-nav__link">
         
   
   
@@ -933,21 +924,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#base64-encryption-service-delegate" class="md-nav__link">
+  <a href="#some-final-considerations-for-application-designs" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Base64 Encryption Service Delegate
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#identity-encryption-service-delegate" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Identity Encryption Service Delegate
+        Some final considerations for application designs
       
     </span>
   </a>
@@ -974,22 +954,31 @@
   
 
 
-<h1 id="testing-delegates">Testing Delegates<a class="headerlink" href="#testing-delegates" title="Permanent link">&para;</a></h1>
-<h2 id="base64-encryption-service-delegate">Base64 Encryption Service Delegate<a class="headerlink" href="#base64-encryption-service-delegate" title="Permanent link">&para;</a></h2>
-<p>The <a href="https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/test/Base64EncryptionService.java">Base64EncryptionService</a> is a provided EncryptionServiceDelegate implementation that simply Base64 encodes the 
-plaintext and decodes the Base64 string back to plaintext for decryption. This should only be used for testing purposes 
-and should never be made available in a production deployment.
-There is no keyConfiguration required for Base64EncryptionService.
-<br>
-<br></p>
-<h2 id="identity-encryption-service-delegate">Identity Encryption Service Delegate<a class="headerlink" href="#identity-encryption-service-delegate" title="Permanent link">&para;</a></h2>
-<p>The <a href="https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/test/IdentityEncryptionService.java">IdentityEncryptionService</a> is a provided EncryptionServiceDelegate implementation that basically does nothing. 
-It simply stores the plaintext as is and returns the same plaintext for decryption. This should only be used for testing 
-purposes and should never be made available in a production deployment. 
-There is no keyConfiguration required for Base64EncryptionService.
-<br>
-<br>
-<br></p>
+<h1 id="hmac-strategies">HMAC Strategies<a class="headerlink" href="#hmac-strategies" title="Permanent link">&para;</a></h1>
+<p>There are several designs you can choose to work with HMACs in your code depending on your application's ability to
+tolerate or circumvent the challenges documented above (if they apply). So this section will discuss the ones supported
+by Mango4j-crypto in the following sections. We strongly advise considering the <a href="../list-hmac/">List HMAC Strategy</a> but 
+due to its unfamiliarity we've documented three different strategies:</p>
+<ul>
+<li><a href="../single-hmac/">Single HMAC Strategy</a></li>
+<li><a href="../list-hmac/">List HMAC strategy</a></li>
+<li><a href="../double-hmac/">Double HMAC strategy</a></li>
+</ul>
+<h2 id="some-final-considerations-for-application-designs">Some final considerations for application designs<a class="headerlink" href="#some-final-considerations-for-application-designs" title="Permanent link">&para;</a></h2>
+<p>Although corporate security guidelines in some companies may only require applications to support HMAC key
+rotation but not necessarily rekeying, we strongly advise application developers to reconsider this in the context of
+their application functionality and requirements! Supporting only HMAC key rotation for long-lived data means
+that there's a strong possibility that you cannot ever deprecate any of a tenant's HMAC keys. Every time you update a
+tenant to a new HMAC key (meaning that you add a new one into the tenant's list of keys) then your application's
+search operations will progressively get slower. This is because if a tenant has N HMAC keys we have to calculate N
+HMACs when we search for something. Since we can't remove a tenant's keys (because there may be records that have never
+been modified since being written with the key in use at that time) then we'll have to keep using all of them to
+generate HMACs for every operation until the end of time.
+Also, although the search challenge documented above will still be solved in a functional sense, the unique constraint
+challenge will still remain a serious problem in your application (if you have unique constraint
+requirements).
+The only concrete way to solve the unique constraint challenge for key rotation without rekey would be to use
+the <a href="../list-hmac/">List HMAC Strategy</a>.</p>
 
 
 
@@ -1047,10 +1036,10 @@ There is no keyConfiguration required for Base64EncryptionService.
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.top", "navigation.tabs", "navigation.instant", "content.code.annotate", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.top", "navigation.tabs", "navigation.instant", "content.code.annotate", "content.tabs.link"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>

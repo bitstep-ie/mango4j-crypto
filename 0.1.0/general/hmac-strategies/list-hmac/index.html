@@ -10,31 +10,31 @@
       
       
       
-        <link rel="canonical" href="https://bitstep-ie.github.io/mango4j-crypto/0.1.0/delegates/test-delegates/">
+        <link rel="canonical" href="https://bitstep-ie.github.io/mango4j-crypto/0.1.0/general/hmac-strategies/list-hmac/">
       
       
-        <link rel="prev" href="../../guide/guide/">
+        <link rel="prev" href="../single-hmac/">
       
       
-        <link rel="next" href="../core-delegates/">
+        <link rel="next" href="../double-hmac/">
       
       
         
       
       
-      <link rel="icon" href="../../assets/images/favicon.png">
+      <link rel="icon" href="../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
     
     
       
-        <title>Test Delegates - mango4j-crypto</title>
+        <title>List HMAC - mango4j-crypto</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -53,7 +53,7 @@
       
     
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#testing-delegates" class="md-skip">
+        <a href="#list-hmac-strategy" class="md-skip">
           Skip to content
         </a>
       
@@ -96,9 +96,9 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="mango4j-crypto" class="md-header__button md-logo" aria-label="mango4j-crypto" data-md-component="logo">
+    <a href="../../.." title="mango4j-crypto" class="md-header__button md-logo" aria-label="mango4j-crypto" data-md-component="logo">
       
-  <img src="../../assets/mango-black.png" alt="logo">
+  <img src="../../../assets/mango-black.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -115,7 +115,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Test Delegates
+              List HMAC
             
           </span>
         </div>
@@ -226,7 +226,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../guide/guide/" class="md-tabs__link">
+      <a href="../../../guide/guide/" class="md-tabs__link">
         
   
   
@@ -243,13 +243,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="./" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../../delegates/test-delegates/" class="md-tabs__link">
           
   
   
@@ -265,11 +263,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../general/general/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../general/" class="md-tabs__link">
           
   
   
@@ -303,9 +303,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="mango4j-crypto" class="md-nav__button md-logo" aria-label="mango4j-crypto" data-md-component="logo">
+    <a href="../../.." title="mango4j-crypto" class="md-nav__button md-logo" aria-label="mango4j-crypto" data-md-component="logo">
       
-  <img src="../../assets/mango-black.png" alt="logo">
+  <img src="../../../assets/mango-black.png" alt="logo">
 
     </a>
     mango4j-crypto
@@ -332,7 +332,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/guide/" class="md-nav__link">
+      <a href="../../../guide/guide/" class="md-nav__link">
         
   
   
@@ -356,29 +356,24 @@
       
   
   
-    
   
   
-  
     
     
     
     
       
-        
-        
-      
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
             
   
   
@@ -396,7 +391,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -411,37 +406,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Test Delegates
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../../delegates/test-delegates/" class="md-nav__link">
         
   
   
@@ -457,48 +425,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#base64-encryption-service-delegate" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Base64 Encryption Service Delegate
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#identity-encryption-service-delegate" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Identity Encryption Service Delegate
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -511,7 +437,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../core-delegates/" class="md-nav__link">
+      <a href="../../../delegates/core-delegates/" class="md-nav__link">
         
   
   
@@ -539,7 +465,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../aws-delegate/" class="md-nav__link">
+      <a href="../../../delegates/aws-delegate/" class="md-nav__link">
         
   
   
@@ -571,24 +497,29 @@
       
   
   
+    
   
   
+  
     
     
     
     
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
             
   
   
@@ -606,7 +537,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -624,7 +555,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../general/general/" class="md-nav__link">
+      <a href="../../general/" class="md-nav__link">
         
   
   
@@ -652,7 +583,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../general/encryption/" class="md-nav__link">
+      <a href="../../encryption/" class="md-nav__link">
         
   
   
@@ -677,6 +608,8 @@
                 
   
   
+    
+  
   
   
     
@@ -687,11 +620,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" checked>
         
           
           <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
@@ -712,7 +645,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -730,7 +663,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../general/hmac-strategies/hmac-strategies/" class="md-nav__link">
+      <a href="../hmac-strategies/" class="md-nav__link">
         
   
   
@@ -758,7 +691,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../general/hmac-strategies/single-hmac/" class="md-nav__link">
+      <a href="../single-hmac/" class="md-nav__link">
         
   
   
@@ -783,10 +716,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../general/hmac-strategies/list-hmac/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    List HMAC
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -802,6 +762,37 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#process-for-re-keying-data-with-the-list-hmac-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Process for re-keying data with the List HMAC Strategy
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -814,7 +805,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../general/hmac-strategies/double-hmac/" class="md-nav__link">
+      <a href="../double-hmac/" class="md-nav__link">
         
   
   
@@ -850,7 +841,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../general/faq/" class="md-nav__link">
+      <a href="../../faq/" class="md-nav__link">
         
   
   
@@ -878,7 +869,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../general/appendixes/" class="md-nav__link">
+      <a href="../../appendixes/" class="md-nav__link">
         
   
   
@@ -933,21 +924,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#base64-encryption-service-delegate" class="md-nav__link">
+  <a href="#process-for-re-keying-data-with-the-list-hmac-strategy" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Base64 Encryption Service Delegate
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#identity-encryption-service-delegate" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Identity Encryption Service Delegate
+        Process for re-keying data with the List HMAC Strategy
       
     </span>
   </a>
@@ -974,22 +954,157 @@
   
 
 
-<h1 id="testing-delegates">Testing Delegates<a class="headerlink" href="#testing-delegates" title="Permanent link">&para;</a></h1>
-<h2 id="base64-encryption-service-delegate">Base64 Encryption Service Delegate<a class="headerlink" href="#base64-encryption-service-delegate" title="Permanent link">&para;</a></h2>
-<p>The <a href="https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/test/Base64EncryptionService.java">Base64EncryptionService</a> is a provided EncryptionServiceDelegate implementation that simply Base64 encodes the 
-plaintext and decodes the Base64 string back to plaintext for decryption. This should only be used for testing purposes 
-and should never be made available in a production deployment.
-There is no keyConfiguration required for Base64EncryptionService.
-<br>
-<br></p>
-<h2 id="identity-encryption-service-delegate">Identity Encryption Service Delegate<a class="headerlink" href="#identity-encryption-service-delegate" title="Permanent link">&para;</a></h2>
-<p>The <a href="https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/test/IdentityEncryptionService.java">IdentityEncryptionService</a> is a provided EncryptionServiceDelegate implementation that basically does nothing. 
-It simply stores the plaintext as is and returns the same plaintext for decryption. This should only be used for testing 
-purposes and should never be made available in a production deployment. 
-There is no keyConfiguration required for Base64EncryptionService.
-<br>
-<br>
-<br></p>
+<h1 id="list-hmac-strategy">List HMAC strategy<a class="headerlink" href="#list-hmac-strategy" title="Permanent link">&para;</a></h1>
+<p>This strategy documents the most general and powerful design that application developers can use to take care of all
+problems mentioned above. Using this design guarantees your
+application will accommodate HMACs correctly regardless of your use case or application requirements.
+The List HMAC strategy has just 2 fairly elegant concepts:</p>
+<ol>
+<li>Have a list of HMAC keys on your tenant, rather than a single HMAC key. Exactly as already discussed in this
+   document.</li>
+<li>For all write operations write the entire list of generated HMACs into your DB.</li>
+</ol>
+<p>Part 2 is the tricky bit because when you use an SQL DB, it forces you into a particular entity design. If you take our
+previous examples where we HMAC the username. This would
+mean that we would have a table for the actual record (maybe a USER_PROFILE table) with the encrypted ciphertext and
+whatever other information, a table for lookup HMACs if we are
+using the username HMAC for search purposes (e.g. USER_PROFILE_LOOKUPS) and a 3rd table for unique values (
+USER_PROFILE_UNIQUE_VALUES) if we are using the username HMAC to enforce
+uniqueness per tenant.</p>
+<p>For example the USER_PROFILE table might look like this:</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>TENANT_ID</th>
+<th>CIPHER_TEXT</th>
+<th>SOME_OTHER_NON_CONFIDENTIAL_ATTRIBUTE</th>
+<th>ENCRYPTION_KEY_ID</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>9c7e275e-3729-421c-a7c5-cf02bba17f2d</td>
+<td>MyTenantID</td>
+<td>QmFzZTY0RW5jb2RpbmdPZlVzZXJQcm9maWxlQ29uZmlkZW50aWFsQXR0cmlidXRlcw==</td>
+<td>some value In the clear</td>
+<td>23a0a1b4-3897-4eaa-b8fa-1818a9540f0c</td>
+</tr>
+</tbody>
+</table>
+<p>And the USER_PROFILE_LOOKUPS table would look like this:</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>TENANT_ID</th>
+<th>ALIAS</th>
+<th>VALUE</th>
+<th>HMAC_KEY_ID</th>
+<th>USER_PROFILE_ID</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2f2ab2f4-57cb-441a-84c8-44eee23e3693</td>
+<td>MyTenantID</td>
+<td>username</td>
+<td>QmFzZTY0VmFsdWVPZlVzZXJuYW1l</td>
+<td>31ae30a7-4228-40a9-9078-d5e994491981</td>
+<td>9c7e275e-3729-421c-a7c5-cf02bba17f2d</td>
+</tr>
+</tbody>
+</table>
+<p>And the USER_PROFILE_UNIQUE_VALUES tables would look like this:</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>TENANT_ID</th>
+<th>ALIAS</th>
+<th>VALUE</th>
+<th>HMAC_KEY_ID</th>
+<th>USER_PROFILE_ID</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>eeddbee1-34db-4554-ada4-a23e04c69846</td>
+<td>MyTenantID</td>
+<td>username</td>
+<td>QmFzZTY0VmFsdWVPZlVzZXJuYW1l</td>
+<td>31ae30a7-4228-40a9-9078-d5e994491981</td>
+<td>9c7e275e-3729-421c-a7c5-cf02bba17f2d</td>
+</tr>
+</tbody>
+</table>
+<p>The USER_PROFILE_LOOKUPS and USER_PROFILE_UNIQUE_VALUES look exactly the same because they are. The only reason they
+need to be separate is because the USER_PROFILE_UNIQUE_VALUES
+table needs a compound unique constraint placed on the TENANT_ID, ALIAS, VALUE and HMAC_KEY_ID columns, whereas the
+lookup does not.</p>
+<p>With the above entity design when inserting or updating records in the USER_PROFILE table, your application code would
+generate a list of HMACs (1 for each HMAC key in use) and
+insert them all into both the USER_PROFILE_LOOKUPS and USER_PROFILE_UNIQUE_VALUES tables (1 row per HMAC entry). If you
+now go back to the HMAC challenge scenarios described
+earlier in this document (even the cached keys scenario), you'll see that this design guarantees to overcome both.
+If you're using a document DB such as Mongo, you should just implement this design anyway as it won't interfere with
+your entity design. The USER_PROFILE_LOOKUPS and
+USER_PROFILE_UNIQUE_VALUES tables just become separate lists inside the USER_PROFILE record. Unfortunately when using
+relational DBs this strategy will require inserting/updating
+from 1 to 3 separate tables for each write operation and for searching it will require a join from the
+USER_PROFILE_LOOKUPS table back to the original record in the USER_PROFILE
+table.</p>
+<h2 id="process-for-re-keying-data-with-the-list-hmac-strategy">Process for re-keying data with the List HMAC Strategy<a class="headerlink" href="#process-for-re-keying-data-with-the-list-hmac-strategy" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Add your new HMAC key to the tenant's list of HMAC keys</li>
+<li>Wait until the HMAC key cache expiry time has passed (if applicable), so that all application instances are using the
+   new HMAC key.</li>
+<li>Kick off the re-keying job.</li>
+<li>The re-keying job should find each record it needs to re-key. This depends on application requirements but will
+   probably fall into one of 2 criteria:
+   a. Any record which doesn't yet have HMACs calculated with the new HMAC key - <strong>common for full re-keying of all data
+   **
+   b. Any record which has HMACs calculated with some old HMAC key (that you're trying to remove from the system), but
+   does not have HMACs calculated with the new HMAC key -
+   </strong>common for passive key rotation**</li>
+<li>For each record found, decrypt the record, calculate the HMAC(s) with the new key, insert the HMAC(s) into the
+   lookup/unique constraint tables (or <strong><em>add</em></strong> them to the lists if
+   using a document DB and save the record). Existing HMACs should remain as they are, untouched.</li>
+<li>Wait for all applicable records to be re-keyed</li>
+<li>Remove the old HMAC key from the tenant's list of HMAC keys</li>
+<li>Wait until the HMAC key cache expiry time has passed (if applicable), so that all application instances are no longer
+   using the old HMAC key.</li>
+<li>For every record, remove all HMACs from the lookup/unique constraint tables (or document HMAC entries) that were
+   calculated with the old HMAC key. Leaving them there won't
+   affect functionality so this cleanup step is optional from a functionality perspective, but leaving old HMACs in your
+   system is a potential security hazard so applications
+   should perform this step at least for long-lived data.</li>
+<li>You can now delete the old HMAC key from wherever it was stored.</li>
+</ol>
+<p><strong>Pros of the list HMAC strategy:</strong></p>
+<ul>
+<li>Bulletproof HMAC design which will work for all combinations of application requirements</li>
+<li>The only general HMAC design which supports passive key rotation for long-lived data which uses HMACS for unique value
+  enforcement</li>
+<li>Application search code becomes standardized and is cleaner (because all lookups tables will have the same definition)</li>
+<li>Excellent fit for document DBs (Mongo)</li>
+<li>Supports zero-outage search</li>
+<li>Supports unique constraint integrity</li>
+<li>Supports applications which cache HMAC keys</li>
+<li>Supports all passive key rotation designs</li>
+<li>Easiest strategy for supporting re-keying of data with no impact to application functionality</li>
+<li>Can have as many HMAC keys on a tenant as you want. You can add a new HMAC key anytime you want, even in the middle of
+  a re-keying job, and it won't affect application
+  functionality.</li>
+<li>Easily supports <a href="#What-is-HMAC-tokenization">HMAC tokenization.</a></li>
+</ul>
+<p><strong>Cons of the list HMAC strategy:</strong></p>
+<ul>
+<li>Forces relational DBs into a multi-table entity design which can negatively impact performance</li>
+<li>Always adds/updates N HMACs for each write operation, where N is the number of HMAC keys in use. So depending on the
+  rate at which an application deletes old keys this will have
+  a performance impact if the list of HMAC keys keeps growing.</li>
+</ul>
 
 
 
@@ -1047,10 +1162,10 @@ There is no keyConfiguration required for Base64EncryptionService.
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.top", "navigation.tabs", "navigation.instant", "content.code.annotate", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.top", "navigation.tabs", "navigation.instant", "content.code.annotate", "content.tabs.link"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>

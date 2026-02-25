@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://bitstep-ie.github.io/mango4j-crypto/0.1.0/delegates/test-delegates/">
+        <link rel="canonical" href="https://bitstep-ie.github.io/mango4j-crypto/0.1.0/general/encryption/">
       
       
-        <link rel="prev" href="../../guide/guide/">
+        <link rel="prev" href="../general/">
       
       
-        <link rel="next" href="../core-delegates/">
+        <link rel="next" href="../hmac-strategies/hmac-strategies/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Test Delegates - mango4j-crypto</title>
+        <title>Encryption - mango4j-crypto</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#testing-delegates" class="md-skip">
+        <a href="#encryption-service-delegates" class="md-skip">
           Skip to content
         </a>
       
@@ -115,7 +115,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Test Delegates
+              Encryption
             
           </span>
         </div>
@@ -243,13 +243,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="./" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../delegates/test-delegates/" class="md-tabs__link">
           
   
   
@@ -265,11 +263,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../general/general/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../general/" class="md-tabs__link">
           
   
   
@@ -356,29 +356,24 @@
       
   
   
-    
   
   
-  
     
     
     
     
       
-        
-        
-      
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
             
   
   
@@ -396,7 +391,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -411,37 +406,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Test Delegates
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../delegates/test-delegates/" class="md-nav__link">
         
   
   
@@ -457,48 +425,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#base64-encryption-service-delegate" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Base64 Encryption Service Delegate
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#identity-encryption-service-delegate" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Identity Encryption Service Delegate
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -511,7 +437,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../core-delegates/" class="md-nav__link">
+      <a href="../../delegates/core-delegates/" class="md-nav__link">
         
   
   
@@ -539,7 +465,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../aws-delegate/" class="md-nav__link">
+      <a href="../../delegates/aws-delegate/" class="md-nav__link">
         
   
   
@@ -571,24 +497,29 @@
       
   
   
+    
   
   
+  
     
     
     
     
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
             
   
   
@@ -606,7 +537,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -624,7 +555,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../general/general/" class="md-nav__link">
+      <a href="../general/" class="md-nav__link">
         
   
   
@@ -649,10 +580,19 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../general/encryption/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -668,6 +608,7 @@
   
 
       </a>
+      
     </li>
   
 
@@ -730,7 +671,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../general/hmac-strategies/hmac-strategies/" class="md-nav__link">
+      <a href="../hmac-strategies/hmac-strategies/" class="md-nav__link">
         
   
   
@@ -758,7 +699,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../general/hmac-strategies/single-hmac/" class="md-nav__link">
+      <a href="../hmac-strategies/single-hmac/" class="md-nav__link">
         
   
   
@@ -786,7 +727,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../general/hmac-strategies/list-hmac/" class="md-nav__link">
+      <a href="../hmac-strategies/list-hmac/" class="md-nav__link">
         
   
   
@@ -814,7 +755,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../general/hmac-strategies/double-hmac/" class="md-nav__link">
+      <a href="../hmac-strategies/double-hmac/" class="md-nav__link">
         
   
   
@@ -850,7 +791,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../general/faq/" class="md-nav__link">
+      <a href="../faq/" class="md-nav__link">
         
   
   
@@ -878,7 +819,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../general/appendixes/" class="md-nav__link">
+      <a href="../appendixes/" class="md-nav__link">
         
   
   
@@ -926,36 +867,6 @@
     
   
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#base64-encryption-service-delegate" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Base64 Encryption Service Delegate
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#identity-encryption-service-delegate" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Identity Encryption Service Delegate
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
 </nav>
                   </div>
                 </div>
@@ -974,22 +885,114 @@
   
 
 
-<h1 id="testing-delegates">Testing Delegates<a class="headerlink" href="#testing-delegates" title="Permanent link">&para;</a></h1>
-<h2 id="base64-encryption-service-delegate">Base64 Encryption Service Delegate<a class="headerlink" href="#base64-encryption-service-delegate" title="Permanent link">&para;</a></h2>
-<p>The <a href="https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/test/Base64EncryptionService.java">Base64EncryptionService</a> is a provided EncryptionServiceDelegate implementation that simply Base64 encodes the 
-plaintext and decodes the Base64 string back to plaintext for decryption. This should only be used for testing purposes 
-and should never be made available in a production deployment.
-There is no keyConfiguration required for Base64EncryptionService.
+<h1 id="encryption-service-delegates">Encryption Service Delegates<a class="headerlink" href="#encryption-service-delegates" title="Permanent link">&para;</a></h1>
+<p>In mango4j-crypto all the code for cryptographic operations is hidden behind an abstraction we refer to as the '
+Encryption Service Delegate'. What this means is that an infinite number of approaches can be used to
+perform the cryptographic operations by allowing developers to supply their own Encryption Service Delegates. Just
+create your own subclass of
+the <a href="https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/EncryptionServiceDelegate.java">EncryptionServiceDelegate</a>
+class and implement the abstract methods. Coupled with the CryptoKey objects this allows applications to support
+multiple
+types of cryptographic providers or different cryptographic approaches depending on application requirements. This also
+allows applications to support different cryptographic providers at the same time (e.g. different regions using
+different providers) without needing to change any application code. And it also allows keys to be rotated from one
+provider to another without needing to change any application code (and potentially without even restarting the
+application).
 <br>
+<br>
+Mango4j-crypto comes with a few built-in Encryption Service Delegate implementations:
 <br></p>
-<h2 id="identity-encryption-service-delegate">Identity Encryption Service Delegate<a class="headerlink" href="#identity-encryption-service-delegate" title="Permanent link">&para;</a></h2>
-<p>The <a href="https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/test/IdentityEncryptionService.java">IdentityEncryptionService</a> is a provided EncryptionServiceDelegate implementation that basically does nothing. 
-It simply stores the plaintext as is and returns the same plaintext for decryption. This should only be used for testing 
-purposes and should never be made available in a production deployment. 
-There is no keyConfiguration required for Base64EncryptionService.
+<ul>
+<li>Production: Wrapped Delegate, Cache Wrapped Delegate</li>
+<li>Test: Base64 Delegate, Identity Delegate</li>
+</ul>
+<p>And developers can create their own Encryption Service Delegate implementations to suit their needs. If you do create
+your own Encryption Service Delegates which you think would be universally useful then please consider giving back by
+making it publicly available, or even submitting a PR to the mango4j-crypto project so that others can benefit from it
+too.</p>
+<h1 id="key-objects">Key objects<a class="headerlink" href="#key-objects" title="Permanent link">&para;</a></h1>
+<p>CryptoKey objects tell the library which Encryption Service Delegate to use to carry out the actual cryptographic
+operations under the hood.
+We often see applications representing their encryption/HMAC keys in their code with simple Strings (representing an AWS
+KMS key ID or key ARN for example) rather than key objects, but representing your key information with objects instead
+provides much more flexibility with how your encryption works. For example, this library represents keys in the code
+with the following object:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-0-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-0-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-0-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-0-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-0-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-0-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-0-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-0-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-0-10">10</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">CryptoKey</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">id</span><span class="p">;</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">CryptoKeyUsage</span><span class="w"> </span><span class="n">usage</span><span class="p">;</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">type</span><span class="p">;</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">configuration</span><span class="p">;</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Instant</span><span class="w"> </span><span class="n">keyStartTime</span><span class="p">;</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">RekeyMode</span><span class="w"> </span><span class="n">rekeyMode</span><span class="p">;</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Instant</span><span class="w"> </span><span class="n">createdDate</span><span class="p">;</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Instant</span><span class="w"> </span><span class="n">lastModifiedDate</span><span class="p">;</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10"></a><span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+<p><em>id:</em> Just a plain old random GUID</p>
+<p><em>usage:</em> What this key will be used for (either encryption or HMAC)</p>
+<p><em>type:</em> The type of the Encryption Service Delegate that this key will use to carry out its cryptographic operations.
+This must match the value returned from the
+desired <a href="https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/EncryptionServiceDelegate.java#L17">EncryptionServiceDelegate.supportedCryptoKeyType()</a>
+implementation.
 <br>
+For example: The
+included <a href="https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-core/src/main/java/ie/bitstep/mango/crypto/core/encryption/impl/wrapped/CachedWrappedKeyEncryptionService.java#251">CacheWrappedKeyEncryptionService.supportedCryptoKeyType()</a>
+returns the value "CACHED_WRAPPED", so if you wanted to use that Encryption Service Delegate implementation then you
+would have a CryptoKey object with this 'type' field set to "CACHED_WRAPPED". At runtime the library matches the
+CryptoKeys with their corresponding EncryptionServiceDelegates by comparing this 'type' field. If you create you own
+Encryption Service Delegate implementation, you can define this field however you like.</p>
+<p><em>Configuration:</em> This field stores the information about the key that the Encryption Service Delegates use to carry out
+their operations. It would never contain the actual
+bytes of the key or related confidential information (at least not in the clear). Instead, it would usually contain a
+reference to the key. For example: if the 'type' of this key was AWS_KMS then this map would have an entry called "
+keyArn" with the value of the AWS Key ID or Key ARN. Each Encryption Service Delegate implementation will know what
+configuration information it needs to carry out its operations so the application just needs to make sure that the right
+information is present in this map for the given key type.</p>
+<p><em>keyStartTime:</em> Optional field which is only used for HMAC CryptoKeys. When used this can alleviate some of the shortcomings with the <a href="#single-hmac-strategy">Single HMAC Strategy</a> that are described further in this document. If you are using this field it should be set when the CryptoKey is created in your application. It's very important to set this to some time in the future which is greater than the key cache time. i.e. by the time this ketStartTime date passes, all application instances should know about this key.</p>
+<p><br>
 <br>
-<br></p>
+A big advantage of using CryptoKey objects to represent cryptographic key information is that it allows applications to easily support multiple cryptographic providers while keeping code clean and encryption code
+abstracted. It could also allow you to rotate from one type of key to another (e.g. AWS_KMS to AZURE_DEDICATED_HSM) with no application code changes. Or you could support different
+encryption delegates in different regions without having to write any custom application code to support that.</p>
+<h1 id="ciphertext-representation">Ciphertext representation<a class="headerlink" href="#ciphertext-representation" title="Permanent link">&para;</a></h1>
+<p>When <a href="https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto/src/main/java/ie/bitstep/mango/crypto/CryptoShield.java#L202">CryptoShield.encrypt()</a>
+is called on an object the library will set
+the <a href="https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto/src/main/java/ie/bitstep/mango/crypto/annotations/EncryptedData.java">@EncryptedData</a>
+field in the object to the calculated ciphertext.
+This final ciphertext is represented in a standardised way for encryption (not HMACs). Instead of just returning the
+straight
+ciphertext output it will return it as a JSON String with the following definition:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
+<span class="normal"><a href="#__codelineno-1-2">2</a></span>
+<span class="normal"><a href="#__codelineno-1-3">3</a></span>
+<span class="normal"><a href="#__codelineno-1-4">4</a></span>
+<span class="normal"><a href="#__codelineno-1-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="p">{</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="w">  </span><span class="nt">&quot;cryptoKeyId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;someKeyId&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="w">  </span><span class="nt">&quot;iv&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;someInitializationVector&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4"></a><span class="w">  </span><span class="nt">&quot;data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+<p>where:</p>
+<ul>
+<li><em>cryptoKeyId</em> is the identifier of the crypto key object (e.g. the CryptoKey.id field) in your system that was used to
+  carry out the cryptographic operation</li>
+<li><em>iv</em> is the <a href="#Whats-an-IV">Initialization Vector</a> that was used for the cryptographic operation</li>
+<li><em>data</em> is the actual output that was returned from the Encryption Service Delegate's encrypt() method, the ciphertext
+  will be included here.
+  Each delegate may return different data here depending on the cryptographic provider or method that it uses, or what
+  information it
+  defines as necessary to include. This is why it's a map, because it needs to be flexible enough to accommodate
+  different ciphertext data structures that different EncryptionServiceDelegates define.</li>
+</ul>
 
 
 

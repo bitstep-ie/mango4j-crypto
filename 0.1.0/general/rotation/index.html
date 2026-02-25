@@ -10,13 +10,9 @@
       
       
       
-        <link rel="canonical" href="https://bitstep-ie.github.io/mango4j-crypto/0.1.0/general/general/">
+        <link rel="canonical" href="https://bitstep-ie.github.io/mango4j-crypto/0.1.0/general/rotation/">
       
       
-        <link rel="prev" href="../../delegates/aws-delegate/">
-      
-      
-        <link rel="next" href="../encryption/">
       
       
         
@@ -27,7 +23,7 @@
     
     
       
-        <title>Overview - mango4j-crypto</title>
+        <title>Key Rotation (Changing the key) - mango4j-crypto</title>
       
     
     
@@ -78,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#general-documentation" class="md-skip">
+        <a href="#key-rotation-changing-the-key" class="md-skip">
           Skip to content
         </a>
       
@@ -115,7 +111,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Overview
+              Key Rotation (Changing the key)
             
           </span>
         </div>
@@ -263,13 +259,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="./" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../general/" class="md-tabs__link">
           
   
   
@@ -497,29 +491,24 @@
       
   
   
-    
   
   
-  
     
     
     
     
       
-        
-        
-      
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
             
   
   
@@ -537,7 +526,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -552,37 +541,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Overview
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../general/" class="md-nav__link">
         
   
   
@@ -598,48 +560,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#introduction" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Introduction
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#mango-crypto-key-driven-design" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Mango Crypto-Key Driven Design
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -933,10 +853,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#introduction" class="md-nav__link">
+  <a href="#encryption-key-rotation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Introduction
+        Encryption Key Rotation
       
     </span>
   </a>
@@ -944,13 +864,80 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#mango-crypto-key-driven-design" class="md-nav__link">
+  <a href="#hmac-key-rotation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Mango Crypto-Key Driven Design
+        HMAC Key Rotation
       
     </span>
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rekeying-re-encrypting-existing-records-with-the-new-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rekeying (re-encrypting existing records with the new key)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Rekeying (re-encrypting existing records with the new key)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hmac-key-rotation-challenges" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HMAC Key Rotation Challenges
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="HMAC Key Rotation Challenges">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#searching-operations-after-the-rotation-of-a-hmac-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Searching operations after the rotation of a HMAC key
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-instance-application-with-cached-keys-search-scenario" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-instance application with cached Keys search scenario
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unique-constraint-enforcement-after-the-rotation-of-a-hmac-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Unique constraint enforcement after the rotation of a HMAC key
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -974,57 +961,216 @@
   
 
 
-<h1 id="general-documentation">General documentation<a class="headerlink" href="#general-documentation" title="Permanent link">&para;</a></h1>
-<h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">&para;</a></h2>
-<p>This documentation is aimed at providing a more general discussion of implementing encryption in your code.</p>
-<p>Much of the contents in this document can be
-used as a reference for developers who need to implement ALE regardless of whether they use mango4j-crypto or not.
-Developers should consider the guidelines documented in each section when building their own solutions.</p>
-<p>This documentation purposely avoids talking about specific cryptographic implementations. or standards (AES, PKCS#11,
-AWS KMS, etc.) because the core focus here is to talk about how
-to implement ALE (whatever cryptographic methods, standards or providers you use) and what general challenges exist
-along with guidance on overcoming them in your application.</p>
-<p>This documentation uses some terms regularly which we'll define upfront:</p>
-<p><em>Tenant:</em> A term used to describe logical isolation in your system for a particular client entity. e.g. Some
-institutions have requirements that any confidential data of theirs that you
-store in your system should be segregated from data belonging to other entities. An application could spin up a full
-environment just for that client institution or they can choose to
-introduce the concept of 'tenants' in the system. With each client entity being a 'tenant' and each 'tenant' using their
-own encryption keys, the application meets the data
-segregation guidelines. If you do not use tenants then just consider your application as the tenant.</p>
-<p><em>HMAC key:</em> A <a href="../faq/#whats-a-hmac">HMAC</a> is just a <a href="../faq/#whats-a-hash">hash</a> which uses a secret key to create the hash.
-HMACs are used for 2 main purposes in an application:</p>
+<h1 id="key-rotation-changing-the-key">Key Rotation (Changing the key)<a class="headerlink" href="#key-rotation-changing-the-key" title="Permanent link">&para;</a></h1>
+<p>Key rotation is the process of changing a CryptoKey to a new CryptoKey. After a key is rotated, create and update
+operations should use the new key to perform the encryption operations. After a key is rotated, some records will have
+been encrypted with the previous key (or keys) while some will have been encrypted with the new key. So previous keys
+should still be
+available for decryption until there are no more records associated with them.</p>
+<p>When applications implement Application Level Encryption, they will commonly have to support key rotation.
+They may have different requirements around how often the CryptoKeys need to be rotated or what conditions trigger a key
+rotation.
+But a key rotation should be something which an application can do at short notice on the fly. This is necessary to
+ensure that no more ciphertext is generated with an old key after we have introduced a new key into the system.
+Although rotating an encryption key is relatively straight forward, rotating a HMAC key on the other hand can pose
+considerable challenges (discussed at length further in this documentation)</p>
+<h2 id="encryption-key-rotation">Encryption Key Rotation<a class="headerlink" href="#encryption-key-rotation" title="Permanent link">&para;</a></h2>
+<p>Changing an encryption key is relatively straightforward. Just add the new encryption key to your tenant/system and use
+it for all write operations going forward. Just make sure to keep the older encryption keys available until no more
+records exist that were encrypted with those keys. This is also why mango4j-crypto includes the CryptoKey ID in the
+ciphertext that it generates, so that we always know what key we need to use to decrypt any given piece of ciphertext.</p>
+<h2 id="hmac-key-rotation">HMAC Key Rotation<a class="headerlink" href="#hmac-key-rotation" title="Permanent link">&para;</a></h2>
+<p>HMAC key rotation is a completely different beast and supporting it successfully requires serious application design
+considerations. Due to this material being so involved we've given it a large section all of its own further in this
+document.
+Please read the discussion carefully.</p>
+<h2 id="rekeying-re-encrypting-existing-records-with-the-new-key">Rekeying (re-encrypting existing records with the new key)<a class="headerlink" href="#rekeying-re-encrypting-existing-records-with-the-new-key" title="Permanent link">&para;</a></h2>
+<p>Rekeying is the process whereby after a key rotation we have a background task which decrypts existing records
+(that were encrypted with some older key) and re-encrypt them with the new key.
+This is done when you want to completely remove an older key from the system after a key rotation but there are still
+older records which were encrypted (or have had HMACs calculated) with the older key.
+In this scenario we cannot remove the older key until there are no more records that have been encrypted with that key.
+So in order to support the removal of the old key we need to rekey the records which were encrypted with that key onto
+the new key until there are no more records remaining which were encrypted with the old key.
+Rekeying is an extremely important function which is needed to handle the scenario in which a key is no longer
+considered secure, and thus we can no longer tolerate any records having ciphertext which used that key.</p>
+<p>Mango4j-crypto supports 2 types of rekey modes which are specified using the rekeyMode field on a CryptoKey
+(please see the relevant section on how to configure the mango4j-crypto automatic rekey job):</p>
+<p><strong>KEY_OFF:</strong> This type of rekey is where we have some encryption/HMAC key that we want to completely remove from our
+system but there might still be some entities which used that key.</p>
+<blockquote>
+<p><strong>NOTE:</strong> If rekeyMode is set to 'KEY_OFF' on the current encryption or current HMAC CryptoKey it is ignored.
+It doesn't really make sense to key off the current key.</p>
+</blockquote>
+<p><strong>KEY_ON:</strong> This type of rekey is where we want all other encryption/HMAC keys (apart from this one) to be completely
+removed from the system. This type of rekeying should be strongly reconsidered before initiating it because it will most
+likely
+rekey a very large portion of your entities which may have a notable impact on performance. Also, keep in mind that you
+may need to make
+sure any external cryptographic providers that you use are aware that they will experience a higher volume of traffic
+for the period of time that the rekey takes.</p>
+<blockquote>
+<p><strong>NOTE:</strong> If rekeyMode is set to 'KEY_ON' on a key that is not the current encryption or current HMAC CryptoKey it is
+ignored. It doesn't really make sense to rekey everything onto some old key.</p>
+</blockquote>
+<p><strong>IMPORTANT: Avoid falling into the trap of thinking that shorter data retention rules can save you from having to
+support
+rekeying functionality in your application. We've often heard the idea that if an application has a key period of say 10
+years but
+our data retention period is only 5 years that rekey support will not be required and we can just swap the key every 10
+years.
+An easy way to see the flaw in this logic is to ask yourself what happens in year 11 when you change the HMAC key?
+What about all the records from year 6 to year 10? You now can't find them! Also, with unique constraints you have 5
+years of records in your system which may be at risk of duplication.</strong></p>
+<h3 id="hmac-key-rotation-challenges">HMAC Key Rotation Challenges<a class="headerlink" href="#hmac-key-rotation-challenges" title="Permanent link">&para;</a></h3>
+<p>The following section documents the 2 core challenges when it comes to supporting HMAC key rotation in your application.
+It's advised for all developers not familiar with this particular topic to read this section very carefully.
+It may seem easy to not give much attention to the scenario of rotating HMAC keys, possibly thinking <em>"when are we
+really going to need to change a <a href="../faq/#Whats-a-tenant">tenant's</a> HMAC key?!"</em> or <em>"I can worry about it later"</em>. But
+hopefully as you
+can see below, in order to support this functionality there are very important considerations to take into account for
+the way that you design your application. And the challenges presented by HMAC key rotation can be very difficult to
+retrofit into an application further down the line.</p>
+<h4 id="searching-operations-after-the-rotation-of-a-hmac-key">Searching operations after the rotation of a HMAC key<a class="headerlink" href="#searching-operations-after-the-rotation-of-a-hmac-key" title="Permanent link">&para;</a></h4>
+<p>If your application has the concept of a single HMAC key per tenant, it's extremely likely that you'll need to stop
+doing this and change this design approach. Unless for some reason you don't have to support HMAC key rotation in your
+application.
+The reason being that if you change a tenant (or system) HMAC key during normal application operation you won't be able
+to find any of the existing records.
+The only way that you could change a tenants HMAC key is if it's acceptable to take your system offline until all
+records have been re-keyed with the new key by some background job. Or (for some reason) you are able to tolerate a lot
+of search misses for existing records until such a background job was complete while the application was running.
+Both of these scenarios are very unlikely to be tolerated in most modern applications.</p>
+<p>To break down this sample scenario into steps:</p>
 <ol>
-<li>To support searching on fields that are encrypted</li>
-<li>To support unique constraint enforcement on fields that are encrypted.
-   The <a href="../faq/#Why-do-I-need-to-HMAC-data-in-order-to-make-it-searchable">FAQ</a> section at the bottom of this document
-   explains this in more detail.</li>
+<li>You change the HMAC key for your tenant.</li>
+<li>All application searches going forward will use the new HMAC key.</li>
+<li>Immediately you won't be able to find any records in your system because all existing HMACs have been calculated with
+   the old HMAC key</li>
+<li>You kick off a background job which goes from record to record decrypting and re-keying the fields with the new HMAC
+   key.</li>
+<li>Your application searches gradually start to become more and more successful over time.</li>
+<li>Once the background rotation job is complete your application search functionality is now back online.</li>
 </ol>
-<h2 id="mango-crypto-key-driven-design">Mango Crypto-Key Driven Design<a class="headerlink" href="#mango-crypto-key-driven-design" title="Permanent link">&para;</a></h2>
-<p>Often when designing applications which have to implement Application Level Encryption (ALE) it might seem to make sense
-to
-design only with some specific
-cryptographic provider in mind (e.g. Azure Dedicated HSM) but doing this could introduce complexities later if your
-application needs the potential to use different providers (different regions might have
-different cryptographic providers or regulations). You may need to perform a <a href="#What-is-a-key-rotation">key rotation</a>
-from one key which uses some cryptographic provider to a new
-key which uses some other cryptographic provider. Or even just rotate a key to a stronger algorithm, or whatever. So a more flexible design should be used to support a more generic
-approach to implementing ALE. We call
-the approach that the mango4j-crypto takes 'Key Driven Design'. The term 'Key Driven Design' comes from the fact
-that each tenant has a group of encryption/HMAC keys (referred
-to in this documentation as CryptoKeys) and those CryptoKeys define how the encryption operation is carried out. i.e. If
-a CryptoKey has a type of 'AWS_KMS' then this library would use
-AWS KMS and its SDK to perform the encryption operation, if a CryptoKey has a type of 'HSM' then this library will use
-some matching HSM implementation to perform the encryption operation. This
-approach hides the details from the application code which is generally good practice and allows for more flexibility if
-an application needs to use a different method to perform
-encryption later without needing any changes to existing application code.</p>
-<p>This library was designed to force application code into a tried and tested design for ALE
-which removes references to
-specific cryptographic providers from your code and allows you to handle encryption key rotation and HMAC key rotation
-more robustly. HMAC key rotation has a
-long section all of its own in this document which should be considered mandatory reading for all developers who need to
-HMAC data for lookup or unique constraint purposes.</p>
+<p>The functional search outage from your application is most likely unacceptable. Re-keying all records in your system may
+take a very large amount of time. You may have a very large number of records in your system and even with a modest
+number
+of records, it's generally not acceptable to have this background re-keying job run as fast as it can due to
+performance degradation of your system. Increased number of calls to the DB (2 extra calls in the background for every
+record). Not to mention if you're using an external
+cryptographic provider (like Azure Dedicated HSM) it might not handle (or even allow) the extra traffic without its own
+performance problems.
+It may be tempting to think along the lines of running the background job until all records are re-keyed with the new
+HMAC key before changing the key on the tenant. But this is just the same scenario in reverse. Your application searches
+will begin successfully but immediately will become less and less successful over time until the background job is
+finished and you change the tenants HMAC key to the new one.</p>
+<p>To remedy this you need to implement 2 simple concepts:</p>
+<ol>
+<li>Change your design approach so that a tenant has a <ins><strong>list</strong></ins> of HMAC keys rather than a single HMAC key.
+   Depending on your application requirements this list may contain anywhere from a single HMAC key to N HMAC keys.
+   During HMAC key rotations you will <em>add</em> the new HMAC key to the list, instead of <em>replacing</em> the old HMAC key.
+   If your application doesn't support rekeying then this list of HMAC keys will keep getting larger until one
+   of the following 2 scenarios happen:
+   <br>
+   a). Older data that has HMACs calculated with an old key is deleted due to data retention rules. Once there are no
+   more HMACs in the DB that were calculated with that old HMAC key, it can be removed from the list.
+   <br>
+   b). You rekey all records onto the new HMAC key. HMAC Rekeying can get tricky and there are multiple ways of doing it
+   depending on which HMAC strategy you use (described below).</li>
+</ol>
+<p><br>
+2. For your application's search operations, change the logic to look for matches with a <em>list</em> of HMACs instead of
+   trying
+   to match a single HMAC. The number of HMACs generated for the search will be equal to the number of HMAC keys in the
+   tenants HMAC key list.
+   So your code needs to be prepared for this scenario by matching across a list of HMACs rather than a single HMAC.</p>
+<p>So the steps for converting your design approach to accommodate the above approach would become:</p>
+<ol>
+<li>Update your tenant record to have a list of HMACs</li>
+<li>Modify your application search code in such a way that instead of looking for a HMAC field value equal to the
+   generated HMAC (e.g. in JpaRepository):</li>
+</ol>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="n">findByUsernameHmac</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">userNameHmac</span><span class="p">);</span>
+</code></pre></div></td></tr></table></div>
+<p>Change it to generate a list of HMAC values (using the tenant's <em>list</em> of HMAC keys) and look for a HMAC value which is
+in that list of HMACs (e.g. in JpaRepository):</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="n">findByUsernameHmacIn</span><span class="p">(</span><span class="n">Collection</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">userNameHmacs</span><span class="p">);</span>
+</code></pre></div></td></tr></table></div>
+<ol>
+<li>Modify your normal application HMAC code for <em><em>write</em></em> operations to choose the active HMAC key for the HMAC
+   operations from the tenant's HMAC key list (that would be the HMAC key with the most recent CryptoKey.createdDate
+   field).</li>
+</ol>
+<p><strong>However, the previous solution still has major flaws!</strong></p>
+<p>If your application is a multi-instance application and caches key information (both very likely in modern applications)
+then very big issues still remain.
+<br>
+Even with the previous solution consider the following scenario:</p>
+<h4 id="multi-instance-application-with-cached-keys-search-scenario">Multi-instance application with cached Keys search scenario<a class="headerlink" href="#multi-instance-application-with-cached-keys-search-scenario" title="Permanent link">&para;</a></h4>
+<ol>
+<li>You have 2 instances of your application, and they both cache key/tenant information (common practice because this
+   type of
+   information rarely changes)</li>
+<li>You add the new HMAC key to the tenant's list of HMAC keys</li>
+<li>You kick off a background rekey job</li>
+<li>Instance 1 of your application has not updated its cache and is still only seeing the tenant with the old HMAC key</li>
+<li>Instance 2 of your application has updated its cache and is now seeing the tenant with both the old HMAC key and new
+   HMAC key</li>
+<li>Instance 2 inserts a new record with an email of <code>john.doe@test.com</code> and uses the new HMAC key to do it (since going
+   forward the application should use the new HMAC key)</li>
+<li>A search comes into instance 1, and it uses the old HMAC key to HMAC <code>john.doe@test.com</code> and search for it.</li>
+<li>The record is not found because the HMAC for <code>john.doe@test.com</code> was calculated and inserted by instance 2 using the
+   new HMAC key</li>
+</ol>
+<p>To solve this issue, another design change needs to be considered. This change is described in the next section
+and is also needed for another (possibly much more serious) challenge regarding unique constraints. Implementing the
+design consideration in the next section will also solve the
+above shortcoming.</p>
+<h4 id="unique-constraint-enforcement-after-the-rotation-of-a-hmac-key">Unique constraint enforcement after the rotation of a HMAC key<a class="headerlink" href="#unique-constraint-enforcement-after-the-rotation-of-a-hmac-key" title="Permanent link">&para;</a></h4>
+<blockquote>
+<ul>
+<li>IMPORTANT!!! - This problem is much more important than the previous search problem! If your application has unique
+    constraints on
+    confidential fields then there's a chance that changing a HMAC key could leave your application in a broken state!</li>
+</ul>
+</blockquote>
+<p>If you have a confidential field which you need to be unique for your tenant, let's say....a username field. Then you
+will have a DB column with a unique constraint where you store the HMAC of this username. Now, if you switch HMAC keys
+it will be possible to create accounts with the same username. Since an existing account username was calculated with
+the old HMAC key then a new account could be created with the same username since now that the new HMAC key is being
+used it
+will calculate a different HMAC for the same username value and <ins>the DB unique constraint will <strong><em>not</em></strong> be
+enforced</ins>.
+This could have serious repercussions for your system and its data integrity.</p>
+<p>To break down this sample scenario into steps:</p>
+<ol>
+<li>A user exists in your application with username <code>john.doe@test.com</code></li>
+<li>You change your tenant's HMAC key to the new HMAC key (or if you've followed
+   the <a href="#Searching-operations-after-the-rotation-of-a-HMAC-key">above</a> approach
+   to solve the search challenge, you've added the new HMAC key into your tenant's list of HMAC keys)</li>
+<li>A request to create a new user (or change an existing username) is sent to your application with the username
+   <code>john.doe@test.com</code>.</li>
+<li>Your application calculates the HMAC of <code>john.doe@test.com</code> using the tenant's new HMAC key. This HMAC will be
+   different than the username HMAC for the existing <code>john.doe@test.com</code> record.</li>
+<li>The new record is created (or existing record is updated) successfully as the unique constraint on that DB column
+   won't have been triggered.</li>
+<li>There now exists 2 users in the application with the username <code>john.doe@test.com</code></li>
+</ol>
+<p>It may be tempting to think that you can offset this somewhat by always searching for the username first before write
+operations but this impacts performance and makes the DB unique constraint a little bit redundant.
+However, in any case it doesn't solve the problem. In multi-instance applications which cache key information
+there would still exist a race condition in your code which can result in 2 usernames with the same value:</p>
+<ul>
+<li>Imagine at <a href="#multi-instance-application-with-cached-keys-search-scenario">point 7</a> in the previous cached keys search
+  scenario that instead of
+  <em>searching</em> for a record, instance 1 <em>creates</em> a new record with the
+  username <code>john.doe@test.com</code>. It can even search for any existing records but it won't find them (because it doesn't
+  yet
+  have the latest HMAC key). This situation will result in a duplicate record being created by instance 1.</li>
+</ul>
+<p>To remedy this you need to implement particular approaches to calculating and storing the HMACs for your entity fields.
+The following sections detail some of these approaches, all of which are supported in
+the <a href="https://github.com/bitstep-ie/mango4j-crypto">mango4j-crypto</a> library.</p>
 
 
 
