@@ -227,7 +227,7 @@ Key rotation is almost fairly straightforward when you just think of it as an ad
 added to the system but the old keys are left as they are. Only when no more records are left which were encrypted, or 
 has had HMACs calculated, with an older key should that key be removed from the system. As long as your 
 CryptoKeyProvider implementation works as prescribed then things should be fine. 
-[But make sure you understand how HMACs are different](../general/general.md#hmac-key-rotation-challenges)...
+[But make sure you understand how HMACs are different](../general/rotation.md#hmac-key-rotation-challenges)...
 
 ## Rekeying
 Mango4j-crypto has built in support for rekey jobs (currently in BETA). Encryption rekeying is supported for all 
@@ -270,7 +270,7 @@ without
 restarting the application. In order to make this periodic RekeyScheduler start rekeying entities you need to make use
 of
 the CryptoKey.rekeyMode field. Mango4j-crypto supports 2 types of rekey modes: KEY_OFF and KEY_ON. Please see the
-[general documentation](../general/general.md#rekeying-re-encrypting-existing-records-with-the-new-key) 
+[general documentation](../general/rotation.md#rekeying-re-encrypting-existing-records-with-the-new-key) 
 for an explanation of these values. Once the CryptoKey.rekeyMode field is set to either
 KEY_ON or KEY_OFF this RekeyScheduler will trigger the rekeying process the next time it runs (defined by
 `withRekeyCheckInterval()` as above).

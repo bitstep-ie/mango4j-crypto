@@ -75,7 +75,7 @@ years of records in your system which may be at risk of duplication.**
 The following section documents the 2 core challenges when it comes to supporting HMAC key rotation in your application.
 It's advised for all developers not familiar with this particular topic to read this section very carefully.
 It may seem easy to not give much attention to the scenario of rotating HMAC keys, possibly thinking _"when are we
-really going to need to change a [tenant's](faq.md#Whats-a-tenant) HMAC key?!"_ or _"I can worry about it later"_. But
+really going to need to change a [tenant's](faq.md#whats-a-tenant) HMAC key?!"_ or _"I can worry about it later"_. But
 hopefully as you
 can see below, in order to support this functionality there are very important considerations to take into account for
 the way that you design your application. And the challenges presented by HMAC key rotation can be very difficult to
@@ -206,7 +206,7 @@ To break down this sample scenario into steps:
 
 1. A user exists in your application with username `john.doe@test.com`
 2. You change your tenant's HMAC key to the new HMAC key (or if you've followed
-   the [above](#Searching-operations-after-the-rotation-of-a-HMAC-key) approach
+   the [above](#searching-operations-after-the-rotation-of-a-hmac-key) approach
    to solve the search challenge, you've added the new HMAC key into your tenant's list of HMAC keys)
 3. A request to create a new user (or change an existing username) is sent to your application with the username
    `john.doe@test.com`.

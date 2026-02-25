@@ -101,7 +101,7 @@ where:
 
 - *cryptoKeyId* is the identifier of the crypto key object (e.g. the CryptoKey.id field) in your system that was used to
   carry out the cryptographic operation
-- *iv* is the [Initialization Vector](faq.md#Whats-an-IV) that was used for the cryptographic operation
+- *iv* is the [Initialization Vector](faq.md#whats-an-iv) that was used for the cryptographic operation
 - *data* is the actual output that was returned from the Encryption Service Delegate's encrypt() method, the ciphertext
   will be included here.
   Each delegate may return different data here depending on the cryptographic provider or method that it uses, or what

@@ -46,6 +46,7 @@ nav:
   - General Documentation:
       - Overview: general/general.md
       - Encryption: general/encryption.md
+      - Rotation: general/rotation.md
       - HMAC:
           - Strategies: general/hmac-strategies/hmac-strategies.md
           - Single HMAC: general/hmac-strategies/single-hmac.md

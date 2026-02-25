@@ -28,7 +28,7 @@ HMACs are used for 2 main purposes in an application:
 
 1. To support searching on fields that are encrypted
 2. To support unique constraint enforcement on fields that are encrypted.
-   The [FAQ](faq.md#why-do-I-need-to-HMAC-data-in-order-to-make-it-searchable) section at the bottom of this document
+   The [FAQ](faq.md#why-do-i-need-to-hmac-data-in-order-to-make-it-searchable) section at the bottom of this document
    explains this in more detail.
 
 ## Mango Crypto-Key Driven Design
@@ -38,7 +38,7 @@ to
 design only with some specific
 cryptographic provider in mind (e.g. Azure Dedicated HSM) but doing this could introduce complexities later if your
 application needs the potential to use different providers (different regions might have
-different cryptographic providers or regulations). You may need to perform a [key rotation](faq.md#What-is-a-key-rotation)
+different cryptographic providers or regulations). You may need to perform a [key rotation](faq.md#what-is-a-key-rotation)
 from one key which uses some cryptographic provider to a new
 key which uses some other cryptographic provider. Or even just rotate a key to a stronger algorithm, or whatever. So a more flexible design should be used to support a more generic
 approach to implementing ALE. We call

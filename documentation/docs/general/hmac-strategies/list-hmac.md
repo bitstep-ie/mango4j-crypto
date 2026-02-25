@@ -95,7 +95,7 @@ table.
 - Can have as many HMAC keys on a tenant as you want. You can add a new HMAC key anytime you want, even in the middle of
   a re-keying job, and it won't affect application
   functionality.
-- Easily supports [HMAC tokenization.](#What-is-HMAC-tokenization)
+- Easily supports [HMAC tokenization.](../faq.md#what-is-hmac-tokenization)
 
 **Cons of the list HMAC strategy:**
 
