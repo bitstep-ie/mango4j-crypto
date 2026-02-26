@@ -1,4 +1,4 @@
-package ie.bitstep.mango.crypto.delegates.aws.impl.service.encryption;
+package ie.bitstep.mango.crypto.delegates.aws.kms.impl.service.encryption;
 
 import ie.bitstep.mango.crypto.core.domain.CiphertextContainer;
 import ie.bitstep.mango.crypto.core.domain.CryptoKey;
@@ -19,7 +19,7 @@ import java.util.Base64;
 import java.util.Collection;
 import java.util.HashMap;
 
-public class AwsEncryptionServiceDelegate extends EncryptionServiceDelegate {
+public class AwsKmsEncryptionServiceDelegate extends EncryptionServiceDelegate {
 
 	private static final String AWS_KMS_KEY_TYPE = "AWS_KMS";
 	private static final String CIPHER_DATA_NODE = "data";
@@ -29,7 +29,7 @@ public class AwsEncryptionServiceDelegate extends EncryptionServiceDelegate {
 
 	private final KmsClient kmsClient;
 
-	public AwsEncryptionServiceDelegate(KmsClient kmsClient) {
+	public AwsKmsEncryptionServiceDelegate(KmsClient kmsClient) {
 		this.kmsClient = kmsClient;
 	}
 
@@ -40,10 +40,10 @@ public class AwsEncryptionServiceDelegate extends EncryptionServiceDelegate {
 
 	@Override
 	public CiphertextContainer encrypt(CryptoKey encryptionKey, String data) {
-		AwsCryptoKeyConfig awsCryptoKeyConfig = createConfigPojo(encryptionKey, AwsCryptoKeyConfig.class);
+		AwsKmsCryptoKeyConfig awsKmsCryptoKeyConfig = createConfigPojo(encryptionKey, AwsKmsCryptoKeyConfig.class);
 		EncryptRequest encryptRequest = EncryptRequest.builder()
-				.keyId(awsCryptoKeyConfig.awsKeyId())
-				.encryptionAlgorithm(awsCryptoKeyConfig.algorithm())
+				.keyId(awsKmsCryptoKeyConfig.awsKeyId())
+				.encryptionAlgorithm(awsKmsCryptoKeyConfig.algorithm())
 				.plaintext(SdkBytes.fromByteArray(data.getBytes(ENCODING_CHARSET)))
 				.build();
 
@@ -68,10 +68,10 @@ public class AwsEncryptionServiceDelegate extends EncryptionServiceDelegate {
 	@Override
 	public void hmac(Collection<HmacHolder> hmacHolders) {
 		hmacHolders.forEach(hmacHolder -> {
-			AwsCryptoKeyConfig awsCryptoKeyConfig = createConfigPojo(hmacHolder.getCryptoKey(), AwsCryptoKeyConfig.class);
+			AwsKmsCryptoKeyConfig awsKmsCryptoKeyConfig = createConfigPojo(hmacHolder.getCryptoKey(), AwsKmsCryptoKeyConfig.class);
 			GenerateMacRequest generateMacRequest = GenerateMacRequest.builder()
-					.keyId(awsCryptoKeyConfig.awsKeyId())
-					.macAlgorithm(awsCryptoKeyConfig.algorithm())
+					.keyId(awsKmsCryptoKeyConfig.awsKeyId())
+					.macAlgorithm(awsKmsCryptoKeyConfig.algorithm())
 					.message(SdkBytes.fromByteArray(hmacHolder.getValue().getBytes(ENCODING_CHARSET)))
 					.build();
 

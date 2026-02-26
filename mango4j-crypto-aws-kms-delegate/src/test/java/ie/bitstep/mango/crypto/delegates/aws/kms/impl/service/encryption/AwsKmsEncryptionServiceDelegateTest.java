@@ -1,4 +1,4 @@
-package ie.bitstep.mango.crypto.delegates.aws.impl.service.encryption;
+package ie.bitstep.mango.crypto.delegates.aws.kms.impl.service.encryption;
 
 import ie.bitstep.mango.crypto.core.domain.CiphertextContainer;
 import ie.bitstep.mango.crypto.core.domain.CryptoKey;
@@ -34,7 +34,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 @ExtendWith(MockitoExtension.class)
-public class AwsEncryptionServiceDelegateTest {
+public class AwsKmsEncryptionServiceDelegateTest {
 
 	private static final String TEST_CRYPTO_KEY_ID = "TetsCryptoKeyId";
 	private static final String TEST_PLAINTEXT_STRING = "Test source data";
@@ -62,27 +62,27 @@ public class AwsEncryptionServiceDelegateTest {
 	private ArgumentCaptor<GenerateMacRequest> generateMacRequestRequestCaptor;
 
 	private CryptoKey testCryptoKey;
-	private AwsEncryptionServiceDelegate awsEncryptionServiceDelegate;
+	private AwsKmsEncryptionServiceDelegate awsKmsEncryptionServiceDelegate;
 
 	@BeforeEach
 	void setup() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 		testCryptoKey = new CryptoKey();
 		testCryptoKey.setCreatedDate(Instant.now());
 		testCryptoKey.setId(TEST_CRYPTO_KEY_ID);
-		HashMap<String, Object> awsKeyConfiguration = new HashMap<>();
-		awsKeyConfiguration.put(AWS_KEY_ID_CONFIG_ATTRIBUTE, TEST_AWS_KEY_URN);
-		awsKeyConfiguration.put(ALGORITHM_CONFIG_ATTRIBUTE, TEST_ALGORITHM_VALUE);
-		testCryptoKey.setConfiguration(awsKeyConfiguration);
+		HashMap<String, Object> awsKmsKeyConfiguration = new HashMap<>();
+		awsKmsKeyConfiguration.put(AWS_KEY_ID_CONFIG_ATTRIBUTE, TEST_AWS_KEY_URN);
+		awsKmsKeyConfiguration.put(ALGORITHM_CONFIG_ATTRIBUTE, TEST_ALGORITHM_VALUE);
+		testCryptoKey.setConfiguration(awsKmsKeyConfiguration);
 
-		awsEncryptionServiceDelegate = new AwsEncryptionServiceDelegate(mockAwsKmsClient);
-		Method setEncryptionServiceMethod = AwsEncryptionServiceDelegate.class.getSuperclass().getDeclaredMethod("setEncryptionServiceReference", EncryptionService.class);
+		awsKmsEncryptionServiceDelegate = new AwsKmsEncryptionServiceDelegate(mockAwsKmsClient);
+		Method setEncryptionServiceMethod = AwsKmsEncryptionServiceDelegate.class.getSuperclass().getDeclaredMethod("setEncryptionServiceReference", EncryptionService.class);
 		setEncryptionServiceMethod.trySetAccessible();
-		setEncryptionServiceMethod.invoke(awsEncryptionServiceDelegate, mockEncryptionService);
+		setEncryptionServiceMethod.invoke(awsKmsEncryptionServiceDelegate, mockEncryptionService);
 	}
 
 	@Test
 	void supportedCryptoKeyType() {
-		assertThat(awsEncryptionServiceDelegate.supportedCryptoKeyType()).isEqualTo("AWS_KMS");
+		assertThat(awsKmsEncryptionServiceDelegate.supportedCryptoKeyType()).isEqualTo("AWS_KMS");
 	}
 
 	@SuppressWarnings("resource")
@@ -96,7 +96,7 @@ public class AwsEncryptionServiceDelegateTest {
 		given(mockEncryptionService.getObjectMapperFactory()).willReturn(new ConfigurableObjectMapperFactory());
 		given(mockAwsKmsClient.encrypt(encryptRequestCaptor.capture())).willReturn(testEncryptResponse);
 
-		CiphertextContainer ciphertextContainer = awsEncryptionServiceDelegate.encrypt(testCryptoKey, TEST_PLAINTEXT_STRING);
+		CiphertextContainer ciphertextContainer = awsKmsEncryptionServiceDelegate.encrypt(testCryptoKey, TEST_PLAINTEXT_STRING);
 
 		assertThat(ciphertextContainer.getCryptoKey()).isEqualTo(testCryptoKey);
 		assertThat(ciphertextContainer.getData()).containsEntry(AWS_KEY_ID_CONFIG_ATTRIBUTE, TEST_AWS_KEY_URN);
@@ -123,7 +123,7 @@ public class AwsEncryptionServiceDelegateTest {
 		ciphertextContainerData.put(ALGORITHM_CONFIG_ATTRIBUTE, TEST_ALGORITHM_VALUE);
 		ciphertextContainerData.put(DATA_CONFIG_ATTRIBUTE, Base64.getEncoder().encodeToString(TEST_CIPHERTEXT.getBytes(UTF_8)));
 
-		String plainText = awsEncryptionServiceDelegate.decrypt(new CiphertextContainer(testCryptoKey, ciphertextContainerData));
+		String plainText = awsKmsEncryptionServiceDelegate.decrypt(new CiphertextContainer(testCryptoKey, ciphertextContainerData));
 
 		assertThat(plainText).isEqualTo(TEST_PLAINTEXT_STRING);
 
@@ -145,7 +145,7 @@ public class AwsEncryptionServiceDelegateTest {
 		given(mockAwsKmsClient.generateMac(generateMacRequestRequestCaptor.capture())).willReturn(testGenerateMacResponse);
 		HmacHolder hmacHolder = new HmacHolder(testCryptoKey, TEST_PLAINTEXT_STRING, TEST_HMAC_FIELD_NAME);
 
-		awsEncryptionServiceDelegate.hmac(List.of(hmacHolder));
+		awsKmsEncryptionServiceDelegate.hmac(List.of(hmacHolder));
 
 		assertThat(hmacHolder.getCryptoKey()).isEqualTo(testCryptoKey);
 		assertThat(hmacHolder.getHmacAlias()).isEqualTo(TEST_HMAC_FIELD_NAME);
