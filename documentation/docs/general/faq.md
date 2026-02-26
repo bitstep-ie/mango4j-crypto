@@ -144,9 +144,10 @@ looking for is or which HMAC key might have been used to calculate
 it, so storing the HMAC key reference alongside it won't help you with anything. And again, This is why you must try all
 possible HMAC keys when searching.
 
-*Caveat:* In saying that, it is useful to store a reference to the HMAC key alongside the HMAC so that re-key jobs can
+*Caveat:* In saying that, it is very useful to store a reference to the HMAC key alongside the HMAC so that re-key jobs can
 easily query which records need re-keyed and which do not. But this is a
-convenience related to re-keying performance only and is not related to normal HMAC functionality.
+convenience related to re-keying performance only and is not related to normal HMAC functionality. Mango4j-crypto makes 
+storing HMAC Key IDs mandatory to enable automatic rekeying support.
 
 ## What is HMAC tokenization?
 
