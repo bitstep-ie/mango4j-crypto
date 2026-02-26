@@ -1011,9 +1011,8 @@
 
 
 <h1 id="double-hmac-strategy">Double HMAC strategy<a class="headerlink" href="#double-hmac-strategy" title="Permanent link">&para;</a></h1>
-<p>The Double HMAC strategy is a compromise between the List HMAC strategy and the (mostly not recommended) Single HMAC
-Strategy (or its sister strategy the Single Time Based HMAC
-strategy) that allows for a more normal entity design.</p>
+<p>The Double HMAC strategy is a compromise between the List HMAC strategy and the Single HMAC Strategy that allows for a 
+more normal entity design.</p>
 <p>This strategy trades the generality of the List HMAC strategy to a more simple relational design and has an added
 downside of only allowing 2 HMAC keys to be in use for write
 operations at any time. So there will be some applications which this strategy won't suit, particularly those that need
