@@ -107,7 +107,7 @@ public class AnnotatedEntityManager {
 				throw new NonTransientCryptoException(String.format("Fields marked with @%s cannot also be marked with @%s or @%s",
 						CascadeEncrypt.class.getSimpleName(), Encrypt.class.getSimpleName(), Hmac.class.getSimpleName()));
 			}
-			cascadedSourceField.setAccessible(true);
+			cascadedSourceField.setAccessible(true); // NOSONAR - mango4j-crypto revolves around reflection
 			sourceFieldsToCascadeEncrypt.get(annotatedEntityClass).add(cascadedSourceField);
 			registerFieldsToCascadeEncrypt(cascadedSourceField.getType());
 		});

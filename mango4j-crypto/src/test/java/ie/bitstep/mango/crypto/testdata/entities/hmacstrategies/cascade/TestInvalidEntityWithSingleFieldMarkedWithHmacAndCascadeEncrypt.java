@@ -33,7 +33,7 @@ public class TestInvalidEntityWithSingleFieldMarkedWithHmacAndCascadeEncrypt {
 	@CascadeEncrypt
 	private TestMockHmacEntity testMockHmacEntity2;
 
-	private TestMockHmacEntity testMockHmacEntity3NotTraversed;
+	private TestMockHmacEntity testMockHmacEntity3NotTraversed; // NOSONAR - Need this field to test that the DoubleHmacStrategy is not applied to any fields without annotations
 
 	private String favouriteColor;
 
