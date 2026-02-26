@@ -6,6 +6,30 @@
 
     <packaging>pom</packaging>
 
+    <name>Mango4j Crypto</name>
+    <description>Java Framework for implementing Application Level Encryption</description>
+    <url>https://github.com/bitstep-ie/mango4j-crypto</url>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>bitstep</id>
+            <name>Bitstep</name>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/bitstep-ie/mango4j-crypto.git</connection>
+        <developerConnection>scm:git:ssh://github.com/bitstep-ie/mango4j-crypto.git</developerConnection>
+        <url>https://github.com/bitstep-ie/mango4j-crypto</url>
+    </scm>
+
     <modules>
         <module>mango4j-crypto-core</module>
         <module>mango4j-crypto</module>
