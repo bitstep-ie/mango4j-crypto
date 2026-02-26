@@ -574,9 +574,11 @@ it with an SQL DB check out the [mango4j-crypto-example](https://github.com/bits
     and CryptoShieldHmacHolder.value (and tenant ID if applicable).
 
 
-> **Important:** When calling CryptoShield.encrypt() for entities which have been updated (as opposed to newly created),
-> make sure that the setLookup() and setUniqueValues() methods _completely replace_ the existing lists! Do not append to
-> the existing lists!!!
+**Important:** When calling CryptoShield.encrypt() for entities which have been updated (as opposed to newly created), 
+make sure that the setLookup() and setUniqueValues() methods _completely replace_ the existing lists! Do not append to 
+the existing lists!!!
+
+<br>
 
 #### HMAC Tokenizers
 
@@ -603,7 +605,7 @@ know and we'll add it to the library. Using HMAC Tokenizers
 will help applications with more flexible searching functionality and is another reason that the ListHmacFieldStrategy
 is the most powerful of the 3 core HMAC strategies.
 
-###### Compound Unique Constraints With The List HMAC Strategy
+#### Compound Unique Constraints With The List HMAC Strategy
 
 One extra challenge when using the List HMAC strategy is that if you have a requirement of needing to create a compound 
 unique constraint on a group of fields that include a HMAC field then this cannot be done the normal way. You can 
@@ -621,7 +623,7 @@ Please read the [the official general documentation](../general/hmac-strategies/
 of the Double HMAC Strategy and for when you might want to use it. The entity definition when using it is similar to the 
 one for the Single HMAC Strategy. Below is an example entity definition.
 
-```java language=java
+```java
 import ie.bitstep.mango.crypto.annotations.Encrypt;
 import ie.bitstep.mango.crypto.annotations.EncryptedData;
 import ie.bitstep.mango.crypto.annotations.Hmac;
@@ -711,15 +713,21 @@ public class UserProfileEntity {
 ```
 
 > **NOTES**:
+> 
 > * We've added the @DoubleHmacStrategy annotation to the class.
+> 
 > * This entity definition is almost the same as the one for SingleHmacStrategy except that each field annotated with 
 >   @Hmac has 2 associated HMAC fields 'panHmac1'/'panHmac2' and 'userNameHmac1'/'userNameHmac2'. This is because 
 >   with the Double HMAC Strategy we need 2 HMACs to be stored separately for each HMAC source field. 
+> 
 > * Again, you'll notice that we didn't bother defining getters/setters for the USERNAME_HMAC_1, USERNAME_HMAC_2, 
 >   PAN_HMAC_1 or PAN_HMAC_2 fields either, for the same reasons as mentioned before.
+> 
 > * The panHmac1, panHmac2, userNameHmac1 and userNameHmac2 fields are persisted to the DB in our example and each have their own columns 
 >   (we're using Hibernate here). 
+> 
 > * The USERNAME_HMAC_1 and USERNAME_HMAC_2 each have a unique constraint on them also.
+> 
 > * Application search code must look for matching HMACs in both of the HMAC columns associated with each HMAC source 
     field. So those queries become OR queries in the case of multiple HMAC keys in use. You can see the 
 >   [mango4j-examples code](https://github.com/bitstep-ie/mango4j-examples/blob/main/mango4j-crypto-example/src/main/java/ie/bitstep/mango/examples/crypto/example/doublehmacstrategy/service/UserProfileService.java#L62) to see an example of what this might look like.
