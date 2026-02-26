@@ -8,20 +8,42 @@ on:
         required: true
         default: "no"
 
-permissions:
-  contents: write
-
 jobs:
+  draft:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      body: ${{ steps.drafter.outputs.body }}
+      tag: ${{ steps.drafter.outputs.tag_name }}
+      name: ${{steps.drafter.outputs.name}}
+    steps:
+      - uses: release-drafter/release-drafter@267d2e0268deae5d44f3ba5029dd4d6e85f9d52d # v6 - Using full commit sha to avoid security hotspot
+        id: drafter
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
   run:
+    needs: draft
     if: ${{ github.event.inputs.confirm == 'yes' }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      TAG: ${{ needs.draft.outputs.tag }}
     steps:
+      - name: Print data
+        run: |
+          echo "Tag: ${{ needs.draft.outputs.tag }}"
+          echo "Release Notes:"
+          echo "${{ needs.draft.outputs.body }}"
+
       - uses: actions/create-github-app-token@v1
         id: app-token
         with:
           app-id: ${{ secrets.APP_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
-
 
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -42,17 +64,60 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
+      - name: Update pom versions
+        run: |
+          echo "Setting version to ${TAG#v}"
+          mvn -B -q versions:set -DnewVersion=${TAG#v} -DgenerateBackupPoms=false
+
+      - name: Commit updated pom versions
+        run: |
+          if git diff --quiet; then
+            echo "No version changes, skipping commit"
+            exit 0
+          fi
+          
+          git commit -am "chore: Version $TAG released"
+          git tag -a "$TAG" -m "Release $TAG"
+
+          git push
+          git push origin "$TAG"
+
+      - uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b # v2.5.0 - Using full commit sha to avoid security hotspot
+        with:
+          tag_name: ${{ needs.draft.outputs.tag }}
+          name: ${{ needs.draft.outputs.name }}
+          body: ${{ needs.draft.outputs.body }}
+          draft: false
+          prerelease: false
+
       - name: Fetch gh-pages
         run: git fetch origin gh-pages:gh-pages || echo "No gh-pages branch yet"
 
-      - name: Release Version Deploy
+      - name: Release Version Documentation Deploy
         working-directory: documentation
-#        if: ${{ github.event.release && github.event.release.tag_name != '' }}
         run: |
-          MANGO4J_CRYPTO_LATEST_VERSION=0.1.0 \
-          mike deploy 0.1.0 latest -u --push
-# mike deploy ${{ github.event.release.tag_name }} latest -u --push
+          MANGO4J_LATEST_VERSION="${TAG#v}" \
+          mike deploy "${TAG#v}" latest -u --push
 
-      - name: Default latest
+      - name: Default latest on docs
         working-directory: documentation
         run: mike set-default latest --allow-undefined --push
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          server-id: central
+          server-username: CENTRAL_USERNAME
+          server-password: CENTRAL_PASSWORD
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: GPG_PASSPHRASE
+
+      - name: Publish Release
+        if: github.ref == 'refs/heads/main'
+        run: mvn -B deploy
+        env:
+          CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
+          CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
