@@ -1,19 +1,9 @@
 [
   {
-    "version": "untagged-74cc5505b7abb39e65aa",
-    "title": "untagged-74cc5505b7abb39e65aa",
-    "aliases": []
-  },
-  {
     "version": "1.0.0",
     "title": "1.0.0",
     "aliases": [
       "latest"
     ]
-  },
-  {
-    "version": "0.1.0",
-    "title": "0.1.0",
-    "aliases": []
   }
 ]
