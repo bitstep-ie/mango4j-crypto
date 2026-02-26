@@ -1,4 +1,4 @@
-# AWS Encryption Service Delegate
+# AWS KMS Encryption Service Delegate
 
 
 This delegate allows applications to use the [Amazon Web Services Key Management Service](https://aws.amazon.com/kms/) 
@@ -46,13 +46,13 @@ Add the following dependency to your pom
 ```xml
 <dependency>
     <groupId>ie.bitstep.mango</groupId>
-    <artifactId>mango4j-crypto-aws-delegate</artifactId>
+    <artifactId>mango4j-crypto-aws-kms-delegate</artifactId>
     <version>1.0.0</version>
 </dependency>
 ```
 
 Then just create an instance of 
-[AwsEncryptionServiceDelegate](https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-aws-delegate/src/main/java/ie/bitstep/mango/crypto/delegates/aws/impl/service/encryption/AwsEncryptionServiceDelegate.java) 
+[AwsEncryptionServiceDelegate](https://github.com/bitstep-ie/mango4j-crypto/blob/main/mango4j-crypto-aws-delegate/src/main/java/ie/bitstep/mango/crypto/delegates/aws/kms/impl/service/encryption/AwsKmsEncryptionServiceDelegate.java) 
 with a configured KmsClient and add it to the list of delegates you configure with your CryptoShield.
 For example a Spring configuration might look like this:
 
@@ -70,8 +70,8 @@ public class Config {
     public String awsRegion;
 
     @Bean
-    public AwsEncryptionServiceDelegate awsEncryptionServiceDelegate() {
-        return new AwsEncryptionServiceDelegate(KmsClient.builder()
+    public AwsKmsEncryptionServiceDelegate awsKmsEncryptionServiceDelegate() {
+        return new AwsKmsEncryptionServiceDelegate(KmsClient.builder()
             .region(Region.of(awsRegion))
             .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
             .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.builder()
@@ -86,7 +86,7 @@ public class Config {
                                  List<EncryptionServiceDelegate> encryptionServiceDelegates) {
         return new CryptoShield.Builder()
             .withAnnotatedEntities(List.of(MyConfidentialEntity.class))
-	    .withCryptoKeyProvider(cryptoKeyProvider)
+            .withCryptoKeyProvider(cryptoKeyProvider)
             .withEncryptionServiceDelegates(encryptionServiceDelegates)
             .withObjectMapperFactory(new ConfigurableObjectMapperFactory())
             .build();

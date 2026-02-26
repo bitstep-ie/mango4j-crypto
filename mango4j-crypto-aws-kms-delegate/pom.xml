@@ -6,7 +6,7 @@
     <parent>
         <groupId>ie.bitstep.mango</groupId>
         <artifactId>mango4j-crypto-framework</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
 
     <name>AWS KMS Encryption Service Delegate for Mango4j Crypto</name>
