@@ -208,7 +208,9 @@ public CryptoShield cryptoShield(CryptoKeyProvider cryptoKeyProvider) {
 > To minimise this risk it's advised to have separate config classes which run with 'prod' and 'dev'
 > profiles. You can create your own EncryptionService classes by creating your own subclass of EncryptionServiceDelegate
 > (just like Base64EncryptionService and IdentityEncryptionService do) which
-> carries out encryption operations using a cryptographic provider that you use in whatever way you need.
+> carries out encryption operations using a cryptographic provider that you use in whatever way you need. Check out 
+> the [mango4j-examples](https://github.com/bitstep-ie/mango4j-examples) springboot app for a slightly different but 
+> more flexible way to do this. 
 > 
 > * We register our UserProfile entity (and any others) with the library using the withAnnotationEntities() method.
 > 
@@ -239,14 +241,12 @@ And this will reset all the confidential (transient) fields in your entity back 
 ## Key Rotation
 Key rotation is almost fairly straightforward when you just think of it as an additive process. A new encryption or HMAC key is 
 added to the system but the old keys are left as they are. Only when no more records are left which were encrypted, or 
-has had HMACs calculated, with an older key should that key be removed from the system. As long as your 
+have had HMACs calculated, with an older key should that key be removed from the system. As long as your 
 CryptoKeyProvider implementation works as prescribed then things should be fine. 
 [But make sure you understand how HMACs are different](../general/rotation.md#hmac-key-rotation-challenges)...
 
 ## Rekeying
-Mango4j-crypto has built in support for rekey jobs (currently in BETA). Encryption rekeying is supported for all 
-entities but for HMACs the RekeyScheduler currently only supports rekeying HMACs for entities which use the List HMAC 
-Strategy. The configuration is as follows:
+Mango4j-crypto has built in support for rekey jobs (currently in BETA). The configuration is as follows:
 
 
 1. Implement the RekeyCryptoKeyManager interface and configure an instance of it.
@@ -317,10 +317,12 @@ explanation of this material) and this library provides 3
 
 You can choose which ones to apply to your application entities by using the corresponding class level annotation. The
 library authors strongly advise application developers to consider
-the @ListHmacStrategy unless there are strong reasons not to. Currently, the library supports the following (in
-order of preference of the mango4j-crypto team):
-- [@ListHmacStrategy](../general/hmac-strategies/list-hmac.md)
+the @ListHmacStrategy unless there are strong reasons not to. Currently, the library supports the following:
+
 - [@SingleHmacStrategy](../general/hmac-strategies/single-hmac.md)
+
+- [@ListHmacStrategy](../general/hmac-strategies/list-hmac.md)
+ 
 - [@DoubleHmacStrategy](../general/hmac-strategies/double-hmac.md)
 
 But we'll start with the Single HMAC Strategy as that's the easiest to understand. In this example we also need to 
@@ -333,6 +335,7 @@ in our application.
 import ie.bitstep.mango.crypto.annotations.Encrypt;
 import ie.bitstep.mango.crypto.annotations.EncryptedData;
 import ie.bitstep.mango.crypto.annotations.Hmac;
+import ie.bitstep.mango.crypto.annotations.HmacKeyId;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -393,7 +396,15 @@ public class UserProfileEntity {
 	@Column(name = "ENCRYPTED_DATA")
 	@EncryptedData
 	private String encryptedData;
-
+	
+	@EncryptionKeyId
+	@Column(name = "ENCRYPTION_KEY_ID")
+	private String encryptionKeyId;
+	
+	@HmacKeyId
+	@Column(name = "HMAC_KEY_ID")
+	private String hmacKeyId;
+	
 	public String getId() {
 		return id;
 	}
@@ -425,7 +436,9 @@ public class UserProfileEntity {
 >   for the same reason that we didn't bother defining getters/setters for the ENCRYPTED_DATA field.
 > 
 > * The panHmac and userNameHmac fields are persisted to the DB in our example and each have their own columns 
->   (we're using Hibernate here). 
+>   (we're using Hibernate here).
+> 
+> * We've added @HmacKeyId to a field where we'll store the HMAC Key ID used. 
 > 
 > * The USERNAME_HMAC also has a unique constraint on it.
 
@@ -572,6 +585,8 @@ it with an SQL DB check out the [mango4j-crypto-example](https://github.com/bits
 > * If you are using HMACs for unique constraint purposes, make sure to create the appropriate unique constraint definitions on your
     DB. Generally you would place a compound unique constraint on the columns representing CryptoShieldHmacHolder.alias 
     and CryptoShieldHmacHolder.value (and tenant ID if applicable).
+> 
+> * We don't use the @HmacKeyId annotation anywhere. It's not needed for ListHmacStrategy.
 
 
 **Important:** When calling CryptoShield.encrypt() for entities which have been updated (as opposed to newly created), 
@@ -627,6 +642,7 @@ one for the Single HMAC Strategy. Below is an example entity definition.
 import ie.bitstep.mango.crypto.annotations.Encrypt;
 import ie.bitstep.mango.crypto.annotations.EncryptedData;
 import ie.bitstep.mango.crypto.annotations.Hmac;
+import ie.bitstep.mango.crypto.annotations.HmacKeyId;
 import ie.bitstep.mango.crypto.annotations.strategies.DoubleHmacStrategy;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -693,6 +709,18 @@ public class UserProfileEntity {
     @Column(name = "ENCRYPTED_DATA")
     @EncryptedData
     private String encryptedData;
+	
+    @EncryptionKeyId
+    @Column(name = "ENCRYPTION_KEY_ID")
+    private String encryptionKeyId;
+	
+    @HmacKeyId(keyNumber = 1)
+    @Column(name = "HMAC_KEY_ID_1")
+    private String hmacKeyId1;
+	
+    @HmacKeyId(keyNumber = 2)
+    @Column(name = "HMAC_KEY_ID_2")
+    private String hmacKeyId2;
 
     public String getId() {
         return id;
@@ -727,6 +755,9 @@ public class UserProfileEntity {
 >   (we're using Hibernate here). 
 > 
 > * The USERNAME_HMAC_1 and USERNAME_HMAC_2 each have a unique constraint on them also.
+> 
+> * There are 2 fields annotated with @HmacKeyId when using this HMAC strategy. Please see [@HmacKeyId](#hmackeyid) for 
+> an explanation of this.
 > 
 > * Application search code must look for matching HMACs in both of the HMAC columns associated with each HMAC source 
     field. So those queries become OR queries in the case of multiple HMAC keys in use. You can see the 
@@ -782,3 +813,13 @@ anyway) but it is useful for more performant rekey query purposes so it's recomm
 as it won't hurt and can be useful later.
 It would basically be used to find the records which are (or aren't) using a certain encryption/HMAC key so that they can be
 rekeyed with the current encryption key.
+
+### @HmacKeyId
+This is a mandatory annotation only when using the Single and Double HMAC strategies (don't use for ListHmacStrategy). 
+You should place this annotation on the field where you will store the ID of the HMAC key(s) used to calculate the HMACs, 
+which you should persist. This field is needed to support rekeying of HMAC keys. If you didn't store this field in each 
+record with HMACs, then the rekey job wouldn't know which HMAC records it needs to rekey.
+> NOTE: If using the Double HMAC Strategy you need to add this annotation to 2 fields and set the keyNumber to 1 on 
+> one of the fields and 2 on the other. The library will set the key ID of the older HMAC key into the field with 
+> keyNumber 1, and the new HMAC key ID into the field with keyNumber 2. If there is only 1 HMAC key in use then the both 
+> fields will be set to the same value.
