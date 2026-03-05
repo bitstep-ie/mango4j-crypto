@@ -3,9 +3,9 @@ package ie.bitstep.mango.crypto.keyrotation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ie.bitstep.mango.crypto.CryptoShield;
 import ie.bitstep.mango.crypto.annotations.EncryptedData;
-import ie.bitstep.mango.crypto.core.domain.CryptoKey;
 import ie.bitstep.mango.crypto.core.encryption.EncryptionService;
 import ie.bitstep.mango.crypto.core.providers.CryptoKeyProvider;
+import ie.bitstep.mango.crypto.core.domain.CryptoKey;
 import ie.bitstep.mango.crypto.keyrotation.exceptions.RekeySchedulerInitializationException;
 
 import java.time.Clock;

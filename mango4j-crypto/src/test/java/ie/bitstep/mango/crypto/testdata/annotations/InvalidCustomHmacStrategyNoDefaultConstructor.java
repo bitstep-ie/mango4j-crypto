@@ -8,7 +8,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@HmacStrategyToUse(ie.bitstep.mango.crypto.testdata.implementations.hmacstrategies.InvalidCustomHmacStrategyNoDefaultConstructor.class)
+@HmacStrategyToUse("ie.bitstep.mango.crypto.testdata.implementations.hmacstrategies.InvalidCustomHmacStrategyNoDefaultConstructor")
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 @Inherited

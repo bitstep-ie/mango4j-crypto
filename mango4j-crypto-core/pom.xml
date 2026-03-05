@@ -3,8 +3,8 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>mango4j-crypto-framework</artifactId>
         <groupId>ie.bitstep.mango</groupId>
+        <artifactId>mango4j-crypto-framework</artifactId>
         <version>1.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -14,6 +14,11 @@
     <packaging>jar</packaging>
 
     <dependencies>
+        <dependency>
+            <groupId>ie.bitstep.mango</groupId>
+            <artifactId>mango4j-crypto-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>ie.bitstep.mango</groupId>
             <artifactId>mango4j-collections</artifactId>
@@ -40,6 +45,32 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
                     <additionalOptions>-Xdoclint:none</additionalOptions>
+                </configuration>
+            </plugin>
+            <!-- PITEST mvn clean test-compile org.pitest:pitest-maven:mutationCoverage   -->
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>${pitest.plugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-junit5-plugin</artifactId>
+                        <version>${pitest.junit5.plugin.version}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <withHistory>false</withHistory>
+                    <mutationThreshold>98</mutationThreshold>
+                    <targetClasses>
+                        <param>ie.bitstep.mango*</param>
+                    </targetClasses>
+                    <targetTests>
+                        <param>ie.bitstep.mango*</param>
+                    </targetTests>
+                    <avoidCallsTo>
+                        <param>java.lang.System$Logger</param>
+                    </avoidCallsTo>
                 </configuration>
             </plugin>
         </plugins>

@@ -1,7 +1,6 @@
 package ie.bitstep.mango.crypto.core.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ie.bitstep.mango.crypto.core.encryption.EncryptionService;
 
 import java.util.Objects;
 
@@ -18,8 +17,7 @@ public final class HmacHolder {
 	/**
 	 * Data to calculate the HMAC for.
 	 * <br>
-	 * {@link EncryptionService#hmac(java.util.Collection)
-	 * EncryptionService#hmac(Collection<HmacHolder>)} will overwrite this field with the result of the
+	 * {@code EncryptionService#hmac(Collection<HmacHolder>)} will overwrite this field with the result of the
 	 * HMAC operation.
 	 */
 	private String value;
@@ -32,17 +30,17 @@ public final class HmacHolder {
 	 * types of operations need each value to be accompanied by an associated alias for the value so that applications
 	 * can tell which HMAC values in the response correspond to which input values. It is encouraged that applications
 	 * collect all values from their data model that they need to HMAC into a single list and call
-	 * {@link EncryptionService#hmac(java.util.Collection) EncryptionService.hmac(Collection<HmacHolder>)}
+	 * {@code EncryptionService#hmac(Collection<HmacHolder>)}
 	 * only once for better performance. Rather than calling
-	 * {@link EncryptionService#hmac(java.util.Collection) EncryptionService.hmac(Collection<HmacHolder>)}
+	 * {@code EncryptionService#hmac(Collection<HmacHolder>)}
 	 * to HMAC the PAN list, then calling it again to HMAC the username list, etc. (remember each field generates a list of
 	 * {@link HmacHolder HMAC holders} to accommodate key rotation).
 	 * <p>
 	 * Bundle them all into one list setting this field
 	 * on each one to an appropriate value and make a single call. If this field isn't set then an application must call
-	 * {@link EncryptionService#hmac(java.util.Collection) EncryptionService.hmac(Collection<HmacHolder>)}
+	 * {@code EncryptionService#hmac(Collection<HmacHolder>)}
 	 * for each field value they need to HMAC, which may not allow for the best performance (depending on the underlying
-	 * {@link EncryptionService EncryptionService}) implementation.
+	 * {@code EncryptionService#hmac(Collection<HmacHolder>)}) implementation.
 	 * </p>
 	 */
 	private final String hmacAlias;

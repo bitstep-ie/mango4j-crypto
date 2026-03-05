@@ -6,9 +6,8 @@ import ie.bitstep.mango.crypto.annotations.EncryptionKeyId;
 import ie.bitstep.mango.crypto.annotations.Hmac;
 import ie.bitstep.mango.crypto.annotations.HmacKeyId;
 import ie.bitstep.mango.crypto.annotations.strategies.HmacStrategyToUse;
-import ie.bitstep.mango.crypto.hmac.DoubleHmacFieldStrategy;
 
-@HmacStrategyToUse(DoubleHmacFieldStrategy.class)
+@HmacStrategyToUse("ie.bitstep.mango.crypto.hmac.DoubleHmacFieldStrategy")
 public class TestAnnotatedEntityTopLevelHmacFieldStrategyAnnotation {
 
 	@Encrypt

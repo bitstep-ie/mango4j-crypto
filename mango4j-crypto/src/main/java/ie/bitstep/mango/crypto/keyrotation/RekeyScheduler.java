@@ -1,9 +1,9 @@
 package ie.bitstep.mango.crypto.keyrotation;
 
 import ie.bitstep.mango.crypto.RekeyCryptoShield;
+import ie.bitstep.mango.crypto.core.exceptions.NonTransientCryptoException;
 import ie.bitstep.mango.crypto.core.domain.CryptoKey;
 import ie.bitstep.mango.crypto.core.domain.CryptoKeyUsage;
-import ie.bitstep.mango.crypto.core.exceptions.NonTransientCryptoException;
 import ie.bitstep.mango.crypto.hmac.DoubleHmacFieldStrategy;
 import ie.bitstep.mango.crypto.hmac.HmacStrategy;
 import ie.bitstep.mango.crypto.hmac.ListHmacFieldStrategy;

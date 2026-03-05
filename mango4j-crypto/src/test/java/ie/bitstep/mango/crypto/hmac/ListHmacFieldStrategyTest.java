@@ -2,13 +2,13 @@ package ie.bitstep.mango.crypto.hmac;
 
 import ie.bitstep.mango.crypto.HmacStrategyHelper;
 import ie.bitstep.mango.crypto.annotations.Hmac;
-import ie.bitstep.mango.crypto.core.domain.CryptoKey;
-import ie.bitstep.mango.crypto.core.domain.HmacHolder;
 import ie.bitstep.mango.crypto.core.encryption.EncryptionService;
 import ie.bitstep.mango.crypto.core.exceptions.NoHmacKeysFoundException;
 import ie.bitstep.mango.crypto.core.exceptions.NonTransientCryptoException;
 import ie.bitstep.mango.crypto.core.providers.CryptoKeyProvider;
+import ie.bitstep.mango.crypto.core.domain.CryptoKey;
 import ie.bitstep.mango.crypto.domain.CryptoShieldHmacHolder;
+import ie.bitstep.mango.crypto.core.domain.HmacHolder;
 import ie.bitstep.mango.crypto.exceptions.HmacTokenizerInstantiationException;
 import ie.bitstep.mango.crypto.exceptions.InvalidUniqueGroupDefinition;
 import ie.bitstep.mango.crypto.exceptions.NoHmacFieldsFoundException;

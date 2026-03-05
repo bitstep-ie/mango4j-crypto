@@ -1,10 +1,10 @@
 package ie.bitstep.mango.crypto.core.encryption;
 
 import ie.bitstep.mango.crypto.core.domain.CiphertextContainer;
-import ie.bitstep.mango.crypto.core.domain.CryptoKey;
-import ie.bitstep.mango.crypto.core.domain.HmacHolder;
 import ie.bitstep.mango.crypto.core.providers.CryptoKeyProvider;
 import ie.bitstep.mango.crypto.core.testdata.TestData;
+import ie.bitstep.mango.crypto.core.domain.CryptoKey;
+import ie.bitstep.mango.crypto.core.domain.HmacHolder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;

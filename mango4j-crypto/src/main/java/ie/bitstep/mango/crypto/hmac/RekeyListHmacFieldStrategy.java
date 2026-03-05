@@ -1,8 +1,8 @@
 package ie.bitstep.mango.crypto.hmac;
 
 import ie.bitstep.mango.crypto.core.domain.CryptoKey;
-import ie.bitstep.mango.crypto.core.domain.HmacHolder;
 import ie.bitstep.mango.crypto.domain.CryptoShieldHmacHolder;
+import ie.bitstep.mango.crypto.core.domain.HmacHolder;
 import ie.bitstep.mango.crypto.domain.Lookup;
 import ie.bitstep.mango.crypto.domain.Unique;
 import ie.bitstep.mango.crypto.tokenizers.HmacTokenizer;

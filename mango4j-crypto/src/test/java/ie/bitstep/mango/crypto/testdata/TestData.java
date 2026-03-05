@@ -4,7 +4,6 @@ import ie.bitstep.mango.crypto.core.domain.CiphertextContainer;
 import ie.bitstep.mango.crypto.core.domain.CryptoKey;
 import ie.bitstep.mango.crypto.core.domain.CryptoKeyUsage;
 import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.HighlyConfidentialObject;
-import ie.bitstep.mango.crypto.enums.TestCryptoKeyTypes;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;
@@ -27,7 +26,7 @@ public class TestData {
 		TEST_CRYPTO_KEY_2 = new CryptoKey();
 		TEST_CRYPTO_KEY_2.setKeyStartTime(Instant.now());
 		TEST_CRYPTO_KEY_2.setId(TEST_IDENTITY_CRYPTO_KEY_ID);
-		TEST_CRYPTO_KEY_2.setType(TestCryptoKeyTypes.TEST.getName());
+		TEST_CRYPTO_KEY_2.setType(MOCK_TEST_KEY_TYPE);
 		TEST_CRYPTO_KEY_2.setUsage(CryptoKeyUsage.ENCRYPTION);
 	}
 

@@ -35,18 +35,18 @@ class PanTokenizerTest {
 		List<HmacHolder> results = panAnalyser.generateTokenizedValues(panHmacHolder);
 
 		assertThat(results).hasSize(3)
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY)
-				&& hmacHolder.getHmacAlias().equals(PAN_ALIAS)
-				&& hmacHolder.getValue().equals(PAN_SUFFIX)
-				&& hmacHolder.getTokenizedRepresentation().equals("last4Digits"))
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY)
-				&& hmacHolder.getHmacAlias().equals(PAN_ALIAS)
-				&& hmacHolder.getValue().equals(PAN_PREFIX)
-				&& hmacHolder.getTokenizedRepresentation().equals("first6Digits"))
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY)
-				&& hmacHolder.getHmacAlias().equals(PAN_ALIAS)
-				&& hmacHolder.getValue().equals(UNDASHED_PAN)
-				&& hmacHolder.getTokenizedRepresentation().equals("normalizedPan"));
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY)
+						&& hmacHolder.getHmacAlias().equals(PAN_ALIAS)
+						&& hmacHolder.getValue().equals(PAN_SUFFIX)
+						&& hmacHolder.getTokenizedRepresentation().equals("last4Digits"))
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY)
+						&& hmacHolder.getHmacAlias().equals(PAN_ALIAS)
+						&& hmacHolder.getValue().equals(PAN_PREFIX)
+						&& hmacHolder.getTokenizedRepresentation().equals("first6Digits"))
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY)
+						&& hmacHolder.getHmacAlias().equals(PAN_ALIAS)
+						&& hmacHolder.getValue().equals(UNDASHED_PAN)
+						&& hmacHolder.getTokenizedRepresentation().equals("normalizedPan"));
 	}
 
 
@@ -58,14 +58,14 @@ class PanTokenizerTest {
 		List<HmacHolder> results = panAnalyser.generateTokenizedValues(panHmacHolder);
 
 		assertThat(results).hasSize(2)
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY)
-				&& hmacHolder.getHmacAlias().equals(PAN_ALIAS)
-				&& hmacHolder.getValue().equals(PAN_SUFFIX)
-				&& hmacHolder.getTokenizedRepresentation().equals("last4Digits"))
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY)
-				&& hmacHolder.getHmacAlias().equals(PAN_ALIAS)
-				&& hmacHolder.getValue().equals(PAN_PREFIX)
-				&& hmacHolder.getTokenizedRepresentation().equals("first6Digits"));
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY)
+						&& hmacHolder.getHmacAlias().equals(PAN_ALIAS)
+						&& hmacHolder.getValue().equals(PAN_SUFFIX)
+						&& hmacHolder.getTokenizedRepresentation().equals("last4Digits"))
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY)
+						&& hmacHolder.getHmacAlias().equals(PAN_ALIAS)
+						&& hmacHolder.getValue().equals(PAN_PREFIX)
+						&& hmacHolder.getTokenizedRepresentation().equals("first6Digits"));
 	}
 
 	@Test
@@ -76,10 +76,10 @@ class PanTokenizerTest {
 		List<HmacHolder> results = panAnalyser.generateTokenizedValues(panHmacHolder);
 
 		assertThat(results).hasSize(1)
-			.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY)
-				&& hmacHolder.getHmacAlias().equals(PAN_ALIAS)
-				&& hmacHolder.getValue().equals(SHORT_PAN)
-				&& hmacHolder.getTokenizedRepresentation().equals("normalizedPan"))
-			.hasSize(1);
+				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY)
+						&& hmacHolder.getHmacAlias().equals(PAN_ALIAS)
+						&& hmacHolder.getValue().equals(SHORT_PAN)
+						&& hmacHolder.getTokenizedRepresentation().equals("normalizedPan"))
+				.hasSize(1);
 	}
 }

@@ -8,12 +8,11 @@ import ie.bitstep.mango.crypto.annotations.strategies.HmacStrategyToUse;
 import ie.bitstep.mango.crypto.domain.CryptoShieldHmacHolder;
 import ie.bitstep.mango.crypto.domain.Lookup;
 import ie.bitstep.mango.crypto.domain.Unique;
-import ie.bitstep.mango.crypto.testdata.implementations.hmacstrategies.HmacStrategyExceptionThrowingConstructor;
 
 import java.util.Collection;
 import java.util.List;
 
-@HmacStrategyToUse(HmacStrategyExceptionThrowingConstructor.class)
+@HmacStrategyToUse("ie.bitstep.mango.crypto.testdata.implementations.hmacstrategies.HmacStrategyExceptionThrowingConstructor")
 public class TestAnnotatedEntityForExceptionThrowingConstructor implements Lookup, Unique {
 
 	@Encrypt

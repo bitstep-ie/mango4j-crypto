@@ -5,9 +5,8 @@ import ie.bitstep.mango.crypto.annotations.EncryptedData;
 import ie.bitstep.mango.crypto.annotations.EncryptionKeyId;
 import ie.bitstep.mango.crypto.annotations.Hmac;
 import ie.bitstep.mango.crypto.annotations.strategies.HmacStrategyToUse;
-import ie.bitstep.mango.crypto.testdata.implementations.hmacstrategies.MockHmacStrategyImpl;
 
-@HmacStrategyToUse(MockHmacStrategyImpl.class)
+@HmacStrategyToUse("ie.bitstep.mango.crypto.testdata.implementations.hmacstrategies.MockHmacStrategyImpl")
 public class TestMockHmacEntity {
 
 	@Encrypt

@@ -1,8 +1,5 @@
 package ie.bitstep.mango.crypto.domain;
 
-import ie.bitstep.mango.crypto.core.domain.CryptoKey;
-import ie.bitstep.mango.crypto.core.encryption.EncryptionService;
-
 import java.util.Objects;
 
 /**
@@ -11,15 +8,14 @@ import java.util.Objects;
 public final class CryptoShieldHmacHolder {
 
 	/**
-	 * {@link CryptoKey} to be used for calculating the HMAC.
+	 * {@code CryptoKey ID} to be used for calculating the HMAC.
 	 */
 	private String cryptoKeyId;
 
 	/**
 	 * Data to calculate the HMAC for.
 	 * <br>
-	 * {@link EncryptionService#hmac(java.util.Collection)
-	 * EncryptionService#hmac(Collection<HmacHolder> hmacHolders)} will overwrite this field with the result of the
+	 * {@code EncryptionService.hmac(Collection<HmacHolder> hmacHolders)} will overwrite this field with the result of the
 	 * HMAC operation.
 	 */
 	private String value;
@@ -32,17 +28,17 @@ public final class CryptoShieldHmacHolder {
 	 * types of operations need each value to be accompanied by an associated alias for the value so that applications
 	 * can tell which HMAC values in the response correspond to which input values. It is encouraged that applications
 	 * collect all values from their data model that they need to HMAC into a single list and call
-	 * {@link EncryptionService#hmac(java.util.Collection) EncryptionService.hmac(Collection)}
+	 * {@code EncryptionService.hmac(Collection<HmacHolder> hmacHolders)}
 	 * only once for better performance. Rather than calling
-	 * {@link EncryptionService#hmac(java.util.Collection) EncryptionService.hmac(Collection)}
+	 * {@code EncryptionService.hmac(Collection<HmacHolder> hmacHolders)}
 	 * to HMAC the PAN list, then calling it again to HMAC the username list, etc. (remember each field generates a list of
-	 * {@link CryptoShieldHmacHolder HMAC holders} to accommodate key rotation).
+	 * {@link CryptoShieldHmacHolder CryptoShieldHmacHolder} to accommodate key rotation).
 	 * <p>
 	 * Bundle them all into one list setting this field
 	 * on each one to an appropriate value and make a single call. If this field isn't set then an application must call
-	 * {@link EncryptionService#hmac(java.util.Collection) EncryptionService.hmac(Collection)}
+	 * {@code EncryptionService.hmac(Collection<HmacHolder> hmacHolders)}
 	 * for each field value they need to HMAC, which may not allow for the best performance (depending on the underlying
-	 * {@link EncryptionService EncryptionService}) implementation.
+	 * {@code EncryptionService}) implementation.
 	 * </p>
 	 */
 	private final String hmacAlias;
@@ -79,7 +75,7 @@ public final class CryptoShieldHmacHolder {
 	 *
 	 * @param cryptoKeyId the crypto key ID
 	 * @param valueToHmac the value to HMAC
-	 * @param hmacAlias the HMAC alias
+	 * @param hmacAlias   the HMAC alias
 	 */
 	public CryptoShieldHmacHolder(String cryptoKeyId, String valueToHmac, String hmacAlias) {
 		this(cryptoKeyId, valueToHmac, hmacAlias, null);
@@ -88,9 +84,9 @@ public final class CryptoShieldHmacHolder {
 	/**
 	 * Creates a holder with key ID, value, alias, and representation.
 	 *
-	 * @param cryptoKeyId the crypto key ID
-	 * @param valueToHmac the value to HMAC
-	 * @param hmacAlias the HMAC alias
+	 * @param cryptoKeyId             the crypto key ID
+	 * @param valueToHmac             the value to HMAC
+	 * @param hmacAlias               the HMAC alias
 	 * @param tokenizedRepresentation the tokenized representation label
 	 */
 	public CryptoShieldHmacHolder(String cryptoKeyId, String valueToHmac, String hmacAlias, String tokenizedRepresentation) {

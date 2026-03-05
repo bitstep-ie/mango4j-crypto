@@ -1,10 +1,10 @@
 package ie.bitstep.mango.crypto.core.encryption.impl.test;
 
 import ie.bitstep.mango.crypto.core.domain.CiphertextContainer;
-import ie.bitstep.mango.crypto.core.domain.CryptoKey;
-import ie.bitstep.mango.crypto.core.domain.HmacHolder;
 import ie.bitstep.mango.crypto.core.encryption.EncryptionServiceDelegate;
 import ie.bitstep.mango.crypto.core.enums.CoreCryptoKeyTypes;
+import ie.bitstep.mango.crypto.core.domain.CryptoKey;
+import ie.bitstep.mango.crypto.core.domain.HmacHolder;
 
 import java.util.Collection;
 import java.util.Map;

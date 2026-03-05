@@ -2,9 +2,8 @@ package ie.bitstep.mango.crypto.testdata.entities.hmacstrategies;
 
 import ie.bitstep.mango.crypto.annotations.Hmac;
 import ie.bitstep.mango.crypto.annotations.strategies.HmacStrategyToUse;
-import ie.bitstep.mango.crypto.testdata.implementations.hmacstrategies.MockHmacStrategyImpl;
 
-@HmacStrategyToUse(MockHmacStrategyImpl.class)
+@HmacStrategyToUse("ie.bitstep.mango.crypto.testdata.implementations.hmacstrategies.MockHmacStrategyImpl")
 public class TestMockHmacEntityWithNoEncryptFields {
 
 	@Hmac

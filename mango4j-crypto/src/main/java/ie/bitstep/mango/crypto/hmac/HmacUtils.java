@@ -1,7 +1,7 @@
 package ie.bitstep.mango.crypto.hmac;
 
-import ie.bitstep.mango.crypto.core.domain.CryptoKey;
 import ie.bitstep.mango.crypto.core.exceptions.NoHmacKeysFoundException;
+import ie.bitstep.mango.crypto.core.domain.CryptoKey;
 
 import java.util.ArrayList;
 import java.util.Comparator;

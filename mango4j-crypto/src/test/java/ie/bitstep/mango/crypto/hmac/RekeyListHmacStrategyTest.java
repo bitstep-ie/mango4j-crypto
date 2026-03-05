@@ -1,7 +1,7 @@
 package ie.bitstep.mango.crypto.hmac;
 
-import ie.bitstep.mango.crypto.core.domain.HmacHolder;
 import ie.bitstep.mango.crypto.domain.CryptoShieldHmacHolder;
+import ie.bitstep.mango.crypto.core.domain.HmacHolder;
 import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.list.TestAnnotatedEntityForListHmacFieldStrategy;
 import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.single.TestAnnotatedEntityForSingleHmacFieldStrategy;
 import org.junit.jupiter.api.BeforeEach;

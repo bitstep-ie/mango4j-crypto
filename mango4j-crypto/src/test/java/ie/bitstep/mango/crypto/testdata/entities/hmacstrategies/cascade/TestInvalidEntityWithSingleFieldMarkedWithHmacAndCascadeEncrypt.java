@@ -8,9 +8,8 @@ import ie.bitstep.mango.crypto.annotations.Hmac;
 import ie.bitstep.mango.crypto.annotations.strategies.HmacStrategyToUse;
 import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.HighlyConfidentialObject;
 import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.TestMockHmacEntity;
-import ie.bitstep.mango.crypto.testdata.implementations.hmacstrategies.MockHmacStrategyImpl;
 
-@HmacStrategyToUse(MockHmacStrategyImpl.class)
+@HmacStrategyToUse("ie.bitstep.mango.crypto.testdata.implementations.hmacstrategies.MockHmacStrategyImpl")
 public class TestInvalidEntityWithSingleFieldMarkedWithHmacAndCascadeEncrypt {
 
 	@Hmac

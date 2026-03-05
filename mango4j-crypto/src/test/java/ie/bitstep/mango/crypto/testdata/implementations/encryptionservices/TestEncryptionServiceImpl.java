@@ -1,9 +1,9 @@
 package ie.bitstep.mango.crypto.testdata.implementations.encryptionservices;
 
 import ie.bitstep.mango.crypto.core.domain.CiphertextContainer;
+import ie.bitstep.mango.crypto.core.encryption.EncryptionServiceDelegate;
 import ie.bitstep.mango.crypto.core.domain.CryptoKey;
 import ie.bitstep.mango.crypto.core.domain.HmacHolder;
-import ie.bitstep.mango.crypto.core.encryption.EncryptionServiceDelegate;
 import ie.bitstep.mango.crypto.testdata.TestData;
 
 import java.util.Collection;

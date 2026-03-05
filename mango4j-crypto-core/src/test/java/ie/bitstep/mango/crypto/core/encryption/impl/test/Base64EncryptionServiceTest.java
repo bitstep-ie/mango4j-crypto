@@ -1,9 +1,9 @@
 package ie.bitstep.mango.crypto.core.encryption.impl.test;
 
 import ie.bitstep.mango.crypto.core.domain.CiphertextContainer;
-import ie.bitstep.mango.crypto.core.domain.HmacHolder;
 import ie.bitstep.mango.crypto.core.enums.CoreCryptoKeyTypes;
 import ie.bitstep.mango.crypto.core.testdata.TestData;
+import ie.bitstep.mango.crypto.core.domain.HmacHolder;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 

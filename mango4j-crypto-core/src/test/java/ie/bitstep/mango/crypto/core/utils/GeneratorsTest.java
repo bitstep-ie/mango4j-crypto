@@ -2,9 +2,20 @@ package ie.bitstep.mango.crypto.core.utils;
 
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Constructor;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 
 class GeneratorsTest {
+
+	@Test
+	void constructor() throws NoSuchMethodException {
+		Constructor<Generators> constructor = Generators.class.getDeclaredConstructor();
+		constructor.setAccessible(true);
+
+		assertThatNoException().isThrownBy(constructor::newInstance);
+	}
 
 	@Test
 	void generateRandomBytes() {

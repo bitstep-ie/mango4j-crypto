@@ -1,14 +1,11 @@
 package ie.bitstep.mango.crypto.annotations;
 
-import ie.bitstep.mango.crypto.hmac.ListHmacFieldStrategy;
 import ie.bitstep.mango.crypto.tokenizers.HmacTokenizer;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import static ie.bitstep.mango.crypto.annotations.Hmac.Purposes.LOOKUP;
 
 /**
  * Used to mark fields in application entities that need HMACs to be calculated. These fields <u>must</u> also be transient or
@@ -21,7 +18,7 @@ public @interface Hmac {
 	/**
 	 * Optional: The purposes that fields marked with this annotation will be used for.
 	 * This field is only used for entities which use the
-	 * {@link ListHmacFieldStrategy ListHmacFieldStrategy}.
+	 * {@code ListHmacFieldStrategy}.
 	 * <p>
 	 * Supported purposes are:
 	 * {@link Purposes#LOOKUP LOOKUP} and {@link Purposes#UNIQUE UNIQUE}. Default value is {@link Purposes#LOOKUP LOOKUP}
@@ -29,10 +26,10 @@ public @interface Hmac {
 	 *
 	 * @return Array of HMAC Purposes
 	 */
-	Purposes[] purposes() default {LOOKUP};
+	Purposes[] purposes() default {Purposes.LOOKUP};
 
 	/**
-	 * Used for the {@link ListHmacFieldStrategy} to mark a HMAC field as an optional unique constraint.
+	 * Used for the {@code ListHmacFieldStrategy} to mark a HMAC field as an optional unique constraint.
 	 * <p>
 	 *     i.e. if the
 	 *     requirement is that a unique constraint should <b><i>not</i></b> be applied if this value is null/empty/missing
@@ -43,11 +40,11 @@ public @interface Hmac {
 	boolean isOptionalUnique() default false;
 
 	/**
-	 * Optional: The {@link HmacTokenizer HMAC Tokenizers} that should be applied to this field by the library during
+	 * Optional: The {@code HMAC Tokenizers} that should be applied to this field by the library during
 	 * HMAC calculation to generate extra HMACs for this field in order to support more flexible search capabilities.
 	 * <p>
 	 * This field is currently only supported for entities which use the
-	 * {@link ListHmacFieldStrategy ListHmacFieldStrategy}.
+	 * {@code ListHmacFieldStrategy}.
 	 * </p>
 	 *
 	 * @return Array of {@link HmacTokenizer} implementation classes that the library will apply to this field.

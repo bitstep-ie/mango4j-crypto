@@ -1,4 +1,4 @@
-	package ie.bitstep.mango.crypto.core.domain;
+package ie.bitstep.mango.crypto.core.domain;
 
 import org.junit.jupiter.api.Test;
 

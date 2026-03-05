@@ -9,8 +9,6 @@ import ie.bitstep.mango.crypto.annotations.Encrypt;
 import ie.bitstep.mango.crypto.annotations.EncryptedData;
 import ie.bitstep.mango.crypto.annotations.Hmac;
 import ie.bitstep.mango.crypto.core.domain.CiphertextContainer;
-import ie.bitstep.mango.crypto.core.domain.CryptoKey;
-import ie.bitstep.mango.crypto.core.domain.HmacHolder;
 import ie.bitstep.mango.crypto.core.encryption.EncryptionService;
 import ie.bitstep.mango.crypto.core.encryption.EncryptionServiceDelegate;
 import ie.bitstep.mango.crypto.core.exceptions.ActiveEncryptionKeyNotFoundException;
@@ -20,6 +18,8 @@ import ie.bitstep.mango.crypto.core.factories.ConfigurableObjectMapperFactory;
 import ie.bitstep.mango.crypto.core.factories.ObjectMapperFactory;
 import ie.bitstep.mango.crypto.core.formatters.CiphertextFormatter;
 import ie.bitstep.mango.crypto.core.providers.CryptoKeyProvider;
+import ie.bitstep.mango.crypto.core.domain.CryptoKey;
+import ie.bitstep.mango.crypto.core.domain.HmacHolder;
 import ie.bitstep.mango.crypto.hmac.HmacStrategy;
 import ie.bitstep.mango.utils.thread.NamedScheduledExecutorBuilder;
 

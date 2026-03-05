@@ -31,6 +31,7 @@
     </scm>
 
     <modules>
+        <module>mango4j-crypto-common</module>
         <module>mango4j-crypto-core</module>
         <module>mango4j-crypto</module>
         <module>mango4j-crypto-aws-kms-delegate</module>

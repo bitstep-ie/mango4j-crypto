@@ -246,7 +246,7 @@ class AnnotatedEntityManagerTest {
 
 		assertThatThrownBy(() -> new AnnotatedEntityManager(annotatedEntityClasses, mockHmacStrategyHelper))
 				.isInstanceOf(NonTransientCryptoException.class)
-				.hasMessage("Could not create an instance of HmacStrategyExceptionThrowingConstructor class. Please make sure it has a constructor which accepts an HmacStrategyHelper object");
+				.hasMessage("Could not create an instance of ie.bitstep.mango.crypto.testdata.implementations.hmacstrategies.HmacStrategyExceptionThrowingConstructor class. Please make sure it has a constructor which accepts an HmacStrategyHelper object");
 	}
 
 	@Test
@@ -283,7 +283,7 @@ class AnnotatedEntityManagerTest {
 
 		assertThatThrownBy(() -> new AnnotatedEntityManager(annotatedEntityClasses, mockHmacStrategyHelper))
 				.isInstanceOf(NonTransientCryptoException.class)
-				.hasMessage("Could not create an instance of InvalidCustomHmacStrategyNoDefaultConstructor class. Please make sure it has a constructor which accepts an HmacStrategyHelper object");
+				.hasMessage("Could not create an instance of ie.bitstep.mango.crypto.testdata.implementations.hmacstrategies.InvalidCustomHmacStrategyNoDefaultConstructor class. Please make sure it has a constructor which accepts an HmacStrategyHelper object");
 	}
 
 	@Test

@@ -1,14 +1,14 @@
 package ie.bitstep.mango.crypto.hmac;
 
 import ie.bitstep.mango.crypto.HmacStrategyHelper;
-import ie.bitstep.mango.crypto.core.domain.CryptoKey;
-import ie.bitstep.mango.crypto.core.domain.HmacHolder;
 import ie.bitstep.mango.crypto.core.encryption.EncryptionService;
 import ie.bitstep.mango.crypto.core.exceptions.ActiveHmacKeyNotFoundException;
 import ie.bitstep.mango.crypto.core.exceptions.NoHmacKeysFoundException;
 import ie.bitstep.mango.crypto.core.exceptions.NonTransientCryptoException;
 import ie.bitstep.mango.crypto.core.exceptions.UnsupportedKeyTypeException;
 import ie.bitstep.mango.crypto.core.providers.CryptoKeyProvider;
+import ie.bitstep.mango.crypto.core.domain.CryptoKey;
+import ie.bitstep.mango.crypto.core.domain.HmacHolder;
 import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.custom.TestAnnotatedEntityNoHmacFields;
 import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.doublehmacstrategy.InvalidTestAnnotatedEntityForDoubleHmacFieldStrategyWithNoCorrespondingHmac1TargetField;
 import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.doublehmacstrategy.InvalidTestAnnotatedEntityForDoubleHmacFieldStrategyWithNoCorrespondingHmac2TargetField;

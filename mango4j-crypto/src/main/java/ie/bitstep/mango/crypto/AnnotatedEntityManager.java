@@ -160,13 +160,13 @@ public class AnnotatedEntityManager {
 		HmacStrategyToUse hmacStrategyToUse = getHmacStrategyToUse(annotatedEntityClass);
 		HmacStrategy hmacStrategyInstance;
 		try {
-			hmacStrategyInstance = hmacStrategyToUse.value().getDeclaredConstructor(Class.class, hmacStrategyHelper.getClass()).newInstance(annotatedEntityClass, hmacStrategyHelper);
+			hmacStrategyInstance = (HmacStrategy) Class.forName(hmacStrategyToUse.value()).getDeclaredConstructor(Class.class, hmacStrategyHelper.getClass()).newInstance(annotatedEntityClass, hmacStrategyHelper);
 		} catch (Exception e) {
 			if (e instanceof InvocationTargetException && e.getCause() instanceof NonTransientCryptoException) {
 				throw (NonTransientCryptoException) e.getCause();
 			}
 			throw new NonTransientCryptoException(String.format("Could not create an instance of %s class. Please make sure " +
-					"it has a constructor which accepts an %s object", hmacStrategyToUse.value().getSimpleName(), hmacStrategyHelper.getClass().getSimpleName()), e);
+					"it has a constructor which accepts an %s object", hmacStrategyToUse.value(), hmacStrategyHelper.getClass().getSimpleName()), e);
 		}
 		return hmacStrategyInstance;
 	}

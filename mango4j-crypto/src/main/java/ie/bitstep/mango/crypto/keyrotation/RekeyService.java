@@ -1,6 +1,7 @@
 package ie.bitstep.mango.crypto.keyrotation;
 
 import ie.bitstep.mango.crypto.core.domain.CryptoKey;
+import ie.bitstep.mango.crypto.core.domain.CryptoKeyUsage;
 
 import java.util.List;
 
@@ -12,13 +13,13 @@ public interface RekeyService<T> {
 	Class<T> getEntityType();
 
 	/**
-	 * Used for {@link ie.bitstep.mango.crypto.core.domain.CryptoKey.RekeyMode#KEY_ON} rekey tasks.
+	 * Used for {@link CryptoKey.RekeyMode#KEY_ON} rekey tasks.
 	 *
 	 * @param cryptoKey The {@link CryptoKey} we want to find records <b>not</b> using. Implementations should check the type
 	 *                  of the key to see what they need to search for. If it's an
-	 *                  {@link ie.bitstep.mango.crypto.core.domain.CryptoKeyUsage#ENCRYPTION} key then the application
+	 *                  {@link CryptoKeyUsage#ENCRYPTION} key then the application
 	 *                  should return any records that were encrypted with some other key(s). If it's a
-	 *                  {@link ie.bitstep.mango.crypto.core.domain.CryptoKeyUsage#HMAC} key then the application should
+	 *                  {@link CryptoKeyUsage#HMAC} key then the application should
 	 *                  return any records that have HMACs that were generated with other key(s) except this one.
 	 * @return a list of records that are not using this key. Do not return all records in your table, just return a
 	 * batch of them to avoid overloading the database. This method is called over and over by the rekey job until an empty list is returned.
@@ -26,13 +27,13 @@ public interface RekeyService<T> {
 	List<T> findRecordsNotUsingCryptoKey(CryptoKey cryptoKey);
 
 	/**
-	 * Used for {@link ie.bitstep.mango.crypto.core.domain.CryptoKey.RekeyMode#KEY_OFF} rekey tasks.
+	 * Used for {@link CryptoKey.RekeyMode#KEY_OFF} rekey tasks.
 	 *
 	 * @param cryptoKey The {@link CryptoKey} we want to find records currently using. Implementations should check the type
 	 *                  of the key to see what they need to search for. If it's an
-	 *                  {@link ie.bitstep.mango.crypto.core.domain.CryptoKeyUsage#ENCRYPTION} key then the application
+	 *                  {@link CryptoKeyUsage#ENCRYPTION} key then the application
 	 *                  should return any records that were encrypted with this key. If it's a
-	 *                  {@link ie.bitstep.mango.crypto.core.domain.CryptoKeyUsage#HMAC} key then the application should
+	 *                  {@link CryptoKeyUsage#HMAC} key then the application should
 	 *                  return any records that have HMACs that were generated with this key but <b><i>not</i></b> the current HMAC key.
 	 * @return a list of records that are not using this key. Do not return all records in your table, just return a
 	 * batch of them to avoid overloading the database. This method is called over and over by the rekey job until an empty list is returned.

@@ -1,7 +1,5 @@
 package ie.bitstep.mango.crypto.core.domain;
 
-import ie.bitstep.mango.crypto.core.encryption.EncryptionServiceDelegate;
-
 import java.time.Instant;
 import java.util.Map;
 import java.util.Objects;
@@ -24,17 +22,17 @@ public class CryptoKey {
 	 * key types &quot;BASE_64&quot; and &quot;IDENTITY&quot;, for development and testing purposes
 	 * <p>
 	 * This field is used in conjunction with
-	 * {@link EncryptionServiceDelegate#supportedCryptoKeyType() EncryptionServiceDelegate.supportedCryptoKeyType()}
-	 * to figure out which {@link EncryptionServiceDelegate} to use at runtime.
-	 * So applications which supply their own {@link EncryptionServiceDelegate} implementation must make sure that this field
-	 * matches the value returned by {@link EncryptionServiceDelegate#supportedCryptoKeyType() EncryptionServiceDelegate.supportedCryptoKeyType()}.
+	 * {@code EncryptionServiceDelegate.supportedCryptoKeyType()}
+	 * to figure out which {@code EncryptionServiceDelegate} to use at runtime.
+	 * So applications which supply their own {@code EncryptionServiceDelegate} implementation must make sure that this field
+	 * matches the value returned by {@code EncryptionServiceDelegate.supportedCryptoKeyType()}.
 	 * </p>
 	 * <p>
 	 * e.g. As a developer you use a
-	 * HSM to perform your cryptographic operations so you've created an implementation of {@link EncryptionServiceDelegate}
-	 * called HsmEncryptionServiceDelegate to do this. You would then set this field on you {@link CryptoKey} object to &quot;HSM&quot;
+	 * HSM to perform your cryptographic operations so you've created an implementation of {@code EncryptionServiceDelegate}
+	 * called {@code HsmEncryptionServiceDelegate} to do this. You would then set this field on you {@link CryptoKey} object to &quot;HSM&quot;
 	 * and also return the value &quot;HSM&quot;
-	 * from {@link EncryptionServiceDelegate#supportedCryptoKeyType() HsmEncryptionServiceDelegate.supportedCryptoKeyType()}.
+	 * from {@code HsmEncryptionServiceDelegate.supportedCryptoKeyType()}.
 	 * </p>
 	 * <p>
 	 * Note: See the Base64EncryptionService implementation for details.

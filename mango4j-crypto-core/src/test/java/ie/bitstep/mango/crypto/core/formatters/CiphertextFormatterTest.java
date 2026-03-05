@@ -2,11 +2,11 @@ package ie.bitstep.mango.crypto.core.formatters;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ie.bitstep.mango.crypto.core.domain.CiphertextContainer;
-import ie.bitstep.mango.crypto.core.domain.CryptoKey;
 import ie.bitstep.mango.crypto.core.exceptions.CiphertextFormatterException;
 import ie.bitstep.mango.crypto.core.factories.ObjectMapperFactory;
 import ie.bitstep.mango.crypto.core.providers.CryptoKeyProvider;
 import ie.bitstep.mango.crypto.core.testdata.TestData;
+import ie.bitstep.mango.crypto.core.domain.CryptoKey;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

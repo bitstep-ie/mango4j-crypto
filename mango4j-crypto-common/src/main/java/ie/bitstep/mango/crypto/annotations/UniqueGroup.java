@@ -1,7 +1,5 @@
 package ie.bitstep.mango.crypto.annotations;
 
-import ie.bitstep.mango.crypto.hmac.ListHmacFieldStrategy;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
@@ -9,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Used by {@link ListHmacFieldStrategy ListHmacFieldStrategy}
+ * Used by {@code ListHmacFieldStrategy}
  * to mark fields in application entities that need multiple HMACs to be calculated together to support a compound
  * unique constraint . These fields can be both transient @{@link Hmac} fields or regular non-transient non (@{@link Hmac})
  * fields. This is to support the case where one or more of the fields in the compound unique constraint
