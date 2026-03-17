@@ -9,8 +9,8 @@
         <version>1.0.0</version>
     </parent>
 
-    <name>AWS KMS Encryption Service Delegate for Mango4j Crypto</name>
     <artifactId>mango4j-crypto-aws-kms-delegate</artifactId>
+    <name>AWS KMS Encryption Service Delegate for Mango4j Crypto</name>
     <packaging>jar</packaging>
 
     <properties>

@@ -1,8 +1,10 @@
 package ie.bitstep.mango.crypto;
 
 import ie.bitstep.mango.crypto.core.domain.CryptoKey;
+import ie.bitstep.mango.crypto.hmac.DoubleHmacFieldStrategy;
 import ie.bitstep.mango.crypto.hmac.HmacStrategy;
 import ie.bitstep.mango.crypto.hmac.ListHmacFieldStrategy;
+import ie.bitstep.mango.crypto.hmac.RekeyDoubleHmacFieldStrategy;
 import ie.bitstep.mango.crypto.hmac.RekeyListHmacFieldStrategy;
 import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.TestMockHmacEntity;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,6 +37,9 @@ class RekeyCryptoShieldTest {
 
 	@Mock
 	private ListHmacFieldStrategy mockListHmacFieldStrategy;
+
+	@Mock
+	private DoubleHmacFieldStrategy mockDoubleHmacFieldStrategy;
 
 	private RekeyCryptoShield rekeyCryptoShield;
 
@@ -76,6 +81,17 @@ class RekeyCryptoShieldTest {
 
 		assertThat(cryptoShieldDelegate.getCurrentEncryptionKey()).isEqualTo(mockEncryptionKey);
 		assertThat(cryptoShieldDelegate.getHmacStrategy(testEntity)).isNotPresent();
+	}
+
+	@SuppressWarnings("OptionalGetWithoutIsPresent")
+	@Test
+	void constructorDoubleHmacStrategy() {
+		given(mockAnnotatedEntityManager.getHmacStrategy(testEntity.getClass())).willReturn(Optional.of(mockDoubleHmacFieldStrategy));
+		given(mockCryptoShield.getAnnotatedEntityManager()).willReturn(mockAnnotatedEntityManager);
+		CryptoShieldDelegate cryptoShieldDelegate = getRekeyCryptoShieldDelegate();
+
+		assertThat(cryptoShieldDelegate.getCurrentEncryptionKey()).isEqualTo(mockEncryptionKey);
+		assertThat(cryptoShieldDelegate.getHmacStrategy(testEntity).get()).isInstanceOf(RekeyDoubleHmacFieldStrategy.class);
 	}
 
 	@Test
