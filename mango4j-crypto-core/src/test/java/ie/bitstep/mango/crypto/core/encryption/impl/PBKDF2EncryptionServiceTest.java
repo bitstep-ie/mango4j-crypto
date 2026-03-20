@@ -7,8 +7,8 @@ import ie.bitstep.mango.crypto.core.domain.HmacHolder;
 import ie.bitstep.mango.crypto.core.encryption.EncryptionService;
 import ie.bitstep.mango.crypto.core.encryption.EncryptionServiceDelegate;
 import ie.bitstep.mango.crypto.core.enums.Algorithm;
-import ie.bitstep.mango.crypto.core.enums.Mode;
 import ie.bitstep.mango.crypto.core.enums.CoreCryptoKeyTypes;
+import ie.bitstep.mango.crypto.core.enums.Mode;
 import ie.bitstep.mango.crypto.core.enums.Padding;
 import ie.bitstep.mango.crypto.core.exceptions.NonTransientCryptoException;
 import ie.bitstep.mango.crypto.core.factories.ConfigurableObjectMapperFactory;
@@ -19,19 +19,23 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mockStatic;
 
 @ExtendWith(MockitoExtension.class)
 class PBKDF2EncryptionServiceTest implements CryptoKeyProvider {
@@ -88,7 +92,7 @@ class PBKDF2EncryptionServiceTest implements CryptoKeyProvider {
 
 		pbEncryptionService = new PBKDF2EncryptionService();
 
-// specify an object mapper factory up to 100MB to allow large blob test to pass
+		// specify an object mapper factory up to 100MB to allow large blob test to pass
 		return new EncryptionService(
 				List.of(pbEncryptionService),
 				this,
@@ -189,6 +193,31 @@ class PBKDF2EncryptionServiceTest implements CryptoKeyProvider {
 				.isNotEqualTo("Value to HMAC");
 	}
 
+	@Test
+	void testHMACException() {
+		try (MockedStatic<Base64> mockedMac = mockStatic(Base64.class)) {
+			EncryptionService encryptionService = setup(
+					256,
+					1000,
+					16,
+					Algorithm.AES,
+					Mode.GCM,
+					Padding.NO_PADDING,
+					128
+			);
+
+			List<HmacHolder> hmacs = List.of(new HmacHolder(getCurrentEncryptionKey(), "Value to HMAC"));
+			mockedMac.when(Base64::getEncoder).thenThrow(new RuntimeException());
+
+			assertThatThrownBy(() -> encryptionService.hmac(hmacs))
+					.isInstanceOf(NonTransientCryptoException.class)
+					.hasMessage("Configuration error")
+					.extracting(Throwable::getCause)
+					.isInstanceOf(IllegalStateException.class)
+					.extracting(Throwable::getMessage).isEqualTo("HMAC computation failed");
+		}
+	}
+
 	@ParameterizedTest
 	@MethodSource("encryptionTestCases")
 	void testEncryption(
@@ -211,10 +240,10 @@ class PBKDF2EncryptionServiceTest implements CryptoKeyProvider {
 				gcmTagLength
 		);
 
-// Encrypt
+		// Encrypt
 		CiphertextContainer encrypted = encryptionService.encrypt(cryptoKey, plaintext);
 
-// create invalid encryption service to ensure decrypt sets all params
+		// create invalid encryption service to ensure decrypt sets all params
 		encryptionService = setup(
 				-1,
 				-1,
@@ -226,10 +255,10 @@ class PBKDF2EncryptionServiceTest implements CryptoKeyProvider {
 		);
 
 
-// Decrypt
+		// Decrypt
 		String decryptedText = encryptionService.decrypt(new CiphertextFormatter(this, new ConfigurableObjectMapperFactory()).format(encrypted));
 
-// Verify
+		// Verify
 		assertEquals(plaintext, decryptedText, "Decryption should return the original plaintext");
 	}
 

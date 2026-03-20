@@ -6,9 +6,11 @@ import ie.bitstep.mango.crypto.hmac.DoubleHmacFieldStrategy;
 import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.TestMockHmacEntity;
 import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.TestMockHmacEntityWithNoEncryptFields;
 import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.cascade.TestEntityWithBothEncryptHmacAndCascadeEncryptFields;
+import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.cascade.TestEntityWithCollectionCascadeEncryptFields;
 import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.cascade.TestEntityWithOnlyCascadeEncryptFieldsWhoseTypesHaveEncryptAndHmac;
 import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.cascade.TestEntityWithOnlyCascadeEncryptFieldsWhoseTypesHaveNoOtherAnnotations;
 import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.cascade.TestEntityWithOnlyCascadeEncryptFieldsWhoseTypesHaveOnlyCascadeEncryptAlso;
+import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.cascade.TestEntityWithOnlyCascadeEncryptFieldsWhoseTypesHaveOnlyCollectionCascadeEncryptField;
 import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.cascade.TestEntityWithOnlyCascadeEncryptFieldsWhoseTypesHaveOnlyEncrypt;
 import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.cascade.TestEntityWithOnlyCascadeEncryptFieldsWhoseTypesHaveOnlyHmac;
 import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.cascade.TestInvalidEntityWithSingleFieldMarkedWithEncryptAndCascadeEncrypt;
@@ -210,6 +212,7 @@ class AnnotatedEntityManagerTest {
 						"@Hmac but it is not transient. Please mark any fields annotated with @Hmac as transient");
 	}
 
+	@SuppressWarnings("DataFlowIssue")
 	@Test
 	@DisplayName("Constructor test for a null entity list")
 	void constructorNullEntityClassList() {
@@ -363,75 +366,118 @@ class AnnotatedEntityManagerTest {
 				List.of(TestMockHmacEntity.class, TestEntityWithBothEncryptHmacAndCascadeEncryptFields.class),
 				mockHmacStrategyHelper);
 
-		assertCascadeEncryptFieldsForTestEntityWithBothFields(annotatedEntityManager);
-		assertEncryptionFieldsForTestEntityWithBothFields(annotatedEntityManager);
-		assertConfidentialFieldsForTestEntityWithBothFields(annotatedEntityManager);
-		assertEncryptionConfigForTestEntityWithBothFields(annotatedEntityManager);
-
-		assertEncryptionFieldsForTestMockHmacEntity(annotatedEntityManager);
-		assertConfidentialFieldsForTestMockHmacEntity(annotatedEntityManager);
-		assertEncryptionConfigForTestMockHmacEntity(annotatedEntityManager);
-	}
-
-	private void assertCascadeEncryptFieldsForTestEntityWithBothFields(AnnotatedEntityManager annotatedEntityManager) {
 		assertThat(annotatedEntityManager.getFieldsToCascadeEncrypt(TestMockHmacEntity.class)).isEmpty();
 		assertThat(annotatedEntityManager.getFieldsToCascadeEncrypt(TestEntityWithBothEncryptHmacAndCascadeEncryptFields.class))
 				.hasSize(2)
 				.filteredOn(field -> field.getName().equals("testMockHmacEntity1")).isNotEmpty();
 		assertThat(annotatedEntityManager.getFieldsToCascadeEncrypt(TestEntityWithBothEncryptHmacAndCascadeEncryptFields.class))
 				.filteredOn(field -> field.getName().equals("testMockHmacEntity2")).isNotEmpty();
-	}
 
-	private void assertEncryptionFieldsForTestEntityWithBothFields(AnnotatedEntityManager annotatedEntityManager) {
+		assertThat(annotatedEntityManager.getFieldsToEncrypt(TestEntityWithBothEncryptHmacAndCascadeEncryptFields.class))
+				.filteredOn(field -> field.getName().equals(TEST_PAN_FIELD_NAME)).isNotEmpty();
+		assertThat(annotatedEntityManager.getFieldsToEncrypt(TestEntityWithBothEncryptHmacAndCascadeEncryptFields.class))
+				.filteredOn(field -> field.getName().equals(TEST_USER_NAME_FIELD_NAME)).isNotEmpty();
+		assertThat(annotatedEntityManager.getFieldsToEncrypt(TestEntityWithBothEncryptHmacAndCascadeEncryptFields.class))
+				.filteredOn(field -> field.getName().equals(TEST_ETHNICITY_FIELD_NAME)).isNotEmpty();
 		assertThat(annotatedEntityManager.getEncryptedDataField(TestEntityWithBothEncryptHmacAndCascadeEncryptFields.class)).isNotNull();
-		assertThat(annotatedEntityManager.getFieldsToEncrypt(TestEntityWithBothEncryptHmacAndCascadeEncryptFields.class))
-				.filteredOn(field -> field.getName().equals(TEST_PAN_FIELD_NAME)).isNotEmpty();
-		assertThat(annotatedEntityManager.getFieldsToEncrypt(TestEntityWithBothEncryptHmacAndCascadeEncryptFields.class))
-				.filteredOn(field -> field.getName().equals(TEST_USER_NAME_FIELD_NAME)).isNotEmpty();
-		assertThat(annotatedEntityManager.getFieldsToEncrypt(TestEntityWithBothEncryptHmacAndCascadeEncryptFields.class))
-				.filteredOn(field -> field.getName().equals(TEST_ETHNICITY_FIELD_NAME)).isNotEmpty();
-	}
-
-	private void assertConfidentialFieldsForTestEntityWithBothFields(AnnotatedEntityManager annotatedEntityManager) {
-		assertThat(annotatedEntityManager.getAllConfidentialFields(TestEntityWithBothEncryptHmacAndCascadeEncryptFields.class))
-				.filteredOn(field -> field.getName().equals(TEST_PAN_FIELD_NAME)).isNotEmpty();
-		assertThat(annotatedEntityManager.getAllConfidentialFields(TestEntityWithBothEncryptHmacAndCascadeEncryptFields.class))
-				.filteredOn(field -> field.getName().equals(TEST_USER_NAME_FIELD_NAME)).isNotEmpty();
-		assertThat(annotatedEntityManager.getAllConfidentialFields(TestEntityWithBothEncryptHmacAndCascadeEncryptFields.class))
-				.filteredOn(field -> field.getName().equals(TEST_ETHNICITY_FIELD_NAME)).isNotEmpty();
-	}
-
-	private void assertEncryptionConfigForTestEntityWithBothFields(AnnotatedEntityManager annotatedEntityManager) {
 		assertThat(annotatedEntityManager.getEncryptionKeyIdField(TestEntityWithBothEncryptHmacAndCascadeEncryptFields.class))
 				.isPresent();
 		assertThat(annotatedEntityManager.getHmacStrategy(TestEntityWithBothEncryptHmacAndCascadeEncryptFields.class))
 				.containsInstanceOf(MockHmacStrategyImpl.class);
-	}
 
-	private void assertEncryptionFieldsForTestMockHmacEntity(AnnotatedEntityManager annotatedEntityManager) {
+		assertThat(annotatedEntityManager.getAllConfidentialFields(TestEntityWithBothEncryptHmacAndCascadeEncryptFields.class))
+				.filteredOn(field -> field.getName().equals(TEST_PAN_FIELD_NAME)).isNotEmpty();
+		assertThat(annotatedEntityManager.getAllConfidentialFields(TestEntityWithBothEncryptHmacAndCascadeEncryptFields.class))
+				.filteredOn(field -> field.getName().equals(TEST_USER_NAME_FIELD_NAME)).isNotEmpty();
+		assertThat(annotatedEntityManager.getAllConfidentialFields(TestEntityWithBothEncryptHmacAndCascadeEncryptFields.class))
+				.filteredOn(field -> field.getName().equals(TEST_ETHNICITY_FIELD_NAME)).isNotEmpty();
+
+
+		assertThat(annotatedEntityManager.getFieldsToEncrypt(TestMockHmacEntity.class))
+				.filteredOn(field -> field.getName().equals(TEST_PAN_FIELD_NAME)).isNotEmpty();
+		assertThat(annotatedEntityManager.getFieldsToEncrypt(TestMockHmacEntity.class))
+				.filteredOn(field -> field.getName().equals(TEST_USER_NAME_FIELD_NAME)).isNotEmpty();
+		assertThat(annotatedEntityManager.getFieldsToEncrypt(TestMockHmacEntity.class))
+				.filteredOn(field -> field.getName().equals(TEST_ETHNICITY_FIELD_NAME)).isNotEmpty();
 		assertThat(annotatedEntityManager.getEncryptedDataField(TestMockHmacEntity.class)).isNotNull();
-		assertThat(annotatedEntityManager.getFieldsToEncrypt(TestMockHmacEntity.class))
-				.filteredOn(field -> field.getName().equals(TEST_PAN_FIELD_NAME)).isNotEmpty();
-		assertThat(annotatedEntityManager.getFieldsToEncrypt(TestMockHmacEntity.class))
-				.filteredOn(field -> field.getName().equals(TEST_USER_NAME_FIELD_NAME)).isNotEmpty();
-		assertThat(annotatedEntityManager.getFieldsToEncrypt(TestMockHmacEntity.class))
-				.filteredOn(field -> field.getName().equals(TEST_ETHNICITY_FIELD_NAME)).isNotEmpty();
-	}
-
-	private void assertConfidentialFieldsForTestMockHmacEntity(AnnotatedEntityManager annotatedEntityManager) {
-		assertThat(annotatedEntityManager.getAllConfidentialFields(TestMockHmacEntity.class))
-				.filteredOn(field -> field.getName().equals(TEST_PAN_FIELD_NAME)).isNotEmpty();
-		assertThat(annotatedEntityManager.getAllConfidentialFields(TestMockHmacEntity.class))
-				.filteredOn(field -> field.getName().equals(TEST_USER_NAME_FIELD_NAME)).isNotEmpty();
-		assertThat(annotatedEntityManager.getAllConfidentialFields(TestMockHmacEntity.class))
-				.filteredOn(field -> field.getName().equals(TEST_ETHNICITY_FIELD_NAME)).isNotEmpty();
-	}
-
-	private void assertEncryptionConfigForTestMockHmacEntity(AnnotatedEntityManager annotatedEntityManager) {
 		assertThat(annotatedEntityManager.getEncryptionKeyIdField(TestMockHmacEntity.class))
 				.isPresent();
 		assertThat(annotatedEntityManager.getHmacStrategy(TestMockHmacEntity.class))
 				.containsInstanceOf(MockHmacStrategyImpl.class);
+
+		assertThat(annotatedEntityManager.getAllConfidentialFields(TestMockHmacEntity.class))
+				.filteredOn(field -> field.getName().equals(TEST_PAN_FIELD_NAME)).isNotEmpty();
+		assertThat(annotatedEntityManager.getAllConfidentialFields(TestMockHmacEntity.class))
+				.filteredOn(field -> field.getName().equals(TEST_USER_NAME_FIELD_NAME)).isNotEmpty();
+		assertThat(annotatedEntityManager.getAllConfidentialFields(TestMockHmacEntity.class))
+				.filteredOn(field -> field.getName().equals(TEST_ETHNICITY_FIELD_NAME)).isNotEmpty();
+
+	}
+
+	@Test
+	@DisplayName("Constructor test for an entity which has @CascadeEncrypt fields on types that only have @Hmac fields inside")
+	void constructorForCascadeEncryptFieldsWithOnlyHmacsInside() {
+		AnnotatedEntityManager annotatedEntityManager = new AnnotatedEntityManager(
+				List.of(TestEntityWithOnlyCascadeEncryptFieldsWhoseTypesHaveOnlyHmac.class, TestMockHmacEntityWithNoEncryptFields.class),
+				mockHmacStrategyHelper);
+
+		assertThat(annotatedEntityManager.getFieldsToCascadeEncrypt(TestMockHmacEntityWithNoEncryptFields.class)).isEmpty();
+		assertThat(annotatedEntityManager.getFieldsToCascadeEncrypt(TestEntityWithOnlyCascadeEncryptFieldsWhoseTypesHaveOnlyHmac.class))
+				.hasSize(2)
+				.filteredOn(field -> field.getName().equals("testMockHmacEntityWithNoEncryptFields1")).isNotEmpty();
+		assertThat(annotatedEntityManager.getFieldsToCascadeEncrypt(TestEntityWithOnlyCascadeEncryptFieldsWhoseTypesHaveOnlyHmac.class))
+				.filteredOn(field -> field.getName().equals("testMockHmacEntityWithNoEncryptFields2")).isNotEmpty();
+
+		assertThat(annotatedEntityManager.getFieldsToEncrypt(TestEntityWithOnlyCascadeEncryptFieldsWhoseTypesHaveOnlyHmac.class)).isEmpty();
+		assertThat(annotatedEntityManager.getEncryptedDataField(TestEntityWithOnlyCascadeEncryptFieldsWhoseTypesHaveOnlyHmac.class)).isNull();
+		assertThat(annotatedEntityManager.getEncryptionKeyIdField(TestEntityWithOnlyCascadeEncryptFieldsWhoseTypesHaveOnlyHmac.class)).isEmpty();
+		assertThat(annotatedEntityManager.getHmacStrategy(TestEntityWithOnlyCascadeEncryptFieldsWhoseTypesHaveOnlyHmac.class)).isEmpty();
+
+		assertThat(annotatedEntityManager.getAllConfidentialFields(TestEntityWithOnlyCascadeEncryptFieldsWhoseTypesHaveOnlyHmac.class)).isEmpty();
+
+		assertThat(annotatedEntityManager.getFieldsToEncrypt(TestMockHmacEntityWithNoEncryptFields.class)).isEmpty();
+		assertThat(annotatedEntityManager.getEncryptedDataField(TestMockHmacEntityWithNoEncryptFields.class)).isNull();
+		assertThat(annotatedEntityManager.getEncryptionKeyIdField(TestMockHmacEntityWithNoEncryptFields.class)).isEmpty();
+		assertThat(annotatedEntityManager.getHmacStrategy(TestMockHmacEntityWithNoEncryptFields.class)).containsInstanceOf(MockHmacStrategyImpl.class);
+
+		assertThat(annotatedEntityManager.getAllConfidentialFields(TestMockHmacEntityWithNoEncryptFields.class))
+				.hasSize(2)
+				.filteredOn(field -> field.getName().equals(TEST_PAN_FIELD_NAME)).isNotEmpty();
+		assertThat(annotatedEntityManager.getAllConfidentialFields(TestMockHmacEntityWithNoEncryptFields.class))
+				.filteredOn(field -> field.getName().equals(TEST_USER_NAME_FIELD_NAME)).isNotEmpty();
+
+	}
+
+	@Test
+	@DisplayName("Constructor test for an entity which has @CascadeEncrypt fields with only @CascadeEncrypt fields on Collections inside")
+	void constructorCascadeEncryptFieldsWithCascadeEncryptCollectionFieldsInside() {
+		AnnotatedEntityManager annotatedEntityManager = new AnnotatedEntityManager(
+				List.of(TestEntityWithOnlyCascadeEncryptFieldsWhoseTypesHaveOnlyCollectionCascadeEncryptField.class,
+						TestEntityWithCollectionCascadeEncryptFields.class),
+				mockHmacStrategyHelper);
+
+		assertThat(annotatedEntityManager.getFieldsToCascadeEncrypt(TestEntityWithCollectionCascadeEncryptFields.class))
+				.hasSize(1)
+				.filteredOn(field -> field.getName().equals("testMockHmacEntities")).isNotEmpty();
+		assertThat(annotatedEntityManager.getFieldsToCascadeEncrypt(TestEntityWithOnlyCascadeEncryptFieldsWhoseTypesHaveOnlyCollectionCascadeEncryptField.class))
+				.hasSize(2)
+				.filteredOn(field -> field.getName().equals("testEntityWithCollectionCascadeEncryptFields1")).isNotEmpty();
+		assertThat(annotatedEntityManager.getFieldsToCascadeEncrypt(TestEntityWithOnlyCascadeEncryptFieldsWhoseTypesHaveOnlyCollectionCascadeEncryptField.class))
+				.filteredOn(field -> field.getName().equals("testEntityWithCollectionCascadeEncryptFields2")).isNotEmpty();
+
+		assertThat(annotatedEntityManager.getFieldsToEncrypt(TestEntityWithOnlyCascadeEncryptFieldsWhoseTypesHaveOnlyCollectionCascadeEncryptField.class)).isEmpty();
+		assertThat(annotatedEntityManager.getEncryptedDataField(TestEntityWithOnlyCascadeEncryptFieldsWhoseTypesHaveOnlyCollectionCascadeEncryptField.class)).isNull();
+		assertThat(annotatedEntityManager.getEncryptionKeyIdField(TestEntityWithOnlyCascadeEncryptFieldsWhoseTypesHaveOnlyCollectionCascadeEncryptField.class)).isEmpty();
+		assertThat(annotatedEntityManager.getHmacStrategy(TestEntityWithOnlyCascadeEncryptFieldsWhoseTypesHaveOnlyCollectionCascadeEncryptField.class)).isEmpty();
+
+		assertThat(annotatedEntityManager.getAllConfidentialFields(TestEntityWithOnlyCascadeEncryptFieldsWhoseTypesHaveOnlyCollectionCascadeEncryptField.class)).isEmpty();
+
+		assertThat(annotatedEntityManager.getFieldsToEncrypt(TestEntityWithCollectionCascadeEncryptFields.class)).isEmpty();
+		assertThat(annotatedEntityManager.getEncryptedDataField(TestEntityWithCollectionCascadeEncryptFields.class)).isNull();
+		assertThat(annotatedEntityManager.getEncryptionKeyIdField(TestEntityWithCollectionCascadeEncryptFields.class)).isEmpty();
+		assertThat(annotatedEntityManager.getHmacStrategy(TestEntityWithCollectionCascadeEncryptFields.class)).isEmpty();
+
+		assertThat(annotatedEntityManager.getAllConfidentialFields(TestEntityWithCollectionCascadeEncryptFields.class)).isEmpty();
 	}
 
 	@Test
@@ -509,7 +555,7 @@ class AnnotatedEntityManagerTest {
 	void constructorWithEnableMigrationSupportBeforeDeadline() {
 		List<Class<?>> annotatedEntityClasses = List.of(ValidEntityWithEnableMigrationSupportBeforeDeadline.class);
 
-// Should not throw exception, just log warning
+		// Should not throw exception, just log warning
 		AnnotatedEntityManager annotatedEntityManager = new AnnotatedEntityManager(annotatedEntityClasses, mockHmacStrategyHelper);
 
 		assertThat(annotatedEntityManager.getFieldsToEncrypt(ValidEntityWithEnableMigrationSupportBeforeDeadline.class))
@@ -523,7 +569,7 @@ class AnnotatedEntityManagerTest {
 	void constructorWithEnableMigrationSupportAfterDeadline() {
 		List<Class<?>> annotatedEntityClasses = List.of(InvalidEntityWithEnableMigrationSupportAfterDeadline.class);
 
-// Should log ERROR but not throw exception
+		// Should log ERROR but not throw exception
 		AnnotatedEntityManager annotatedEntityManager = new AnnotatedEntityManager(annotatedEntityClasses, mockHmacStrategyHelper);
 
 		assertThat(annotatedEntityManager.getFieldsToEncrypt(InvalidEntityWithEnableMigrationSupportAfterDeadline.class))
@@ -547,7 +593,7 @@ class AnnotatedEntityManagerTest {
 	void constructorWithEnableMigrationSupportToday() {
 		List<Class<?>> annotatedEntityClasses = List.of(ValidEntityWithEnableMigrationSupportToday.class);
 
-// Should not throw exception when deadline is today (today is not after today)
+		// Should not throw exception when deadline is today (today is not after today)
 		AnnotatedEntityManager annotatedEntityManager = new AnnotatedEntityManager(annotatedEntityClasses, mockHmacStrategyHelper);
 
 		assertThat(annotatedEntityManager.getFieldsToEncrypt(ValidEntityWithEnableMigrationSupportToday.class))

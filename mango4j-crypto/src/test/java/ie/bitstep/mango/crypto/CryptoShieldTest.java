@@ -30,6 +30,7 @@ import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.custom.NothingAn
 import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.list.TestAnnotatedEntityForListHmacFieldStrategy;
 import ie.bitstep.mango.crypto.testdata.implementations.hmacstrategies.MockHmacStrategyImpl;
 import ie.bitstep.mango.reflection.utils.ReflectionUtils;
+import ie.bitstep.mango.utils.thread.NamedScheduledExecutorBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -37,6 +38,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -74,6 +76,9 @@ import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
@@ -724,6 +729,36 @@ class CryptoShieldTest {
 		then(mockedObjectMapper).should(times(0)).createObjectNode();
 	}
 
+	@SuppressWarnings("InstantiatingAThreadWithDefaultRunMethod")
+	@Test
+	void testSchedulerServiceUncaughtExceptionHandler() {
+		try (MockedStatic<NamedScheduledExecutorBuilder> mockedBuilder = org.mockito.Mockito.mockStatic(NamedScheduledExecutorBuilder.class)) {
+			NamedScheduledExecutorBuilder builderMock = mock(NamedScheduledExecutorBuilder.class);
+			mockedBuilder.when(NamedScheduledExecutorBuilder::builder).thenReturn(builderMock);
+			given(builderMock.poolSize(anyInt())).willReturn(builderMock);
+			given(builderMock.threadNamePrefix(anyString())).willReturn(builderMock);
+			given(builderMock.removeOnCancelPolicy(anyBoolean())).willReturn(builderMock);
+			given(builderMock.build()).willReturn(mockScheduledExecutorService);
+			ArgumentCaptor<Thread.UncaughtExceptionHandler> captor = ArgumentCaptor.forClass(Thread.UncaughtExceptionHandler.class);
+			given(builderMock.uncaughtExceptionHandler(captor.capture())).willReturn(builderMock);
+
+			given(mockRetryConfiguration.poolSize()).willReturn(TEST_POOL_SIZE);
+
+			given(mockObjectMapperFactory.objectMapper()).willReturn(mockedObjectMapper);
+
+			cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), mockRetryConfiguration);
+
+			System.Logger mockLogger = mock(System.Logger.class);
+			overrideFieldWithMock(cryptoShield, "logger", mockLogger);
+
+			Thread testThread = new Thread("test-thread");
+			RuntimeException thrown = new RuntimeException("Uncaught boom");
+			captor.getValue().uncaughtException(testThread, thrown);
+
+			then(mockLogger).should().log(eq(System.Logger.Level.ERROR), eq("Uncaught in {0}: {1}"), eq("test-thread"), eq(thrown));
+		}
+	}
+
 	@Test
 	void getHmacStrategy() {
 		given(mockObjectMapperFactory.objectMapper()).willReturn(mockedObjectMapper);
@@ -926,6 +961,37 @@ class CryptoShieldTest {
 		assertThat(objectNodeArgumentCaptor.getValue().get(TEST_USER_NAME_FIELD_NAME).asText()).isEqualTo(TEST_USERNAME);
 		assertThat(objectNodeArgumentCaptor.getValue().get(TEST_ETHNICITY_FIELD_NAME).asText()).isEqualTo(TEST_ETHNICITY);
 		assertThat(objectNodeArgumentCaptor.getValue().get(TEST_HIGHLY_CONFIDENTIAL_OBJECT_FIELD_NAME)).isEqualTo(highlyConfidentialObjectNode);
+	}
+
+	@Test
+	void encryptAndSerializeExceptionResettingSourceFieldValuesIllegalAccess() throws JsonProcessingException {
+		given(mockObjectMapperFactory.objectMapper()).willReturn(mockedObjectMapper);
+		given(mockedObjectMapper.createObjectNode()).willReturn(objectNode);
+		given(mockedObjectMapper.convertValue(TEST_PAN, JsonNode.class)).willReturn(new TextNode(TEST_PAN));
+		given(mockedObjectMapper.convertValue(TEST_USERNAME, JsonNode.class)).willReturn(new TextNode(TEST_USERNAME));
+		given(mockedObjectMapper.convertValue(TEST_ETHNICITY, JsonNode.class)).willReturn(new TextNode(TEST_ETHNICITY));
+		ObjectNode highlyConfidentialObjectNode = new ObjectNode(JsonNodeFactory.instance);
+		highlyConfidentialObjectNode.set(TEST_HIGHLY_CONFIDENTIAL_FIELD_NAME, new TextNode(SOME_HIGHLY_CONFIDENTIAL_OBJECT_TEST_VALUE));
+		given(mockedObjectMapper.convertValue(TEST_HIGHLY_CONFIDENTIAL_OBJECT, JsonNode.class)).willReturn(highlyConfidentialObjectNode);
+		given(mockedObjectMapper.writeValueAsString(objectNodeArgumentCaptor.capture())).willReturn(TEST_MOCK_SOURCE_CIPHERTEXT);
+		given(mockCryptoKeyProvider.getCurrentEncryptionKey()).willReturn(TEST_CRYPTO_KEY);
+		given(mockEncryptionService.encrypt(TEST_CRYPTO_KEY, TEST_MOCK_SOURCE_CIPHERTEXT)).willReturn(TEST_CIPHERTEXT_CONTAINER);
+		given(mockCiphertextFormatter.format(TEST_CIPHERTEXT_CONTAINER)).willReturn(TEST_MOCK_ENCRYPTED_DATA);
+
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+		overrideDirectlyInstantiatedFieldsWithMocks();
+
+		assertThatThrownBy(() -> cryptoShield.encryptAndSerialize(testEntity, e -> {
+			// Make the field inaccessible to trigger the exception in resetSourceValues
+			cryptoShield.getAnnotatedEntityManager().getAllConfidentialFields(TestMockHmacEntity.class).forEach(field -> {
+				if (field.getName().equals(TEST_PAN_FIELD_NAME)) {
+					field.setAccessible(false);
+				}
+			});
+			return e;
+		}))
+				.isInstanceOf(NonTransientCryptoException.class)
+				.hasMessage(String.format("A IllegalAccessException error occurred trying to reset the original value of field: %s on type: %s", TEST_PAN_FIELD_NAME, TestMockHmacEntity.class.getSimpleName()));
 	}
 
 	@Test

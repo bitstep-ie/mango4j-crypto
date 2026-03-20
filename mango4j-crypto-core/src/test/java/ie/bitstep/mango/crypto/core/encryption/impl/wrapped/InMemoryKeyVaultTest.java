@@ -18,6 +18,8 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.security.auth.DestroyFailedException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -31,7 +33,9 @@ import static ie.bitstep.mango.crypto.core.testdata.TestKeyUtils.isEmpty;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
@@ -114,6 +118,41 @@ class InMemoryKeyVaultTest {
 		keyGeneratorField.set(InMemoryKeyVault.INSTANCE, originalKeyGenerator);
 		secureRandomField.set(InMemoryKeyVault.INSTANCE, originalSecureRandom);
 		storeField.set(InMemoryKeyVault.INSTANCE, originalStore);
+	}
+
+	@Test
+	void constructorShouldThrowIllegalStateExceptionWhenKeyGeneratorFails() throws ClassNotFoundException {
+		try (MockedStatic<KeyGenerator> mockedKeyGenerator = mockStatic(KeyGenerator.class)) {
+			mockedKeyGenerator.when(() -> KeyGenerator.getInstance(anyString()))
+					.thenThrow(new RuntimeException("Simulated KeyGenerator failure"));
+			ClassLoader customClassLoader = new ClassLoader(Thread.currentThread().getContextClassLoader()) {
+				@Override
+				public Class<?> loadClass(String name) throws ClassNotFoundException {
+					if (name.startsWith("ie.bitstep.mango.crypto.core.encryption.impl.wrapped.InMemoryKeyVault")) {
+						try {
+							String internalName = name.replace('.', '/') + ".class";
+							InputStream inputStream = getParent().getResourceAsStream(internalName);
+							if (inputStream == null) {
+								throw new ClassNotFoundException(name);
+							}
+							byte[] bytes = inputStream.readAllBytes();
+							return defineClass(name, bytes, 0, bytes.length);
+						} catch (IOException e) {
+							throw new ClassNotFoundException(name, e);
+						}
+					}
+					return super.loadClass(name);
+				}
+			};
+			try {
+				Class.forName("ie.bitstep.mango.crypto.core.encryption.impl.wrapped.InMemoryKeyVault", true, customClassLoader);
+				fail("Should have thrown IllegalStateException");
+			} catch (ExceptionInInitializerError e) {
+				assertThat(e.getCause()).isInstanceOf(IllegalStateException.class);
+				assertThat(e.getCause()).hasMessage("Failed to init default KeyGenerator");
+				assertThat(e.getCause().getCause()).hasMessage("Simulated KeyGenerator failure");
+			}
+		}
 	}
 
 	@Test

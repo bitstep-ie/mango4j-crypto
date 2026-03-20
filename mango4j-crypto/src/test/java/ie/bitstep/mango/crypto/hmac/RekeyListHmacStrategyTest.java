@@ -46,6 +46,13 @@ public class RekeyListHmacStrategyTest {
 	}
 
 	@Test
+	void constructorNullCurrentHmacKey() {
+		rekeyListHmacFieldStrategy = new RekeyListHmacFieldStrategy(mockListHmacStrategy, null);
+
+		assertThat(rekeyListHmacFieldStrategy.getCurrentHmacKeys()).isEmpty();
+	}
+
+	@Test
 	void getCurrentHmacKeys() {
 		assertThat(rekeyListHmacFieldStrategy.getCurrentHmacKeys()).isEqualTo(List.of(TEST_CRYPTO_KEY));
 	}
