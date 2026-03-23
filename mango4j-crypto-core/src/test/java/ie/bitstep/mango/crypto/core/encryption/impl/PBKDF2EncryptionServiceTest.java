@@ -13,6 +13,7 @@ import ie.bitstep.mango.crypto.core.enums.Padding;
 import ie.bitstep.mango.crypto.core.exceptions.NonTransientCryptoException;
 import ie.bitstep.mango.crypto.core.factories.ConfigurableObjectMapperFactory;
 import ie.bitstep.mango.crypto.core.formatters.CiphertextFormatter;
+import ie.bitstep.mango.crypto.core.formatters.DefaultCiphertextFormatter;
 import ie.bitstep.mango.crypto.core.providers.CryptoKeyProvider;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -160,7 +161,7 @@ class PBKDF2EncryptionServiceTest implements CryptoKeyProvider {
 		CiphertextContainer hackedCiphertextContainer = new CiphertextContainer(
 				ciphertextContainer.getCryptoKey(), hackedData
 		);
-		CiphertextFormatter cipherTextFormatter = new CiphertextFormatter(this, new ConfigurableObjectMapperFactory());
+		CiphertextFormatter cipherTextFormatter = new DefaultCiphertextFormatter(this, new ConfigurableObjectMapperFactory());
 
 		hackedCiphertextContainer.getData().put(PBKDF2EncryptionService.CIPHER_MODE, Mode.NONE.getMode());
 		String cipherText = cipherTextFormatter.format(hackedCiphertextContainer);
@@ -256,7 +257,7 @@ class PBKDF2EncryptionServiceTest implements CryptoKeyProvider {
 
 
 		// Decrypt
-		String decryptedText = encryptionService.decrypt(new CiphertextFormatter(this, new ConfigurableObjectMapperFactory()).format(encrypted));
+		String decryptedText = encryptionService.decrypt(new DefaultCiphertextFormatter(this, new ConfigurableObjectMapperFactory()).format(encrypted));
 
 		// Verify
 		assertEquals(plaintext, decryptedText, "Decryption should return the original plaintext");

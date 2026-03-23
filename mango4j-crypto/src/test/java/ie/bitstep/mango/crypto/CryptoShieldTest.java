@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.node.MissingNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
+import ie.bitstep.mango.crypto.core.domain.CiphertextContainer;
 import ie.bitstep.mango.crypto.core.domain.HmacHolder;
 import ie.bitstep.mango.crypto.core.encryption.EncryptionService;
 import ie.bitstep.mango.crypto.core.encryption.EncryptionServiceDelegate;
@@ -19,7 +20,6 @@ import ie.bitstep.mango.crypto.core.factories.ConfigurableObjectMapperFactory;
 import ie.bitstep.mango.crypto.core.factories.ObjectMapperFactory;
 import ie.bitstep.mango.crypto.core.formatters.CiphertextFormatter;
 import ie.bitstep.mango.crypto.core.providers.CryptoKeyProvider;
-import ie.bitstep.mango.crypto.exceptions.DeserializationException;
 import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.HighlyConfidentialObject;
 import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.TestMockHmacEntity;
 import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.TestMockHmacEntityWithNoEncryptFields;
@@ -32,7 +32,6 @@ import ie.bitstep.mango.crypto.testdata.implementations.hmacstrategies.MockHmacS
 import ie.bitstep.mango.reflection.utils.ReflectionUtils;
 import ie.bitstep.mango.utils.thread.NamedScheduledExecutorBuilder;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -45,6 +44,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.lang.reflect.Field;
 import java.time.Duration;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -71,6 +71,7 @@ import static ie.bitstep.mango.crypto.testdata.TestData.TEST_PAN;
 import static ie.bitstep.mango.crypto.testdata.TestData.TEST_PAN_FIELD_NAME;
 import static ie.bitstep.mango.crypto.testdata.TestData.TEST_USERNAME;
 import static ie.bitstep.mango.crypto.testdata.TestData.TEST_USER_NAME_FIELD_NAME;
+import static ie.bitstep.mango.crypto.testdata.TestData.testCryptoKey;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -151,7 +152,7 @@ class CryptoShieldTest {
 		given(mockObjectMapperFactory.objectMapper()).willReturn(mockedObjectMapper);
 		given(mockRetryConfiguration.poolSize()).willReturn(TEST_POOL_SIZE);
 		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory,
-				mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), mockRetryConfiguration);
+				mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), mockRetryConfiguration, null);
 
 		assertThat(cryptoShield).isNotNull();
 
@@ -168,11 +169,12 @@ class CryptoShieldTest {
 		assertThat(getField(cryptoShield, "annotatedEntityManager")).isInstanceOf(AnnotatedEntityManager.class);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	void constructorNullObjectMapper() {
 		given(mockRetryConfiguration.poolSize()).willReturn(TEST_POOL_SIZE);
 		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), null,
-				mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), mockRetryConfiguration);
+				mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), mockRetryConfiguration, null);
 
 		assertThat(cryptoShield).isNotNull();
 
@@ -184,6 +186,36 @@ class CryptoShieldTest {
 		EncryptionService encryptionService = (EncryptionService) getField(cryptoShield, "encryptionService");
 		assertThat((Map<String, EncryptionServiceDelegate>) getField(encryptionService, "encryptionServiceDelegates")).containsValue(mockEncryptionServiceDelegate);
 		assertThat((CiphertextFormatter) getField(encryptionService, "ciphertextFormatter")).isEqualTo(ciphertextFormatter);
+		assertThat((ObjectMapperFactory) getField(encryptionService, "objectMapperFactory")).isInstanceOf(ConfigurableObjectMapperFactory.class);
+		assertThat(getField(cryptoShield, "retryConfiguration")).isEqualTo(mockRetryConfiguration);
+		assertThat(getField(cryptoShield, "annotatedEntityManager")).isInstanceOf(AnnotatedEntityManager.class);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	void constructorCustomCiphertextFormatter() {
+		given(mockRetryConfiguration.poolSize()).willReturn(TEST_POOL_SIZE);
+		CiphertextFormatter customCiphertextFormatter = new CiphertextFormatter() {
+			@Override
+			public CiphertextContainer parse(String data) {
+				return new CiphertextContainer(testCryptoKey(), new HashMap<>());
+			}
+
+			@Override
+			public String format(CiphertextContainer ciphertextContainer) {
+				return "Custom Formatted ciphertext";
+			}
+		};
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), null,
+				mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), mockRetryConfiguration, customCiphertextFormatter);
+
+		assertThat(cryptoShield).isNotNull();
+
+		assertThat(getField(cryptoShield, "objectMapper")).isInstanceOf(ObjectMapper.class);
+		assertThat(getField(cryptoShield, "cryptoKeyProvider")).isEqualTo(mockCryptoKeyProvider);
+		EncryptionService encryptionService = (EncryptionService) getField(cryptoShield, "encryptionService");
+		assertThat((Map<String, EncryptionServiceDelegate>) getField(encryptionService, "encryptionServiceDelegates")).containsValue(mockEncryptionServiceDelegate);
+		assertThat((CiphertextFormatter) getField(encryptionService, "ciphertextFormatter")).isEqualTo(customCiphertextFormatter);
 		assertThat((ObjectMapperFactory) getField(encryptionService, "objectMapperFactory")).isInstanceOf(ConfigurableObjectMapperFactory.class);
 		assertThat(getField(cryptoShield, "retryConfiguration")).isEqualTo(mockRetryConfiguration);
 		assertThat(getField(cryptoShield, "annotatedEntityManager")).isInstanceOf(AnnotatedEntityManager.class);
@@ -201,7 +233,7 @@ class CryptoShieldTest {
 		given(mockEncryptionService.encrypt(TEST_CRYPTO_KEY, TEST_MOCK_SOURCE_CIPHERTEXT)).willReturn(TEST_CIPHERTEXT_CONTAINER);
 		given(mockCiphertextFormatter.format(TEST_CIPHERTEXT_CONTAINER)).willReturn(TEST_MOCK_ENCRYPTED_DATA);
 
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null, null);
 		overrideDirectlyInstantiatedFieldsWithMocks();
 
 		cryptoShield.encrypt(testEntity);
@@ -231,7 +263,7 @@ class CryptoShieldTest {
 		given(mockEncryptionService.encrypt(TEST_CRYPTO_KEY, TEST_MOCK_SOURCE_CIPHERTEXT)).willReturn(TEST_CIPHERTEXT_CONTAINER);
 		given(mockCiphertextFormatter.format(TEST_CIPHERTEXT_CONTAINER)).willReturn(TEST_MOCK_ENCRYPTED_DATA);
 
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null, null);
 		overrideDirectlyInstantiatedFieldsWithMocks();
 
 		cryptoShield.encrypt(List.of(testEntity));
@@ -264,7 +296,7 @@ class CryptoShieldTest {
 		given(mockEncryptionService.encrypt(TEST_CRYPTO_KEY, TEST_MOCK_SOURCE_CIPHERTEXT)).willReturn(TEST_CIPHERTEXT_CONTAINER);
 		given(mockCiphertextFormatter.format(TEST_CIPHERTEXT_CONTAINER)).willReturn(TEST_MOCK_ENCRYPTED_DATA);
 
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null, null);
 		overrideDirectlyInstantiatedFieldsWithMocks();
 
 		cryptoShield.encrypt(new TestMockHmacEntity[]{testEntity});
@@ -284,7 +316,7 @@ class CryptoShieldTest {
 
 	@Test
 	void encryptArrayPrimitiveException() {
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null, null);
 		overrideDirectlyInstantiatedFieldsWithMocks();
 
 		assertThatThrownBy(() -> cryptoShield.encrypt(new int[]{}))
@@ -316,7 +348,7 @@ class CryptoShieldTest {
 	@Test
 	void encryptNullEntity() {
 		given(mockObjectMapperFactory.objectMapper()).willReturn(mockedObjectMapper);
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null, null);
 		cryptoShield.encrypt(null);
 
 		assertThat(testEntity.getEncryptionKeyId()).isNull();
@@ -335,7 +367,7 @@ class CryptoShieldTest {
 		given(mockCryptoKeyProvider.getCurrentEncryptionKey()).willReturn(TEST_CRYPTO_KEY);
 
 		testEntity = new TestMockHmacEntity();
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null, null);
 
 		cryptoShield.encrypt(testEntity);
 
@@ -373,7 +405,7 @@ class CryptoShieldTest {
 		given(mockEncryptionService.encrypt(TEST_CRYPTO_KEY, TEST_MOCK_SOURCE_CIPHERTEXT)).willReturn(TEST_CIPHERTEXT_CONTAINER);
 		given(mockCiphertextFormatter.format(TEST_CIPHERTEXT_CONTAINER)).willReturn(TEST_MOCK_ENCRYPTED_DATA);
 
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null, null);
 		overrideDirectlyInstantiatedFieldsWithMocks();
 
 		cryptoShield.encrypt(testEntity);
@@ -403,7 +435,7 @@ class CryptoShieldTest {
 		given(mockEncryptionService.encrypt(TEST_CRYPTO_KEY, TEST_MOCK_SOURCE_CIPHERTEXT)).willReturn(TEST_CIPHERTEXT_CONTAINER);
 		given(mockCiphertextFormatter.format(TEST_CIPHERTEXT_CONTAINER)).willReturn(TEST_MOCK_ENCRYPTED_DATA);
 
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null, null);
 		overrideDirectlyInstantiatedFieldsWithMocks();
 
 		cryptoShield.encrypt(testEntity);
@@ -433,7 +465,7 @@ class CryptoShieldTest {
 		given(mockEncryptionService.encrypt(TEST_CRYPTO_KEY, TEST_MOCK_SOURCE_CIPHERTEXT)).willReturn(TEST_CIPHERTEXT_CONTAINER);
 		given(mockCiphertextFormatter.format(TEST_CIPHERTEXT_CONTAINER)).willReturn(TEST_MOCK_ENCRYPTED_DATA);
 
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null, null);
 		overrideDirectlyInstantiatedFieldsWithMocks();
 
 		cryptoShield.encrypt(testEntity);
@@ -466,7 +498,7 @@ class CryptoShieldTest {
 		entity.setPan(TEST_PAN);
 		entity.setUserName(TEST_USERNAME);
 		entity.setEthnicity(TEST_ETHNICITY);
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntityWithNoEncryptionKeyIdAnnotation.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntityWithNoEncryptionKeyIdAnnotation.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null, null);
 		overrideDirectlyInstantiatedFieldsWithMocks();
 
 		cryptoShield.encrypt(entity);
@@ -493,7 +525,7 @@ class CryptoShieldTest {
 		given(mockEncryptionService.encrypt(TEST_CRYPTO_KEY, TEST_MOCK_SOURCE_CIPHERTEXT)).willReturn(TEST_CIPHERTEXT_CONTAINER);
 		given(mockCiphertextFormatter.format(TEST_CIPHERTEXT_CONTAINER)).willThrow(new CiphertextFormatterException("Issue with json"));
 
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null, null);
 		overrideDirectlyInstantiatedFieldsWithMocks();
 
 		NonTransientCryptoException exception = assertThrows(NonTransientCryptoException.class, () ->
@@ -521,7 +553,7 @@ class CryptoShieldTest {
 		given(mockEncryptionService.encrypt(TEST_CRYPTO_KEY, TEST_MOCK_SOURCE_CIPHERTEXT)).willReturn(TEST_CIPHERTEXT_CONTAINER);
 		given(mockCiphertextFormatter.format(TEST_CIPHERTEXT_CONTAINER)).willThrow(new RuntimeException("Test exception"));
 
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null, null);
 		overrideDirectlyInstantiatedFieldsWithMocks();
 
 		assertThatThrownBy(() -> cryptoShield.encrypt(testEntity))
@@ -543,7 +575,7 @@ class CryptoShieldTest {
 		given(mockedObjectMapper.convertValue(TEST_PAN, JsonNode.class)).willThrow(cause);
 
 
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null, null);
 		NonTransientCryptoException exception = assertThrows(NonTransientCryptoException.class, () ->
 				cryptoShield.encrypt(testEntity)
 		);
@@ -565,7 +597,7 @@ class CryptoShieldTest {
 		given(mockCiphertextFormatter.format(TEST_CIPHERTEXT_CONTAINER)).willReturn(TEST_MOCK_ENCRYPTED_DATA);
 
 		RetryConfiguration retryConfiguration = new RetryConfiguration(TEST_POOL_SIZE, 3, Duration.ofMillis(200), 2);
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), retryConfiguration);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), retryConfiguration, null);
 		overrideDirectlyInstantiatedFieldsWithMocks();
 
 		cryptoShield.encrypt(testEntity);
@@ -598,7 +630,7 @@ class CryptoShieldTest {
 		given(mockCiphertextFormatter.format(TEST_CIPHERTEXT_CONTAINER)).willReturn(TEST_MOCK_ENCRYPTED_DATA);
 
 		RetryConfiguration retryConfiguration = new RetryConfiguration(TEST_POOL_SIZE, 3, Duration.ofMillis(200), 2);
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), retryConfiguration);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), retryConfiguration, null);
 		overrideDirectlyInstantiatedFieldsWithMocks();
 
 		cryptoShield.encrypt(testEntity);
@@ -624,7 +656,7 @@ class CryptoShieldTest {
 		given(mockCryptoKeyProvider.getCurrentEncryptionKey()).willReturn(TEST_CRYPTO_KEY);
 
 		RetryConfiguration retryConfiguration = new RetryConfiguration(TEST_POOL_SIZE, 3, Duration.ofMillis(200), 2);
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), retryConfiguration);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), retryConfiguration, null);
 		overrideDirectlyInstantiatedFieldsWithMocks();
 
 		assertThatThrownBy(() -> cryptoShield.encrypt(testEntity))
@@ -647,7 +679,7 @@ class CryptoShieldTest {
 
 		ScheduledFuture mockedFuture = mock(ScheduledFuture.class);
 		RetryConfiguration retryConfiguration = new RetryConfiguration(TEST_POOL_SIZE, 3, Duration.ofSeconds(2), 2);
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), retryConfiguration);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), retryConfiguration, null);
 		overrideDirectlyInstantiatedFieldsWithMocks();
 		overrideFieldWithMock(cryptoShield, "scheduler", mockScheduledExecutorService);
 
@@ -676,7 +708,7 @@ class CryptoShieldTest {
 
 		ScheduledFuture mockedFuture = mock(ScheduledFuture.class);
 		RetryConfiguration retryConfiguration = new RetryConfiguration(TEST_POOL_SIZE, 3, Duration.ofSeconds(2), 2);
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), retryConfiguration);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), retryConfiguration, null);
 		overrideDirectlyInstantiatedFieldsWithMocks();
 		overrideFieldWithMock(cryptoShield, "scheduler", mockScheduledExecutorService);
 
@@ -707,7 +739,7 @@ class CryptoShieldTest {
 
 		ScheduledFuture mockedFuture = mock(ScheduledFuture.class);
 		RetryConfiguration retryConfiguration = new RetryConfiguration(TEST_POOL_SIZE, 3, Duration.ofSeconds(2), 2);
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), retryConfiguration);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), retryConfiguration, null);
 		overrideDirectlyInstantiatedFieldsWithMocks();
 		overrideFieldWithMock(cryptoShield, "scheduler", mockScheduledExecutorService);
 
@@ -746,7 +778,7 @@ class CryptoShieldTest {
 
 			given(mockObjectMapperFactory.objectMapper()).willReturn(mockedObjectMapper);
 
-			cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), mockRetryConfiguration);
+			cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), mockRetryConfiguration, null);
 
 			System.Logger mockLogger = mock(System.Logger.class);
 			overrideFieldWithMock(cryptoShield, "logger", mockLogger);
@@ -762,7 +794,7 @@ class CryptoShieldTest {
 	@Test
 	void getHmacStrategy() {
 		given(mockObjectMapperFactory.objectMapper()).willReturn(mockedObjectMapper);
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null, null);
 		assertThat(cryptoShield.getAnnotatedEntityManager().getHmacStrategy(testEntity.getClass()).orElseThrow()).isInstanceOf(MockHmacStrategyImpl.class);
 	}
 
@@ -771,7 +803,7 @@ class CryptoShieldTest {
 		given(mockObjectMapperFactory.objectMapper()).willReturn(mockedObjectMapper);
 		given(mockCryptoKeyProvider.getCurrentEncryptionKey()).willReturn(null);
 
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null, null);
 		assertThatThrownBy(() -> cryptoShield.encrypt(testEntity))
 				.isInstanceOf(ActiveEncryptionKeyNotFoundException.class)
 				.hasMessage("No active encryption key was found");
@@ -804,7 +836,7 @@ class CryptoShieldTest {
 		given(mockCryptoShieldDelegate.getCurrentEncryptionKey()).willReturn(null);
 		given(mockCryptoShieldDelegate.getHmacStrategy(testEntity)).willReturn(Optional.of(new MockHmacStrategyImpl(null, null)));
 
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null, null);
 		assertThatNoException().isThrownBy(() -> cryptoShield.encrypt(testEntity, mockCryptoShieldDelegate));
 
 		assertThat(MockHmacStrategyImpl.entityPassedToHmac).isEqualTo(testEntity);
@@ -820,7 +852,7 @@ class CryptoShieldTest {
 	@Test
 	void encryptNoEncryptFields() {
 		given(mockObjectMapperFactory.objectMapper()).willReturn(mockedObjectMapper);
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntityWithNoEncryptFields.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntityWithNoEncryptFields.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null, null);
 
 		TestMockHmacEntityWithNoEncryptFields entity = new TestMockHmacEntityWithNoEncryptFields();
 		cryptoShield.encrypt(entity);
@@ -838,7 +870,7 @@ class CryptoShieldTest {
 	@Test
 	void encryptNoAnnotations() {
 		given(mockObjectMapperFactory.objectMapper()).willReturn(mockedObjectMapper);
-		cryptoShield = new CryptoShield(List.of(NothingAnnotatedEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+		cryptoShield = new CryptoShield(List.of(NothingAnnotatedEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null, null);
 
 		NothingAnnotatedEntity entity = new NothingAnnotatedEntity();
 		entity.setPan(TEST_PAN);
@@ -871,7 +903,7 @@ class CryptoShieldTest {
 		given(mockEncryptionService.encrypt(TEST_CRYPTO_KEY, TEST_MOCK_SOURCE_CIPHERTEXT)).willReturn(TEST_CIPHERTEXT_CONTAINER);
 		given(mockCiphertextFormatter.format(TEST_CIPHERTEXT_CONTAINER)).willReturn(TEST_MOCK_ENCRYPTED_DATA);
 
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null, null);
 		overrideDirectlyInstantiatedFieldsWithMocks();
 
 		TestMockHmacEntity result = cryptoShield.encryptAndSerialize(testEntity, e -> {
@@ -903,7 +935,7 @@ class CryptoShieldTest {
 	void encryptAndSerializeExceptionGettingSourceFieldValues() throws NoSuchFieldException, IllegalAccessException {
 		given(mockObjectMapperFactory.objectMapper()).willReturn(mockedObjectMapper);
 
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null, null);
 		AnnotatedEntityManager aem = (AnnotatedEntityManager) cryptoShield.getClass().getDeclaredField("annotatedEntityManager").get(cryptoShield);
 		aem.getAllConfidentialFields(TestMockHmacEntity.class).forEach(field -> field.setAccessible(false));
 		overrideDirectlyInstantiatedFieldsWithMocks();
@@ -939,7 +971,7 @@ class CryptoShieldTest {
 		given(mockEncryptionService.encrypt(TEST_CRYPTO_KEY, TEST_MOCK_SOURCE_CIPHERTEXT)).willReturn(TEST_CIPHERTEXT_CONTAINER);
 		given(mockCiphertextFormatter.format(TEST_CIPHERTEXT_CONTAINER)).willReturn(TEST_MOCK_ENCRYPTED_DATA);
 
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null, null);
 		overrideDirectlyInstantiatedFieldsWithMocks();
 
 		assertThatThrownBy(() -> cryptoShield.encryptAndSerialize(testEntity, e -> {
@@ -978,7 +1010,7 @@ class CryptoShieldTest {
 		given(mockEncryptionService.encrypt(TEST_CRYPTO_KEY, TEST_MOCK_SOURCE_CIPHERTEXT)).willReturn(TEST_CIPHERTEXT_CONTAINER);
 		given(mockCiphertextFormatter.format(TEST_CIPHERTEXT_CONTAINER)).willReturn(TEST_MOCK_ENCRYPTED_DATA);
 
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null, null);
 		overrideDirectlyInstantiatedFieldsWithMocks();
 
 		assertThatThrownBy(() -> cryptoShield.encryptAndSerialize(testEntity, e -> {
@@ -1015,7 +1047,7 @@ class CryptoShieldTest {
 		given(mockedObjectMapper.treeToValue(highlyConfidentialObjectNode, HighlyConfidentialObject.class)).willReturn(TEST_HIGHLY_CONFIDENTIAL_OBJECT);
 
 
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null, null);
 		overrideDirectlyInstantiatedFieldsWithMocks();
 		testEntity.setPan(null);
 		testEntity.setUserName(null);
@@ -1034,7 +1066,7 @@ class CryptoShieldTest {
 	@Test
 	void decryptNullEntity() {
 		given(mockObjectMapperFactory.objectMapper()).willReturn(mockedObjectMapper);
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null, null);
 		testEntity.setPan(null);
 		testEntity.setUserName(null);
 		testEntity.setEthnicity(null);
@@ -1054,7 +1086,7 @@ class CryptoShieldTest {
 		given(mockEncryptionService.decrypt(TEST_MOCK_ENCRYPTED_DATA)).willReturn(TEST_MOCK_SOURCE_CIPHERTEXT);
 		given(mockedObjectMapper.readTree(TEST_MOCK_SOURCE_CIPHERTEXT)).willReturn(objectNode);
 
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null, null);
 		overrideDirectlyInstantiatedFieldsWithMocks();
 		testEntity.setPan(null);
 		testEntity.setEncryptedData(TEST_MOCK_ENCRYPTED_DATA);
@@ -1066,7 +1098,7 @@ class CryptoShieldTest {
 	@Test
 	void decryptNoExistingEncryptedData() {
 		given(mockObjectMapperFactory.objectMapper()).willReturn(mockedObjectMapper);
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null, null);
 		TestMockHmacEntity entity = new TestMockHmacEntity();
 		cryptoShield.decrypt(entity);
 
@@ -1076,7 +1108,7 @@ class CryptoShieldTest {
 	@Test
 	void decryptNoEncryptedFields() {
 		given(mockObjectMapperFactory.objectMapper()).willReturn(mockedObjectMapper);
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntityWithNoEncryptFields.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntityWithNoEncryptFields.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null, null);
 		TestMockHmacEntityWithNoEncryptFields entity = new TestMockHmacEntityWithNoEncryptFields();
 
 		cryptoShield.decrypt(entity);
@@ -1084,21 +1116,6 @@ class CryptoShieldTest {
 		then(mockCryptoKeyProvider).shouldHaveNoInteractions();
 		then(mockCiphertextFormatter).shouldHaveNoInteractions();
 		then(mockedObjectMapper).shouldHaveNoInteractions();
-	}
-
-	@Test
-	@Disabled("Revisit if we want to restrict to certain field types")
-	void decryptExceptionWrongValueType() throws JsonProcessingException {
-		given(mockObjectMapperFactory.objectMapper()).willReturn(mockedObjectMapper);
-		given(mockEncryptionService.decrypt(TEST_MOCK_ENCRYPTED_DATA)).willReturn(TEST_MOCK_SOURCE_CIPHERTEXT);
-		given(mockedObjectMapper.readTree(TEST_MOCK_SOURCE_CIPHERTEXT)).willReturn(new ObjectNode(JsonNodeFactory.instance).put("pan", 234234234L));
-
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
-		testEntity.setEncryptedData(TEST_MOCK_ENCRYPTED_DATA);
-
-		assertThatThrownBy(() -> cryptoShield.decrypt(testEntity))
-				.isInstanceOf(DeserializationException.class)
-				.hasMessage("Field 'pan' is of type 'NUMBER'. Only String fields are currently supported");
 	}
 
 	@Test
@@ -1111,7 +1128,7 @@ class CryptoShieldTest {
 		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class),
 				mockObjectMapperFactory,
 				mockCryptoKeyProvider,
-				List.of(mockEncryptionServiceDelegate), null);
+				List.of(mockEncryptionServiceDelegate), null, null);
 		overrideDirectlyInstantiatedFieldsWithMocks();
 		testEntity.setEncryptedData(TEST_MOCK_ENCRYPTED_DATA);
 
@@ -1144,7 +1161,7 @@ class CryptoShieldTest {
 		given(mockedObjectMapper.treeToValue(highlyConfidentialObjectNode, HighlyConfidentialObject.class)).willReturn(TEST_HIGHLY_CONFIDENTIAL_OBJECT);
 
 		RetryConfiguration retryConfiguration = new RetryConfiguration(TEST_POOL_SIZE, 3, Duration.ofMillis(200), 2);
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), retryConfiguration);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), retryConfiguration, null);
 		overrideDirectlyInstantiatedFieldsWithMocks();
 
 		testEntity.setPan(null);
@@ -1178,7 +1195,7 @@ class CryptoShieldTest {
 				.willReturn(mockedFuture);
 
 		RetryConfiguration retryConfiguration = new RetryConfiguration(TEST_POOL_SIZE, 3, Duration.ofMillis(200), 2);
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), retryConfiguration);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), retryConfiguration, null);
 		overrideDirectlyInstantiatedFieldsWithMocks();
 		overrideFieldWithMock(cryptoShield, "scheduler", mockScheduledExecutorService);
 
@@ -1201,7 +1218,7 @@ class CryptoShieldTest {
 				.willReturn(mockedFuture);
 
 		RetryConfiguration retryConfiguration = new RetryConfiguration(TEST_POOL_SIZE, 3, Duration.ofSeconds(2), 2);
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), retryConfiguration);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), retryConfiguration, null);
 		overrideDirectlyInstantiatedFieldsWithMocks();
 		overrideFieldWithMock(cryptoShield, "scheduler", mockScheduledExecutorService);
 
@@ -1228,7 +1245,7 @@ class CryptoShieldTest {
 				.willReturn(mockedFuture);
 
 		RetryConfiguration retryConfiguration = new RetryConfiguration(TEST_POOL_SIZE, 3, Duration.ofSeconds(2), 2);
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), retryConfiguration);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), retryConfiguration, null);
 		overrideDirectlyInstantiatedFieldsWithMocks();
 		overrideFieldWithMock(cryptoShield, "scheduler", mockScheduledExecutorService);
 
@@ -1255,7 +1272,7 @@ class CryptoShieldTest {
 		given(mockedFuture.get()).willThrow(executionException);
 
 		RetryConfiguration retryConfiguration = new RetryConfiguration(TEST_POOL_SIZE, 3, Duration.ofSeconds(2), 2);
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), retryConfiguration);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), retryConfiguration, null);
 		overrideDirectlyInstantiatedFieldsWithMocks();
 		overrideFieldWithMock(cryptoShield, "scheduler", mockScheduledExecutorService);
 
@@ -1273,7 +1290,7 @@ class CryptoShieldTest {
 	@Test
 	void getCryptoKeyProvider() {
 		given(mockObjectMapperFactory.objectMapper()).willReturn(mockedObjectMapper);
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null, null);
 
 		assertThat(cryptoShield.getCryptoKeyProvider()).isEqualTo(mockCryptoKeyProvider);
 	}
@@ -1286,7 +1303,7 @@ class CryptoShieldTest {
 		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class),
 				mockObjectMapperFactory,
 				mockCryptoKeyProvider,
-				List.of(mockEncryptionServiceDelegate, mockEncryptionServiceDelegate2), null);
+				List.of(mockEncryptionServiceDelegate, mockEncryptionServiceDelegate2), null, null);
 		overrideDirectlyInstantiatedFieldsWithMocks();
 
 		Collection<HmacHolder> hmacHolders = cryptoShield.generateHmacs(TEST_PAN);
@@ -1336,7 +1353,7 @@ class CryptoShieldTest {
 		given(mockCiphertextFormatter.format(TEST_CIPHERTEXT_CONTAINER)).willReturn(TEST_MOCK_ENCRYPTED_DATA);
 
 		cryptoShield = new CryptoShield(List.of(TestEntityWithBothEncryptHmacAndCascadeEncryptFields.class, TestMockHmacEntity.class),
-				mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+				mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null, null);
 		overrideDirectlyInstantiatedFieldsWithMocks();
 
 		TestEntityWithBothEncryptHmacAndCascadeEncryptFields testEntityWithBothEncryptHmacAndCascadeEncryptFields = new TestEntityWithBothEncryptHmacAndCascadeEncryptFields();
@@ -1427,7 +1444,7 @@ class CryptoShieldTest {
 		given(mockCiphertextFormatter.format(TEST_CIPHERTEXT_CONTAINER)).willReturn(TEST_MOCK_ENCRYPTED_DATA);
 
 		cryptoShield = new CryptoShield(List.of(TestEntityWithCollectionCascadeEncryptFields.class, TestMockHmacEntity.class),
-				mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+				mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null, null);
 		overrideDirectlyInstantiatedFieldsWithMocks();
 
 		TestMockHmacEntity cascadeTestEntity2 = new TestMockHmacEntity();
@@ -1465,7 +1482,7 @@ class CryptoShieldTest {
 		given(mockObjectMapperFactory.objectMapper()).willReturn(mockedObjectMapper);
 
 		cryptoShield = new CryptoShield(List.of(TestEntityWithCollectionCascadeEncryptFields.class, TestMockHmacEntity.class),
-				mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+				mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null, null);
 		overrideDirectlyInstantiatedFieldsWithMocks();
 
 		TestEntityWithCollectionCascadeEncryptFields testEntityWithCollectionCascadeEncryptFields = new TestEntityWithCollectionCascadeEncryptFields();
@@ -1511,7 +1528,7 @@ class CryptoShieldTest {
 		given(mockCiphertextFormatter.format(TEST_CIPHERTEXT_CONTAINER)).willReturn(TEST_MOCK_ENCRYPTED_DATA);
 
 		cryptoShield = new CryptoShield(List.of(TestEntityWithBothEncryptHmacAndCascadeEncryptFields.class, TestMockHmacEntity.class),
-				mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+				mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null, null);
 		overrideDirectlyInstantiatedFieldsWithMocks();
 
 		TestEntityWithBothEncryptHmacAndCascadeEncryptFields testEntityWithBothEncryptHmacAndCascadeEncryptFields = new TestEntityWithBothEncryptHmacAndCascadeEncryptFields();
@@ -1588,7 +1605,7 @@ class CryptoShieldTest {
 		TestEntityWithBothEncryptHmacAndCascadeEncryptFields testEntityWithBothEncryptHmacAndCascadeEncryptFields = new TestEntityWithBothEncryptHmacAndCascadeEncryptFields();
 		testEntityWithBothEncryptHmacAndCascadeEncryptFields.setTestMockHmacEntity2(cascadeTestEntity2);
 
-		cryptoShield = new CryptoShield(List.of(TestEntityWithBothEncryptHmacAndCascadeEncryptFields.class, TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+		cryptoShield = new CryptoShield(List.of(TestEntityWithBothEncryptHmacAndCascadeEncryptFields.class, TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null, null);
 		overrideDirectlyInstantiatedFieldsWithMocks();
 		testEntityWithBothEncryptHmacAndCascadeEncryptFields.setPan(null);
 		testEntityWithBothEncryptHmacAndCascadeEncryptFields.setUserName(null);
@@ -1651,7 +1668,7 @@ class CryptoShieldTest {
 		TestEntityWithCollectionCascadeEncryptFields testEntityWithCollectionCascadeEncryptFields = new TestEntityWithCollectionCascadeEncryptFields();
 		testEntityWithCollectionCascadeEncryptFields.setTestMockHmacEntities(List.of(testEntity, cascadeTestEntity2));
 
-		cryptoShield = new CryptoShield(List.of(TestEntityWithCollectionCascadeEncryptFields.class, TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+		cryptoShield = new CryptoShield(List.of(TestEntityWithCollectionCascadeEncryptFields.class, TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null, null);
 		overrideDirectlyInstantiatedFieldsWithMocks();
 
 		cryptoShield.decrypt(testEntityWithCollectionCascadeEncryptFields);
@@ -1667,7 +1684,7 @@ class CryptoShieldTest {
 	void decryptNullCollectionCascadeSuccess() {
 		TestEntityWithCollectionCascadeEncryptFields testEntityWithCollectionCascadeEncryptFields = new TestEntityWithCollectionCascadeEncryptFields();
 
-		cryptoShield = new CryptoShield(List.of(TestEntityWithCollectionCascadeEncryptFields.class, TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+		cryptoShield = new CryptoShield(List.of(TestEntityWithCollectionCascadeEncryptFields.class, TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null, null);
 		overrideDirectlyInstantiatedFieldsWithMocks();
 
 		cryptoShield.decrypt(testEntityWithCollectionCascadeEncryptFields);
@@ -1710,7 +1727,7 @@ class CryptoShieldTest {
 		testEntityWithBothEncryptHmacAndCascadeEncryptFields.setEthnicity(null);
 		testEntityWithBothEncryptHmacAndCascadeEncryptFields.setHighlyConfidentialObject(null);
 		testEntityWithBothEncryptHmacAndCascadeEncryptFields.setEncryptedData(TEST_MOCK_ENCRYPTED_DATA);
-		cryptoShield = new CryptoShield(List.of(TestEntityWithBothEncryptHmacAndCascadeEncryptFields.class, TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+		cryptoShield = new CryptoShield(List.of(TestEntityWithBothEncryptHmacAndCascadeEncryptFields.class, TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null, null);
 		overrideDirectlyInstantiatedFieldsWithMocks();
 		AnnotatedEntityManager aem = (AnnotatedEntityManager) cryptoShield.getClass().getDeclaredField("annotatedEntityManager").get(cryptoShield);
 		aem.getFieldsToCascadeEncrypt(TestEntityWithBothEncryptHmacAndCascadeEncryptFields.class).forEach(field -> field.setAccessible(false));
@@ -1721,7 +1738,7 @@ class CryptoShieldTest {
 
 	@SuppressWarnings("unchecked")
 	@Test
-	void testBuilderBuildsCryptoShieldWithCorrectFieldsUsingReflection() {
+	void testBuilderBuildsCryptoShieldWithUsualFields() {
 		given(mockObjectMapperFactory.objectMapper()).willReturn(mockedObjectMapper);
 		given(mockRetryConfiguration.poolSize()).willReturn(TEST_POOL_SIZE);
 
@@ -1741,6 +1758,30 @@ class CryptoShieldTest {
 		CiphertextFormatter ciphertextFormatter = (CiphertextFormatter) getField(shield, "ciphertextFormatter");
 		assertThat(getField(ciphertextFormatter, "objectMapperFactory")).isEqualTo(mockObjectMapperFactory);
 		assertThat(getField(ciphertextFormatter, "cryptoKeyProvider")).isEqualTo(mockCryptoKeyProvider);
+		assertThat(getField(shield, "annotatedEntityManager")).isInstanceOf(AnnotatedEntityManager.class);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	void testBuilderBuildsCryptoShieldWithNonDefaultCiphertextFormatter() {
+		given(mockObjectMapperFactory.objectMapper()).willReturn(mockedObjectMapper);
+		given(mockRetryConfiguration.poolSize()).willReturn(TEST_POOL_SIZE);
+
+		CryptoShield shield = new CryptoShield.Builder()
+				.withAnnotatedEntities(List.of(TestAnnotatedEntityForListHmacFieldStrategy.class))
+				.withObjectMapperFactory(mockObjectMapperFactory)
+				.withCryptoKeyProvider(mockCryptoKeyProvider)
+				.withEncryptionServiceDelegates(List.of(mockEncryptionServiceDelegate))
+				.withRetryConfiguration(mockRetryConfiguration)
+				.withCiphertextFormatter(mockCiphertextFormatter)
+				.build();
+
+		assertThat(getField(shield, "objectMapper")).isEqualTo(mockedObjectMapper);
+		assertThat(getField(shield, "cryptoKeyProvider")).isEqualTo(mockCryptoKeyProvider);
+		EncryptionService encryptionService = (EncryptionService) getField(shield, "encryptionService");
+		assertThat((Map<String, EncryptionServiceDelegate>) getField(encryptionService, "encryptionServiceDelegates")).containsValue(mockEncryptionServiceDelegate);
+		assertThat(getField(shield, "retryConfiguration")).isEqualTo(mockRetryConfiguration);
+		assertThat(getField(shield, "ciphertextFormatter")).isEqualTo(mockCiphertextFormatter);
 		assertThat(getField(shield, "annotatedEntityManager")).isInstanceOf(AnnotatedEntityManager.class);
 	}
 
