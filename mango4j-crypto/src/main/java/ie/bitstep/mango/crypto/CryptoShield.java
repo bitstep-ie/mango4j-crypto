@@ -259,8 +259,8 @@ public class CryptoShield {
 
 	private void retryableCommand(Runnable command) {
 		long backoffDelayInMilliseconds = 0;
-
-		for (int attempts = 1; attempts <= retryConfiguration.maxAttempts(); attempts++) {
+		int attempts = 1;
+		while(true) {
 			try {
 				ScheduledFuture<?> future = scheduler.schedule(command, backoffDelayInMilliseconds, TimeUnit.MILLISECONDS);
 				future.get();
@@ -280,6 +280,7 @@ public class CryptoShield {
 					throw new NonTransientCryptoException("An error occurred during retry attempt", ex.getCause());
 				}
 			}
+			++attempts;
 		}
 	}
 
