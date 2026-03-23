@@ -260,7 +260,7 @@ public class CryptoShield {
 	private void retryableCommand(Runnable command) {
 		long backoffDelayInMilliseconds = 0;
 		int attempts = 1;
-		while(true) {
+		while (true) {
 			try {
 				ScheduledFuture<?> future = scheduler.schedule(command, backoffDelayInMilliseconds, TimeUnit.MILLISECONDS);
 				future.get();
@@ -313,8 +313,9 @@ public class CryptoShield {
 	 * Method to generate HMACs for a given source value using all current HMAC keys. This method is useful
 	 * for applications that need to generate HMACs for values outside the context of an annotated entity,
 	 * usually for search operations.
+	 *
 	 * @param sourceValue The source value to HMAC
-	 * @param name An optional name/alias for the HMAC (can be null)
+	 * @param name        An optional name/alias for the HMAC (can be null)
 	 * @return A collection of {@link HmacHolder} objects containing the resulting HMACs
 	 */
 	public Collection<HmacHolder> generateHmacs(String sourceValue, String name) {
