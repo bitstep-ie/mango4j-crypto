@@ -67,7 +67,7 @@
         <junit-mockito.version>5.21.0</junit-mockito.version>
         <mockito-core.version>5.21.0</mockito-core.version>
         <assertj.version>3.27.7</assertj.version>
-        <jackson.version>2.21.5</jackson.version>
+        <jackson.version>2.22.1</jackson.version>
         <commons-collections.version>4.5.0</commons-collections.version>
         <slf4j-api.version>2.0.18</slf4j-api.version>
     </properties>
