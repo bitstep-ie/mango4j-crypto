@@ -27,11 +27,16 @@ jobs:
           server-id: central
           server-username: CENTRAL_USERNAME
           server-password: CENTRAL_PASSWORD
-          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-private-key: ${{ github.event_name == 'push' && secrets.GPG_PRIVATE_KEY || '' }}
           gpg-passphrase: GPG_PASSPHRASE
 
       - name: Build with Maven
-        run: mvn -e -X -B install --file pom.xml
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            mvn -e -X -B install -Dgpg.skip=true --file pom.xml
+          else
+            mvn -e -X -B install --file pom.xml
+          fi
         env:
           CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
           CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
@@ -39,6 +44,23 @@ jobs:
 
       - name: Update dependency graph
         uses: advanced-security/maven-dependency-submission-action@b275d12641ac2d2108b2cbb7598b154ad2f2cee8 # v5.0.0 - Using full commit sha to avoid security hotspot
+
+      - name: Check Sonar token
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          if [ -z "$SONAR_TOKEN" ]; then
+            echo "SONAR_TOKEN is missing"
+            exit 1
+          else
+            echo "SONAR_TOKEN is available"
+          fi
+      - name: Validate Sonar token
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          curl -s -u "${SONAR_TOKEN}:" https://sonarcloud.io/api/authentication/validate
 
       - name: SonarQube Scan
         if: github.event_name != 'pull_request'
@@ -50,16 +72,16 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
           mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-            -Dsonar.projectKey=bitstep-ie_mango4j-crypto \
+            -Dsonar.projectKey=bitstep-ie_mango4j \
             -Dsonar.organization=bitstep-ie \
             -Dsonar.host.url=${SONAR_HOST_URL} \
             -Dsonar.token=${SONAR_TOKEN} \
             -Dsonar.branch.name=${GITHUB_REF_NAME} \
-            -Dsonar.exclusions=**/keyrotation/** \
-            -Dsonar.coverage.exclusions=**/test/**,**/keyrotation/**
-
+            -Dsonar.coverage.exclusions=**/test/**
+        
+      
       - name: SonarQube Scan-PRs
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && github.event.pull_request.user.login != 'dependabot[bot]'
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
@@ -71,15 +93,15 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
           mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-            -Dsonar.projectKey=bitstep-ie_mango4j-crypto \
+            -Dgpg.skip=true \
+            -Dsonar.projectKey=bitstep-ie_mango4j \
             -Dsonar.organization=bitstep-ie \
             -Dsonar.host.url=${SONAR_HOST_URL} \
             -Dsonar.token=${SONAR_TOKEN} \
             -Dsonar.pullrequest.key=$PR_ID \
             -Dsonar.pullrequest.branch=$PR_BRANCH \
             -Dsonar.pullrequest.base=$PR_BASE \
-            -Dsonar.exclusions=**/keyrotation/** \
-            -Dsonar.coverage.exclusions=**/test/**,**/keyrotation/**
+            -Dsonar.coverage.exclusions=**/test/**
 
 
   docs:
