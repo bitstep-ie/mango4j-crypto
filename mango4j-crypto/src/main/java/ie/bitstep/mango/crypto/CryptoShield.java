@@ -383,8 +383,8 @@ public class CryptoShield {
 	}
 
 	private void setEncryptedDataField(Object entity, CryptoShieldDelegate cryptoShieldDelegate) {
-		List<Field> encryptedFields = annotatedEntityManager.getFieldsToEncrypt(entity.getClass());
-		if (encryptedFields.isEmpty()) {
+		List<CipherGroup> cipherGroups = annotatedEntityManager.getCipherGroups(entity.getClass());
+		if (cipherGroups.isEmpty()) {
 			// maybe this entity only has HMACs
 			return;
 		}
@@ -401,21 +401,23 @@ public class CryptoShield {
 			}
 		}
 
-		ObjectNode rootNode = convertToJson(entity, encryptedFields);
-		try {
-			if (!rootNode.isEmpty()) {
-				String finalCipherText = ciphertextFormatter.format(doEncrypt(rootNode, cryptoShieldDelegate));
-				annotatedEntityManager.getEncryptedDataField(entity.getClass()).set(entity, finalCipherText); // NOSONAR - we set accessible to true on startup
+		cipherGroups.forEach(cipherGroup -> {
+			ObjectNode rootNode = convertToJson(entity, cipherGroup.sourceFields());
+			try {
+				if (!rootNode.isEmpty()) {
+					String finalCipherText = ciphertextFormatter.format(doEncrypt(rootNode, cryptoShieldDelegate));
+					cipherGroup.targetField().set(entity, finalCipherText); // NOSONAR - we set accessible to true on startup
+				}
+				Optional<Field> encryptionKeyIdFieldMaybe = annotatedEntityManager.getEncryptionKeyIdField(entity.getClass());
+				if (encryptionKeyIdFieldMaybe.isPresent()) {
+					encryptionKeyIdFieldMaybe.get().set(entity, cryptoShieldDelegate.getCurrentEncryptionKey().getId()); // NOSONAR - we set accessible to true on startup
+				}
+			} catch (NonTransientCryptoException e) {
+				throw e;
+			} catch (Exception e) {
+				throw new NonTransientCryptoException(String.format("An error occurred trying to create the ciphertext:%s", e.getClass()), e);
 			}
-			Optional<Field> encryptionKeyIdFieldMaybe = annotatedEntityManager.getEncryptionKeyIdField(entity.getClass());
-			if (encryptionKeyIdFieldMaybe.isPresent()) {
-				encryptionKeyIdFieldMaybe.get().set(entity, cryptoShieldDelegate.getCurrentEncryptionKey().getId()); // NOSONAR - we set accessible to true on startup
-			}
-		} catch (NonTransientCryptoException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new NonTransientCryptoException(String.format("An error occurred trying to create the ciphertext:%s", e.getClass()), e);
-		}
+		});
 	}
 
 	private ObjectNode convertToJson(Object entity, List<Field> encryptedFields) {
@@ -501,17 +503,19 @@ public class CryptoShield {
 				return;
 			}
 
-			Object encryptedData = annotatedEntityManager.getEncryptedDataField(entity.getClass()).get(entity);
-			if (encryptedData == null) {
-				return;
-			}
+			for (CipherGroup cipherGroup : annotatedEntityManager.getCipherGroups(entity.getClass())) {
+				Object encryptedData = cipherGroup.targetField().get(entity);
+				if (encryptedData == null) {
+					continue;
+				}
 
-			String finalCiphertext = valueOf(encryptedData);
-			JsonNode decryptedJsonNode = objectMapper.readTree(encryptionService.decrypt(finalCiphertext));
-			for (Field field : fieldsToEncrypt) {
-				JsonNode fieldValue = decryptedJsonNode.get(field.getName());
-				if (fieldValue != null) {
-					field.set(entity, objectMapper.treeToValue(fieldValue, field.getType())); // NOSONAR
+				String finalCiphertext = valueOf(encryptedData);
+				JsonNode decryptedJsonNode = objectMapper.readTree(encryptionService.decrypt(finalCiphertext));
+				for (Field field : fieldsToEncrypt) {
+					JsonNode fieldValue = decryptedJsonNode.get(field.getName());
+					if (fieldValue != null) {
+						field.set(entity, objectMapper.treeToValue(fieldValue, field.getType())); // NOSONAR
+					}
 				}
 			}
 		} catch (TransientCryptoException e) {

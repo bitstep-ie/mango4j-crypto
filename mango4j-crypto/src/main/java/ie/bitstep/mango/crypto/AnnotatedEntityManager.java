@@ -19,16 +19,19 @@ import java.lang.reflect.Modifier;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.lang.System.Logger.Level.ERROR;
 import static java.lang.System.Logger.Level.WARNING;
 import static java.util.Collections.emptyList;
+import static java.util.List.copyOf;
 
 /**
  * Used to register an application's entities that contain encrypted fields.
@@ -39,10 +42,11 @@ public class AnnotatedEntityManager {
 
 	private final Map<Class<?>, List<Field>> sourceEncryptedFields = new HashMap<>();
 	private final Map<Class<?>, List<Field>> allSourceConfidentialFields = new HashMap<>();
-	private final Map<Class<?>, Field> applicationEncryptedDataFields = new HashMap<>();
 	private final Map<Class<?>, Field> applicationEncryptedKeyIdFields = new HashMap<>();
 	private final Map<Class<?>, HmacStrategy> applicationConfidentialEntitiesHmacStrategies = new HashMap<>();
 	private final Map<Class<?>, List<Field>> sourceFieldsToCascadeEncrypt = new HashMap<>();
+
+	private final Map<Class<?>, List<CipherGroup>> cipherGroups = new HashMap<>();
 
 	/**
 	 * Applications must call this method for all entity classes they have which contain the encryption annotations
@@ -57,8 +61,7 @@ public class AnnotatedEntityManager {
 			throw new NullPointerException("Constructor parameters cannot be null");
 		}
 		annotatedEntityClasses.forEach(annotatedEntityClass -> {
-			registerEncryptedDataField(annotatedEntityClass);
-			registerFieldsToEncrypt(annotatedEntityClass);
+			registerCipherGroups(annotatedEntityClass);
 			registerEncryptedKeyIdField(annotatedEntityClass);
 			registerHmacStrategy(annotatedEntityClass, hmacStrategyHelper);
 			registerAllConfidentialFields(annotatedEntityClass);
@@ -197,48 +200,48 @@ public class AnnotatedEntityManager {
 	}
 
 	/**
-	 * Registers the field annotated with {@link EncryptedData} for the entity type.
-	 *
-	 * @param annotatedEntityClass the entity class to scan
-	 */
-	private void registerEncryptedDataField(Class<?> annotatedEntityClass) {
-		List<Field> encryptedDataSourceFields = ReflectionUtils.getFieldsByAnnotation(annotatedEntityClass, Encrypt.class);
-		if (encryptedDataSourceFields.isEmpty()) {
-			return;
-		}
-
-		List<Field> encryptedDataField = ReflectionUtils.getFieldsByAnnotation(annotatedEntityClass, EncryptedData.class);
-		if (encryptedDataField.size() != 1) {
-			throw new NonTransientCryptoException(String.format("%s has a field marked with @%s but without a corresponding field marked with @%s",
-					annotatedEntityClass.getSimpleName(), Encrypt.class.getSimpleName(), EncryptedData.class.getSimpleName()));
-		}
-
-		encryptedDataField.get(0).setAccessible(true); // NOSONAR
-		applicationEncryptedDataFields.putIfAbsent(annotatedEntityClass, encryptedDataField.get(0));
-	}
-
-	/**
 	 * Registers fields annotated with {@link Encrypt} for the entity type.
 	 *
 	 * @param annotatedEntityClass the entity class to scan
 	 */
-	private void registerFieldsToEncrypt(Class<?> annotatedEntityClass) {
+	private void registerCipherGroups(Class<?> annotatedEntityClass) {
 		List<Field> fieldsToEncrypt = ReflectionUtils.getFieldsByAnnotation(annotatedEntityClass, Encrypt.class);
-		fieldsToEncrypt.forEach(field -> {
+		if (fieldsToEncrypt.isEmpty()) {
+			return;
+		}
 
-			EnableMigrationSupport migrationSupport = field.getAnnotation(EnableMigrationSupport.class);
+		Map<String, List<Field>> cipherGroupSourceFields = new HashMap<>();
+		List<CipherGroup> entityCipherGroups = new ArrayList<>();
+		Map<String, Field> targetEncryptedDataFields = Arrays.stream(annotatedEntityClass.getDeclaredFields())
+				.filter(field -> field.isAnnotationPresent(EncryptedData.class))
+				.collect(Collectors.toMap(field -> field.getAnnotation(EncryptedData.class).cipherGroup(), field -> field));
+		if (targetEncryptedDataFields.size() != 1) {
+			throw new NonTransientCryptoException(String.format("%s has a field marked with @%s but without a corresponding field marked with @%s",
+					annotatedEntityClass.getSimpleName(), Encrypt.class.getSimpleName(), EncryptedData.class.getSimpleName()));
+		}
+		targetEncryptedDataFields.forEach((s, field) -> field.setAccessible(true)); // NOSONAR
 
+		fieldsToEncrypt.forEach(fieldToEncrypt -> {
+			EnableMigrationSupport migrationSupport = fieldToEncrypt.getAnnotation(EnableMigrationSupport.class);
 			if (migrationSupport != null) {
 				// Field has @EnableMigrationSupport, skip transient check and log warning/error
-				handleMigrationSupport(annotatedEntityClass, field, migrationSupport);
-			} else if (!Modifier.isTransient(field.getModifiers())) {
+				handleMigrationSupport(annotatedEntityClass, fieldToEncrypt, migrationSupport);
+			} else if (!Modifier.isTransient(fieldToEncrypt.getModifiers())) {
 				// Field doesn't have @EnableMigrationSupport and is not transient - throw exception
 				throw new NonTransientCryptoException(String.format("%s has a field named %s marked with @%s but it is not transient. " +
 								"Please mark any fields annotated with @%s as transient",
-						annotatedEntityClass.getSimpleName(), field.getName(), Encrypt.class.getSimpleName(), Encrypt.class.getSimpleName()));
+						annotatedEntityClass.getSimpleName(), fieldToEncrypt.getName(), Encrypt.class.getSimpleName(), Encrypt.class.getSimpleName()));
 			}
-			field.setAccessible(true); // NOSONAR
+			fieldToEncrypt.setAccessible(true); // NOSONAR
+			Encrypt encryptAnnotation = fieldToEncrypt.getAnnotation(Encrypt.class);
+			cipherGroupSourceFields.computeIfAbsent(encryptAnnotation.cipherGroup(), k -> new ArrayList<>()).add(fieldToEncrypt);
 		});
+
+		cipherGroupSourceFields.forEach((cipherGroupName, sourceFields) -> {
+			Field targetEncryptedDataField = targetEncryptedDataFields.get(cipherGroupName);
+			entityCipherGroups.add(new CipherGroup(targetEncryptedDataField.getAnnotation(EncryptedData.class).keySelector(), sourceFields.size() == 1 ? CipherGroup.Type.SINGLE : CipherGroup.Type.COMPOUND, copyOf(sourceFields), targetEncryptedDataField));
+		});
+		this.cipherGroups.put(annotatedEntityClass, entityCipherGroups);
 		sourceEncryptedFields.putIfAbsent(annotatedEntityClass, fieldsToEncrypt);
 	}
 
@@ -316,6 +319,16 @@ public class AnnotatedEntityManager {
 	}
 
 	/**
+	 * Returns fields marked with {@link Encrypt} for the entity type.
+	 *
+	 * @param annotatedEntityClass the entity class to look up
+	 * @return the list of fields to encrypt
+	 */
+	public List<CipherGroup> getCipherGroups(Class<?> annotatedEntityClass) {
+		return cipherGroups.getOrDefault(annotatedEntityClass, emptyList());
+	}
+
+	/**
 	 * Returns all confidential fields (encrypt + hmac) for the entity type.
 	 *
 	 * @param annotatedEntityClass the entity class to look up
@@ -323,16 +336,6 @@ public class AnnotatedEntityManager {
 	 */
 	public List<Field> getAllConfidentialFields(Class<?> annotatedEntityClass) {
 		return allSourceConfidentialFields.getOrDefault(annotatedEntityClass, emptyList());
-	}
-
-	/**
-	 * Returns the field annotated with {@link EncryptedData} for the entity type.
-	 *
-	 * @param annotatedEntityClass the entity class to look up
-	 * @return the encrypted blob field
-	 */
-	public Field getEncryptedDataField(Class<?> annotatedEntityClass) {
-		return applicationEncryptedDataFields.get(annotatedEntityClass);
 	}
 
 	/**
