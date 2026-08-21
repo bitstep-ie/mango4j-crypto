@@ -24,9 +24,11 @@ import ie.bitstep.mango.crypto.hmac.HmacStrategy;
 import ie.bitstep.mango.utils.thread.NamedScheduledExecutorBuilder;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -35,6 +37,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 
 import static java.lang.String.valueOf;
 import static java.lang.System.Logger.Level.ERROR;
@@ -305,6 +308,10 @@ public class CryptoShield {
 				});
 	}
 
+	public Iterator<CryptoKey> generateHmacIterator(CryptoKeyRange cryptoKeyRange) {
+		return new CryptoKeyIterator(cryptoKeyProvider.getCurrentHmacKeys(), cryptoKeyRange);
+	}
+
 	public Collection<HmacHolder> generateHmacs(String sourceValue) {
 		return generateHmacs(sourceValue, null);
 	}
@@ -315,13 +322,41 @@ public class CryptoShield {
 	 * usually for search operations.
 	 *
 	 * @param sourceValue The source value to HMAC
-	 * @param name        An optional name/alias for the HMAC (can be null)
+	 * @param hmacAlias   An optional hmacAlias/alias for the HMAC (can be null)
 	 * @return A collection of {@link HmacHolder} objects containing the resulting HMACs
 	 */
-	public Collection<HmacHolder> generateHmacs(String sourceValue, String name) {
-		List<HmacHolder> hmacHolders = cryptoKeyProvider.getCurrentHmacKeys().stream()
-				.map(cryptoKey -> new HmacHolder(cryptoKey, sourceValue, name))
+	public Collection<HmacHolder> generateHmacs(String sourceValue, String hmacAlias) {
+		Map<String, String> map = new HashMap<>();
+		map.put(hmacAlias, sourceValue);
+		return generateHmacs(map);
+	}
+
+	/**
+	 * Note: Since this method ultimately streams several calls (in series - 1 for each key) to encryptionService.hmac().
+	 * Revisit this method if multithreading is needed or if we want to just end up calling encryptionService.hmac() once.
+	 *
+	 * @param hmacAliasToSourceValuePairs
+	 * @return
+	 */
+	public Collection<HmacHolder> generateHmacs(Map<String, String> hmacAliasToSourceValuePairs) {
+		return cryptoKeyProvider.getCurrentHmacKeys().stream()
+				.flatMap(cryptoKey -> generateHmacs(cryptoKey, hmacAliasToSourceValuePairs).stream())
 				.toList();
+	}
+
+	public HmacHolder generateHmac(CryptoKey hmacKey, String sourceValue, String hmacAlias) {
+		Map<String, String> map = new HashMap<>();
+		map.put(hmacAlias, sourceValue);
+		return generateHmacs(hmacKey, map).iterator().next();
+	}
+
+	public Collection<HmacHolder> generateHmacs(CryptoKey hmacKey, Map<String, String> hmacAliasToSourceValuePairs) {
+		if (hmacAliasToSourceValuePairs == null) {
+			throw new NonTransientCryptoException("Cannot generate HMACs for a null hmacAliasToSourceValuePairs map");
+		}
+		List<HmacHolder> hmacHolders = hmacAliasToSourceValuePairs.entrySet().stream()
+				.map(entry -> new HmacHolder(hmacKey, entry.getValue(), entry.getKey()))
+				.collect(Collectors.toCollection(ArrayList::new));
 		encryptionService.hmac(hmacHolders);
 		return hmacHolders;
 	}
