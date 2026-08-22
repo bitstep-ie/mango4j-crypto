@@ -8,6 +8,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+/**
+ * An iterator for iterating over a list of CryptoKey objects in a specified order
+ * (either increasing from oldest or decreasing from newest), defined by the {@link CryptoKeyRange}.
+ * <p></p>
+ * This class sorts the provided list of CryptoKey objects based on their creation date and allows iteration in the
+ * specified order. It is intended for use in scenarios where applications want to search for a HMAC with one key at a
+ * time in a particular order, rather than generate HMACs with all possible keys at once due to performance considerations.
+ */
 public class CryptoKeyIterator implements Iterator<CryptoKey> {
 	private final List<CryptoKey> cryptoKeysOldestFirst;
 	private final CryptoKeyRange cryptoKeyRange;

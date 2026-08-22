@@ -308,17 +308,34 @@ public class CryptoShield {
 				});
 	}
 
+	/**
+	 * Returns an iterator over the current HMAC keys in the order specified by the provided {@link CryptoKeyRange}.
+	 * This method is useful for applications that need to iterate over the current HMAC keys in a specific order
+	 * (specified by the {@link CryptoKeyRange}), and use each one to generate a HMAC one at a time using the
+	 * {@link CryptoShield#generateHmacs(CryptoKey, Map)} and {@link CryptoShield#generateHmac(CryptoKey, String, String)}
+	 * methods.
+	 *
+	 * @param cryptoKeyRange The range specifying the order of iteration (increasing from oldest or decreasing from newest)
+	 * @return An iterator over the current HMAC keys
+	 */
 	public Iterator<CryptoKey> generateHmacIterator(CryptoKeyRange cryptoKeyRange) {
 		return new CryptoKeyIterator(cryptoKeyProvider.getCurrentHmacKeys(), cryptoKeyRange);
 	}
 
+	/**
+	 * deafult method to generate HMACs for a given source value using all current HMAC keys. This method is useful
+	 * for applications that need to generate HMACs for values outside the context of an annotated entity,
+	 * usually for search operations. This method will use a null hmacAlias for the HMAC.
+	 * @param sourceValue The source value for which to generate HMACs
+	 * @return A collection of {@link HmacHolder} objects containing the resulting HMACs
+	 */
 	public Collection<HmacHolder> generateHmacs(String sourceValue) {
 		return generateHmacs(sourceValue, null);
 	}
 
 	/**
 	 * Method to generate HMACs for a given source value using all current HMAC keys. This method is useful
-	 * for applications that need to generate HMACs for values outside the context of an annotated entity,
+	 * for applications that need to generate a HMAC for a value outside the context of an annotated entity,
 	 * usually for search operations.
 	 *
 	 * @param sourceValue The source value to HMAC
@@ -332,11 +349,19 @@ public class CryptoShield {
 	}
 
 	/**
-	 * Note: Since this method ultimately streams several calls (in series - 1 for each key) to encryptionService.hmac().
+	 * Generates HMACs for a given map of hmacAlias to source value pairs using all current HMAC keys. This method is useful
+	 * for applications that need to generate HMACs for values outside the context of an annotated entity,
+	 * usually for search operations. The resulting HMACs will be calculated with all possible HMAC keys and
+	 * returned as a collection of {@link HmacHolder} objects, (1 HMAC per key per hmacAliasToSourceValuePair pair).
+	 * <p>
+	 * i.e. if an application needed to search for an entity using 2 of that entity's fields that are HMACed, and there
+	 * are 3 current HMAC keys, then this method would return 6 {@link HmacHolder HmacHolders}.
+	 * </p>
+	 * <b>Note:</b> Since this method ultimately streams several calls (in series - 1 for each key) to encryptionService.hmac().
 	 * Revisit this method if multithreading is needed or if we want to just end up calling encryptionService.hmac() once.
 	 *
-	 * @param hmacAliasToSourceValuePairs
-	 * @return
+	 * @param hmacAliasToSourceValuePairs A map of hmacAlias to source value pairs for which HMACs need to be generated
+	 * @return A collection of {@link HmacHolder} objects containing the resulting HMACs, calculated with all possible HMAC keys
 	 */
 	public Collection<HmacHolder> generateHmacs(Map<String, String> hmacAliasToSourceValuePairs) {
 		return cryptoKeyProvider.getCurrentHmacKeys().stream()
@@ -344,12 +369,29 @@ public class CryptoShield {
 				.toList();
 	}
 
+	/**
+	 * Method to generate HMACs for a given source value using the specified HMAC key. This method is useful
+	 * for applications that need to generate a HMAC for a value outside the context of an annotated entity,
+	 * usually for search operations.
+	 *
+	 * @param sourceValue The source value to HMAC
+	 * @param hmacAlias   An optional hmacAlias/alias for the HMAC (can be null)
+	 * @return A collection of {@link HmacHolder} objects containing the resulting HMACs
+	 */
 	public HmacHolder generateHmac(CryptoKey hmacKey, String sourceValue, String hmacAlias) {
 		Map<String, String> map = new HashMap<>();
 		map.put(hmacAlias, sourceValue);
 		return generateHmacs(hmacKey, map).iterator().next();
 	}
 
+	/**
+	 * Generates HMACs for a given map of hmacAlias to source value pairs using the specified HMAC key. This method is useful
+	 * for applications that need to generate HMACs for values outside the context of an annotated entity,
+	 * usually for search operations.
+	 *
+	 * @param hmacAliasToSourceValuePairs A map of hmacAlias to source value pairs for which HMACs need to be generated
+	 * @return A collection of {@link HmacHolder} objects containing the resulting HMACs, calculated with all possible HMAC keys
+	 */
 	public Collection<HmacHolder> generateHmacs(CryptoKey hmacKey, Map<String, String> hmacAliasToSourceValuePairs) {
 		if (hmacAliasToSourceValuePairs == null) {
 			throw new NonTransientCryptoException("Cannot generate HMACs for a null hmacAliasToSourceValuePairs map");
