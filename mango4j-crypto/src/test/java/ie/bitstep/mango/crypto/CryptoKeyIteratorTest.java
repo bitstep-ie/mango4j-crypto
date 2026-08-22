@@ -15,58 +15,58 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class CryptoKeyIteratorTest {
 
-    private CryptoKey newerCryptoKey;
-    private CryptoKey olderCryptoKey;
+	private CryptoKey newerCryptoKey;
+	private CryptoKey olderCryptoKey;
 
-    @BeforeEach
-    void setup() {
-        olderCryptoKey = testCryptoKey();
-        olderCryptoKey.setId("older");
-        olderCryptoKey.setCreatedDate(Instant.now().minusSeconds(3600));
+	@BeforeEach
+	void setup() {
+		olderCryptoKey = testCryptoKey();
+		olderCryptoKey.setId("older");
+		olderCryptoKey.setCreatedDate(Instant.now().minusSeconds(3600));
 
-        newerCryptoKey = testCryptoKey();
-        newerCryptoKey.setId("newer");
-        newerCryptoKey.setCreatedDate(Instant.now());
-    }
+		newerCryptoKey = testCryptoKey();
+		newerCryptoKey.setId("newer");
+		newerCryptoKey.setCreatedDate(Instant.now());
+	}
 
-    @Test
-    void increasingFromOldestIteratesFromOldestToNewest() {
-        List<CryptoKey> cryptoKeys = List.of(olderCryptoKey, newerCryptoKey);
-        CryptoKeyIterator cryptoKeyIterator = new CryptoKeyIterator(cryptoKeys, CryptoKeyRange.increasingFromOldest());
+	@Test
+	void increasingFromOldestIteratesFromOldestToNewest() {
+		List<CryptoKey> cryptoKeys = List.of(olderCryptoKey, newerCryptoKey);
+		CryptoKeyIterator cryptoKeyIterator = new CryptoKeyIterator(cryptoKeys, CryptoKeyRange.increasingFromOldest());
 
-        assertThat(cryptoKeyIterator.hasNext()).isTrue();
-        assertThat(cryptoKeyIterator.next()).isEqualTo(olderCryptoKey);
-        assertThat(cryptoKeyIterator.hasNext()).isTrue();
-        assertThat(cryptoKeyIterator.next()).isEqualTo(newerCryptoKey);
-        assertThat(cryptoKeyIterator.hasNext()).isFalse();
-        assertThatThrownBy(cryptoKeyIterator::next).isInstanceOf(NoSuchElementException.class);
-    }
+		assertThat(cryptoKeyIterator.hasNext()).isTrue();
+		assertThat(cryptoKeyIterator.next()).isEqualTo(olderCryptoKey);
+		assertThat(cryptoKeyIterator.hasNext()).isTrue();
+		assertThat(cryptoKeyIterator.next()).isEqualTo(newerCryptoKey);
+		assertThat(cryptoKeyIterator.hasNext()).isFalse();
+		assertThatThrownBy(cryptoKeyIterator::next).isInstanceOf(NoSuchElementException.class);
+	}
 
-    @Test
-    void decreasingFromNewestIteratesFromNewestToOldest() {
-        List<CryptoKey> cryptoKeys = List.of(olderCryptoKey, newerCryptoKey);
-        CryptoKeyIterator cryptoKeyIterator = new CryptoKeyIterator(cryptoKeys, CryptoKeyRange.decreasingFromNewest());
+	@Test
+	void decreasingFromNewestIteratesFromNewestToOldest() {
+		List<CryptoKey> cryptoKeys = List.of(olderCryptoKey, newerCryptoKey);
+		CryptoKeyIterator cryptoKeyIterator = new CryptoKeyIterator(cryptoKeys, CryptoKeyRange.decreasingFromNewest());
 
-        assertThat(cryptoKeyIterator.hasNext()).isTrue();
-        assertThat(cryptoKeyIterator.next()).isEqualTo(newerCryptoKey);
-        assertThat(cryptoKeyIterator.hasNext()).isTrue();
-        assertThat(cryptoKeyIterator.next()).isEqualTo(olderCryptoKey);
-        assertThat(cryptoKeyIterator.hasNext()).isFalse();
-        assertThatThrownBy(cryptoKeyIterator::next).isInstanceOf(NoSuchElementException.class);
-    }
+		assertThat(cryptoKeyIterator.hasNext()).isTrue();
+		assertThat(cryptoKeyIterator.next()).isEqualTo(newerCryptoKey);
+		assertThat(cryptoKeyIterator.hasNext()).isTrue();
+		assertThat(cryptoKeyIterator.next()).isEqualTo(olderCryptoKey);
+		assertThat(cryptoKeyIterator.hasNext()).isFalse();
+		assertThatThrownBy(cryptoKeyIterator::next).isInstanceOf(NoSuchElementException.class);
+	}
 
-    @Test
-    void emptyListHasNoElements() {
-        CryptoKeyIterator cryptoKeyIterator = new CryptoKeyIterator(Collections.emptyList(), CryptoKeyRange.increasingFromOldest());
-        assertThat(cryptoKeyIterator.hasNext()).isFalse();
-        assertThatThrownBy(cryptoKeyIterator::next).isInstanceOf(NoSuchElementException.class);
-    }
+	@Test
+	void emptyListHasNoElements() {
+		CryptoKeyIterator cryptoKeyIterator = new CryptoKeyIterator(Collections.emptyList(), CryptoKeyRange.increasingFromOldest());
+		assertThat(cryptoKeyIterator.hasNext()).isFalse();
+		assertThatThrownBy(cryptoKeyIterator::next).isInstanceOf(NoSuchElementException.class);
+	}
 
-    @Test
-    void nullRangeCausesNpeOnNext() {
-        CryptoKeyIterator cryptoKeyIterator = new CryptoKeyIterator(List.of(newerCryptoKey), null);
-        // hasNext relies only on index and size, so it should be true; next will try to dereference range and throw NPE
-        assertThat(cryptoKeyIterator.hasNext()).isTrue();
-        assertThatThrownBy(cryptoKeyIterator::next).isInstanceOf(NullPointerException.class);
-    }
+	@Test
+	void nullRangeCausesNpeOnNext() {
+		CryptoKeyIterator cryptoKeyIterator = new CryptoKeyIterator(List.of(newerCryptoKey), null);
+		// hasNext relies only on index and size, so it should be true; next will try to dereference range and throw NPE
+		assertThat(cryptoKeyIterator.hasNext()).isTrue();
+		assertThatThrownBy(cryptoKeyIterator::next).isInstanceOf(NullPointerException.class);
+	}
 }
