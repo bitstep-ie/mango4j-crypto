@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import ie.bitstep.mango.crypto.core.domain.CiphertextContainer;
+import ie.bitstep.mango.crypto.core.domain.CryptoKey;
 import ie.bitstep.mango.crypto.core.domain.HmacHolder;
 import ie.bitstep.mango.crypto.core.encryption.EncryptionService;
 import ie.bitstep.mango.crypto.core.encryption.EncryptionServiceDelegate;
@@ -43,10 +44,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.lang.reflect.Field;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
@@ -89,7 +93,10 @@ import static org.mockito.Mockito.times;
 @ExtendWith(MockitoExtension.class)
 class CryptoShieldTest {
 
-	public static final int TEST_POOL_SIZE = 10;
+	private static final int TEST_POOL_SIZE = 10;
+	private static final String OLDER_CRYPTO_KEY_ID = "older";
+	private static final String NEWER_CRYPTO_KEY_ID = "newer";
+
 	@Mock
 	private ObjectMapper mockedObjectMapper;
 
@@ -128,6 +135,8 @@ class CryptoShieldTest {
 
 	private ObjectNode objectNode;
 	private TestMockHmacEntity testEntity;
+	private CryptoKey newerCryptoKey;
+	private CryptoKey olderCryptoKey;
 	private CryptoShield cryptoShield;
 
 	@BeforeEach
@@ -144,6 +153,14 @@ class CryptoShieldTest {
 		testEntity.setHighlyConfidentialObject(TEST_HIGHLY_CONFIDENTIAL_OBJECT);
 
 		given(mockEncryptionServiceDelegate.supportedCryptoKeyType()).willReturn(TEST_CRYPTO_KEY.getType());
+
+		olderCryptoKey = testCryptoKey();
+		olderCryptoKey.setId(OLDER_CRYPTO_KEY_ID);
+		olderCryptoKey.setCreatedDate(Instant.now().minusSeconds(3600));
+
+		newerCryptoKey = testCryptoKey();
+		newerCryptoKey.setId(NEWER_CRYPTO_KEY_ID);
+		newerCryptoKey.setCreatedDate(Instant.now());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1310,11 +1327,92 @@ class CryptoShieldTest {
 		assertThat(hmacHolders).hasSize(2)
 				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY) && hmacHolder.getValue().equals(TEST_PAN))
 				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY_2) && hmacHolder.getValue().equals(TEST_PAN));
-		then(mockEncryptionService).should().hmac(hmacHolderArgumentCaptor.capture());
+		then(mockEncryptionService).should(times(2)).hmac(hmacHolderArgumentCaptor.capture());
 
-		assertThat(hmacHolderArgumentCaptor.getValue()).hasSize(2)
+		assertThat(hmacHolderArgumentCaptor.getAllValues()).hasSize(2);
+		assertThat(hmacHolderArgumentCaptor.getAllValues().stream().flatMap(Collection::stream).toList())
 				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY) && hmacHolder.getValue().equals(TEST_PAN))
 				.anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY_2) && hmacHolder.getValue().equals(TEST_PAN));
+	}
+
+	@Test
+	void generateHmacsWithCryptoKey() {
+		String testAlias1 = "alias1";
+		String testAlias2 = "alias2";
+		String otherSourceValue = "someOtherValue";
+		given(mockObjectMapperFactory.objectMapper()).willReturn(mockedObjectMapper);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+		overrideDirectlyInstantiatedFieldsWithMocks();
+
+		Map<String, String> aliasToValue = Map.of(testAlias1, TEST_PAN, testAlias2, otherSourceValue);
+		Collection<HmacHolder> hmacHolders = cryptoShield.generateHmacs(TEST_CRYPTO_KEY, aliasToValue);
+		assertThat(hmacHolders).hasSize(2)
+				.anyMatch(h -> h.getCryptoKey().equals(TEST_CRYPTO_KEY) && h.getValue().equals(TEST_PAN) && testAlias1.equals(h.getHmacAlias()))
+				.anyMatch(h -> h.getCryptoKey().equals(TEST_CRYPTO_KEY) && h.getValue().equals(otherSourceValue) && testAlias2.equals(h.getHmacAlias()));
+
+		then(mockEncryptionService).should().hmac(hmacHolderArgumentCaptor.capture());
+		assertThat(hmacHolderArgumentCaptor.getValue()).hasSize(2)
+				.allMatch(h -> h.getCryptoKey().equals(TEST_CRYPTO_KEY));
+	}
+
+	@Test
+	void generateHmacWithCryptoKeySingle() {
+		String testHmacAlias = "TestAlias";
+		given(mockObjectMapperFactory.objectMapper()).willReturn(mockedObjectMapper);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+		overrideDirectlyInstantiatedFieldsWithMocks();
+
+		HmacHolder hmacHolder = cryptoShield.generateHmac(TEST_CRYPTO_KEY, TEST_PAN, testHmacAlias);
+		assertThat(hmacHolder).isNotNull();
+		assertThat(hmacHolder.getCryptoKey()).isEqualTo(TEST_CRYPTO_KEY);
+		assertThat(hmacHolder.getValue()).isEqualTo(TEST_PAN);
+		assertThat(hmacHolder.getHmacAlias()).isEqualTo(testHmacAlias);
+
+		then(mockEncryptionService).should().hmac(hmacHolderArgumentCaptor.capture());
+		assertThat(hmacHolderArgumentCaptor.getValue()).hasSize(1);
+		HmacHolder captured = hmacHolderArgumentCaptor.getValue().iterator().next();
+		assertThat(captured.getCryptoKey()).isEqualTo(TEST_CRYPTO_KEY);
+		assertThat(captured.getValue()).isEqualTo(TEST_PAN);
+		assertThat(captured.getHmacAlias()).isEqualTo(testHmacAlias);
+	}
+
+	@Test
+	void generateHmacsWithCryptoKeyNullMapThrows() {
+		given(mockObjectMapperFactory.objectMapper()).willReturn(mockedObjectMapper);
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+		overrideDirectlyInstantiatedFieldsWithMocks();
+
+		assertThatThrownBy(() -> cryptoShield.generateHmacs(TEST_CRYPTO_KEY, null))
+				.isInstanceOf(NonTransientCryptoException.class)
+				.hasMessage("Cannot generate HMACs for a null hmacAliasToSourceValuePairs map");
+	}
+
+	@Test
+	void generateHmacIteratorDecreasingFromNewest() {
+		given(mockObjectMapperFactory.objectMapper()).willReturn(mockedObjectMapper);
+		// return in reverse order to ensure sorting occurs
+		given(mockCryptoKeyProvider.getCurrentHmacKeys()).willReturn(List.of(newerCryptoKey, olderCryptoKey));
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+
+		Iterator<CryptoKey> cryptoKeyIterator = cryptoShield.generateHmacIterator(CryptoKeyRange.decreasingFromNewest());
+
+		assertThat(cryptoKeyIterator.next().getId()).isEqualTo(NEWER_CRYPTO_KEY_ID);
+		assertThat(cryptoKeyIterator.next().getId()).isEqualTo(OLDER_CRYPTO_KEY_ID);
+		assertThatThrownBy(cryptoKeyIterator::next).isInstanceOf(NoSuchElementException.class);
+	}
+
+	@Test
+	void generateHmacIteratorIncreasingFromOldest() {
+		given(mockObjectMapperFactory.objectMapper()).willReturn(mockedObjectMapper);
+		// return in reverse order to ensure sorting occurs
+		given(mockCryptoKeyProvider.getCurrentHmacKeys()).willReturn(List.of(newerCryptoKey, olderCryptoKey));
+		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+
+		Iterator<CryptoKey> cryptoKeyIterator = cryptoShield.generateHmacIterator(CryptoKeyRange.increasingFromOldest());
+
+		assertThat(cryptoKeyIterator.next().getId()).isEqualTo(OLDER_CRYPTO_KEY_ID);
+		assertThat(cryptoKeyIterator.next().getId()).isEqualTo(NEWER_CRYPTO_KEY_ID);
+		assertThatThrownBy(cryptoKeyIterator::next).isInstanceOf(NoSuchElementException.class);
 	}
 
 	@Test
