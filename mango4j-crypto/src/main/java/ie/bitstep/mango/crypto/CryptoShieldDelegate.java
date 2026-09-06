@@ -13,6 +13,8 @@ public interface CryptoShieldDelegate {
 	 */
 	CryptoKey getCurrentEncryptionKey();
 
+	CryptoKey getCurrentEncryptionKey(String keySelector);
+
 	/**
 	 * Returns the HMAC strategy for the supplied entity.
 	 *

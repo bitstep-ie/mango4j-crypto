@@ -4,13 +4,10 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 record CipherGroup(
-		String KeySelector,
-		Type type,
+		String cipherGroupName,
+		String keySelector,
 		List<Field> sourceFields,
-		Field targetField
+		Field targetField,
+		Field keyIdField
 ) {
-	enum Type { // Changed to public as it's part of the public record's component type
-		SINGLE,
-		COMPOUND
-	}
 }

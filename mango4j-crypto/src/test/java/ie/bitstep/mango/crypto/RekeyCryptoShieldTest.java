@@ -112,6 +112,7 @@ class RekeyCryptoShieldTest {
 		CryptoShieldDelegate cryptoShieldDelegate = getRekeyCryptoShieldDelegate();
 
 		assertThat(cryptoShieldDelegate.getCurrentEncryptionKey()).isEqualTo(mockEncryptionKey);
+		assertThat(cryptoShieldDelegate.getCurrentEncryptionKey("highConfidentialityKeySelector")).isEqualTo(mockEncryptionKey);
 		assertThat(cryptoShieldDelegate.getHmacStrategy(testEntity)).isNotPresent();
 	}
 

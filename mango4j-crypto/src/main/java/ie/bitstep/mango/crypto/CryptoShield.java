@@ -203,6 +203,14 @@ public class CryptoShield {
 			public CryptoKey getCurrentEncryptionKey() {
 				return cryptoKeyProvider.getCurrentEncryptionKey();
 			}
+
+			@Override
+			public CryptoKey getCurrentEncryptionKey(String keySelector) {
+				if ("".equals(keySelector)) {
+					return cryptoKeyProvider.getCurrentEncryptionKey();
+				}
+				return cryptoKeyProvider.getCurrentEncryptionKey(keySelector);
+			}
 		};
 	}
 
@@ -466,6 +474,7 @@ public class CryptoShield {
 			return;
 		}
 
+		// TODO: revisit this check when rekey is refactored. It should be removed and replaced with a check that also incorporates the keySelector of the target field.
 		if (cryptoShieldDelegate.getCurrentEncryptionKey() == null) {
 			// The delegate check is needed due to the fact that currently the rekey job (currently in BETA) does the
 			// re-encrypt and re-HMAC operations separately so cryptoShieldDelegate.getCurrentEncryptionKey() returns null
@@ -481,13 +490,14 @@ public class CryptoShield {
 		cipherGroups.forEach(cipherGroup -> {
 			ObjectNode rootNode = convertToJson(entity, cipherGroup.sourceFields());
 			try {
+				CryptoKey currentEncryptionKey = cryptoShieldDelegate.getCurrentEncryptionKey(cipherGroup.targetField().getAnnotation(EncryptedData.class).keySelector());
 				if (!rootNode.isEmpty()) {
-					String finalCipherText = ciphertextFormatter.format(doEncrypt(rootNode, cryptoShieldDelegate));
+					String finalCipherText = ciphertextFormatter.format(doEncrypt(rootNode, currentEncryptionKey));
 					cipherGroup.targetField().set(entity, finalCipherText); // NOSONAR - we set accessible to true on startup
 				}
-				Optional<Field> encryptionKeyIdFieldMaybe = annotatedEntityManager.getEncryptionKeyIdField(entity.getClass());
-				if (encryptionKeyIdFieldMaybe.isPresent()) {
-					encryptionKeyIdFieldMaybe.get().set(entity, cryptoShieldDelegate.getCurrentEncryptionKey().getId()); // NOSONAR - we set accessible to true on startup
+				Field encryptionKeyIdField = cipherGroup.keyIdField();
+				if (encryptionKeyIdField != null) {
+					encryptionKeyIdField.set(entity, currentEncryptionKey.getId()); // NOSONAR - we set accessible to true on startup
 				}
 			} catch (NonTransientCryptoException e) {
 				throw e;
@@ -516,8 +526,8 @@ public class CryptoShield {
 		return rootNode;
 	}
 
-	private CiphertextContainer doEncrypt(ObjectNode rootNode, CryptoShieldDelegate cryptoShieldDelegate) throws JsonProcessingException {
-		return encryptionService.encrypt(cryptoShieldDelegate.getCurrentEncryptionKey(), objectMapper.writeValueAsString(rootNode));
+	private CiphertextContainer doEncrypt(ObjectNode rootNode, CryptoKey encryptionKey) throws JsonProcessingException {
+		return encryptionService.encrypt(encryptionKey, objectMapper.writeValueAsString(rootNode));
 	}
 
 	/**

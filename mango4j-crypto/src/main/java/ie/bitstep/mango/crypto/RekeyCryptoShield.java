@@ -25,6 +25,12 @@ public class RekeyCryptoShield {
 			}
 
 			@Override
+			// TODO: This method is provided for backward compatibility and delegates to the no-argument getCurrentEncryptionKey() method.
+			public CryptoKey getCurrentEncryptionKey(String keySelector) {
+				return getCurrentEncryptionKey();
+			}
+
+			@Override
 			public Optional<HmacStrategy> getHmacStrategy(Object entity) {
 				Optional<HmacStrategy> hmacStrategy = cryptoShield.getAnnotatedEntityManager().getHmacStrategy(entity.getClass());
 				if (currentHmacKey != null && hmacStrategy.isPresent()) {
