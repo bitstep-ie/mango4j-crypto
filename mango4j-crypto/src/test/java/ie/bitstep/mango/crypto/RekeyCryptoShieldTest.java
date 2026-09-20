@@ -23,6 +23,7 @@ import static org.mockito.BDDMockito.then;
 @ExtendWith(MockitoExtension.class)
 class RekeyCryptoShieldTest {
 
+	public static final String TEST_SELECTOR_VALUE = "test-selector";
 	@Mock
 	private CryptoShield mockCryptoShield;
 
@@ -112,8 +113,39 @@ class RekeyCryptoShieldTest {
 		CryptoShieldDelegate cryptoShieldDelegate = getRekeyCryptoShieldDelegate();
 
 		assertThat(cryptoShieldDelegate.getCurrentEncryptionKey()).isEqualTo(mockEncryptionKey);
-		assertThat(cryptoShieldDelegate.getCurrentEncryptionKey("highConfidentialityKeySelector")).isEqualTo(mockEncryptionKey);
+		assertThat(cryptoShieldDelegate.getCurrentEncryptionKey("highConfidentialityKeySelector")).isNull();
 		assertThat(cryptoShieldDelegate.getHmacStrategy(testEntity)).isNotPresent();
+	}
+
+	@Test
+	void getCurrentEncryptionKeyNull() {
+		rekeyCryptoShield = new RekeyCryptoShield(mockCryptoShield, null, null);
+		CryptoShieldDelegate cryptoShieldDelegate = getRekeyCryptoShieldDelegate();
+
+		assertThat(cryptoShieldDelegate.getCurrentEncryptionKey(TEST_SELECTOR_VALUE)).isNull();
+	}
+
+	@Test
+	void getCurrentEncryptionKeyWithEmptySelectorReturnsCurrentKey() {
+		CryptoShieldDelegate cryptoShieldDelegate = getRekeyCryptoShieldDelegate();
+
+		assertThat(cryptoShieldDelegate.getCurrentEncryptionKey("")).isEqualTo(mockEncryptionKey);
+	}
+
+	@Test
+	void getCurrentEncryptionKeyWithMatchingSelectorReturnsCurrentKey() {
+		given(mockEncryptionKey.getKeySelector()).willReturn(TEST_SELECTOR_VALUE);
+		CryptoShieldDelegate cryptoShieldDelegate = getRekeyCryptoShieldDelegate();
+
+		assertThat(cryptoShieldDelegate.getCurrentEncryptionKey(TEST_SELECTOR_VALUE)).isEqualTo(mockEncryptionKey);
+	}
+
+	@Test
+	void getCurrentEncryptionKeyWithNonMatchingSelectorReturnsNull() {
+		given(mockEncryptionKey.getKeySelector()).willReturn(TEST_SELECTOR_VALUE);
+		CryptoShieldDelegate cryptoShieldDelegate = getRekeyCryptoShieldDelegate();
+
+		assertThat(cryptoShieldDelegate.getCurrentEncryptionKey("other-selector")).isNull();
 	}
 
 	@Test

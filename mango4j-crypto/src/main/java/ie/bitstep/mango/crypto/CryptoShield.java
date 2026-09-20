@@ -42,6 +42,7 @@ import java.util.stream.Collectors;
 
 import static java.lang.String.valueOf;
 import static java.lang.System.Logger.Level.ERROR;
+import static java.lang.System.Logger.Level.INFO;
 
 /**
  * Applications that use Entities annotated with the mango4j-crypto annotations (
@@ -207,7 +208,7 @@ public class CryptoShield {
 			@Override
 			public CryptoKey getCurrentEncryptionKey(String keySelector) {
 				if ("".equals(keySelector)) {
-					return cryptoKeyProvider.getCurrentEncryptionKey();
+					return getCurrentEncryptionKey();
 				}
 				return cryptoKeyProvider.getCurrentEncryptionKey(keySelector);
 			}
@@ -381,6 +382,7 @@ public class CryptoShield {
 	 * deafult method to generate HMACs for a given source value using all current HMAC keys. This method is useful
 	 * for applications that need to generate HMACs for values outside the context of an annotated entity,
 	 * usually for search operations. This method will use a null hmacAlias for the HMAC.
+	 *
 	 * @param sourceValue The source value for which to generate HMACs
 	 * @return A collection of {@link HmacHolder} objects containing the resulting HMACs
 	 */
@@ -474,30 +476,25 @@ public class CryptoShield {
 			return;
 		}
 
-		// TODO: revisit this check when rekey is refactored. It should be removed and replaced with a check that also incorporates the keySelector of the target field.
-		if (cryptoShieldDelegate.getCurrentEncryptionKey() == null) {
-			// The delegate check is needed due to the fact that currently the rekey job (currently in BETA) does the
-			// re-encrypt and re-HMAC operations separately so cryptoShieldDelegate.getCurrentEncryptionKey() returns null
-			// here for the re-HMAC job which isn't a problem and we just return immediately cause there's no encryption to do.
-			// This all needs removed when the rekey stuff is refactored.
-			if (cryptoShieldDelegate != this.cryptoShieldDelegate) {
-				return;
-			} else {
-				throw new ActiveEncryptionKeyNotFoundException();
-			}
-		}
-
 		cipherGroups.forEach(cipherGroup -> {
 			ObjectNode rootNode = convertToJson(entity, cipherGroup.sourceFields());
 			try {
-				CryptoKey currentEncryptionKey = cryptoShieldDelegate.getCurrentEncryptionKey(cipherGroup.targetField().getAnnotation(EncryptedData.class).keySelector());
+				String keySelector = cipherGroup.targetField().getAnnotation(EncryptedData.class).keySelector();
+				CryptoKey currentCipherGroupEncryptionKey = cryptoShieldDelegate.getCurrentEncryptionKey(keySelector);
+				if (currentCipherGroupEncryptionKey == null && cryptoShieldDelegate != this.cryptoShieldDelegate) {
+					logger.log(INFO, "No active encryption key found for key selector ''{0}'' during a rekey, so this cipher group does not need rekeying", keySelector);
+					return;
+				} else if (currentCipherGroupEncryptionKey == null) {
+					throw new ActiveEncryptionKeyNotFoundException();
+				}
+
 				if (!rootNode.isEmpty()) {
-					String finalCipherText = ciphertextFormatter.format(doEncrypt(rootNode, currentEncryptionKey));
+					String finalCipherText = ciphertextFormatter.format(doEncrypt(rootNode, currentCipherGroupEncryptionKey));
 					cipherGroup.targetField().set(entity, finalCipherText); // NOSONAR - we set accessible to true on startup
 				}
 				Field encryptionKeyIdField = cipherGroup.keyIdField();
 				if (encryptionKeyIdField != null) {
-					encryptionKeyIdField.set(entity, currentEncryptionKey.getId()); // NOSONAR - we set accessible to true on startup
+					encryptionKeyIdField.set(entity, currentCipherGroupEncryptionKey.getId()); // NOSONAR - we set accessible to true on startup
 				}
 			} catch (NonTransientCryptoException e) {
 				throw e;

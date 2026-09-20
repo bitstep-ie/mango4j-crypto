@@ -285,7 +285,6 @@ class CryptoShieldTest {
 			given(mockedObjectMapper.convertValue(TEST_PAN, JsonNode.class)).willReturn(new TextNode(TEST_PAN));
 			given(mockedObjectMapper.convertValue(TEST_USERNAME, JsonNode.class)).willReturn(new TextNode(TEST_USERNAME));
 			given(mockedObjectMapper.writeValueAsString(objectNodeArgumentCaptor.capture())).willReturn(TEST_MOCK_SOURCE_CIPHERTEXT);
-			given(mockCryptoKeyProvider.getCurrentEncryptionKey()).willReturn(TEST_CRYPTO_KEY);
 			CryptoKey highConfidentialityKey = testCryptoKey();
 			highConfidentialityKey.setId(HIGH_CONFIDENTIALITY_KEY_ID);
 			CryptoKey lowConfidentialityKey = testCryptoKey();
@@ -650,7 +649,6 @@ class CryptoShieldTest {
 	@Test
 	void encryptFieldGetFailure() {
 		given(mockObjectMapperFactory.objectMapper()).willReturn(mockedObjectMapper);
-		given(mockCryptoKeyProvider.getCurrentEncryptionKey()).willReturn(TEST_CRYPTO_KEY);
 		RuntimeException cause = new RuntimeException("Test Exception Message");
 		given(mockedObjectMapper.convertValue(TEST_PAN, JsonNode.class)).willThrow(cause);
 
@@ -733,7 +731,6 @@ class CryptoShieldTest {
 		TransientCryptoException transientCryptoException = new TransientCryptoException("Test Transient Exception", new RuntimeException());
 		given(mockedObjectMapper.createObjectNode())
 				.willThrow(transientCryptoException);
-		given(mockCryptoKeyProvider.getCurrentEncryptionKey()).willReturn(TEST_CRYPTO_KEY);
 
 		RetryConfiguration retryConfiguration = new RetryConfiguration(TEST_POOL_SIZE, 3, Duration.ofMillis(200), 2);
 		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), retryConfiguration, null);
@@ -905,7 +902,6 @@ class CryptoShieldTest {
 		assertThat(MockHmacStrategyImpl.hmacStrategyHelperPassedToConstructor.encryptionService()).isInstanceOf(EncryptionService.class);
 		assertThat(MockHmacStrategyImpl.entityPassedToHmac).isEqualTo(testEntity);
 
-		then(mockedObjectMapper).shouldHaveNoInteractions();
 		then(mockCiphertextFormatter).shouldHaveNoInteractions();
 	}
 
@@ -913,7 +909,7 @@ class CryptoShieldTest {
 	void encryptNoCurrentEncryptionKeyButRekeyCryptoShieldDelegate() {
 		given(mockObjectMapperFactory.objectMapper()).willReturn(mockedObjectMapper);
 		CryptoShieldDelegate mockCryptoShieldDelegate = Mockito.mock(CryptoShieldDelegate.class);
-		given(mockCryptoShieldDelegate.getCurrentEncryptionKey()).willReturn(null);
+		given(mockCryptoShieldDelegate.getCurrentEncryptionKey("")).willReturn(null);
 		given(mockCryptoShieldDelegate.getHmacStrategy(testEntity)).willReturn(Optional.of(new MockHmacStrategyImpl(null, null)));
 
 		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null, null);
@@ -925,7 +921,6 @@ class CryptoShieldTest {
 		assertThat(MockHmacStrategyImpl.hmacStrategyHelperPassedToConstructor.cryptoKeyProvider()).isEqualTo(mockCryptoKeyProvider);
 		assertThat(MockHmacStrategyImpl.hmacStrategyHelperPassedToConstructor.encryptionService()).isInstanceOf(EncryptionService.class);
 
-		then(mockedObjectMapper).shouldHaveNoInteractions();
 		then(mockCiphertextFormatter).shouldHaveNoInteractions();
 	}
 

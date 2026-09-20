@@ -17,6 +17,7 @@ class CryptoKeyTest {
 	private static final Instant TEST_KEY_MODIFIED_DATE = Instant.ofEpochSecond(200000000);
 	private static final Instant TEST_KEY_START_TIME = Instant.ofEpochSecond(100000100);
 	private static final String TEST_TENANT_ID = "TestTenantId";
+	private static final String TEST_KEY_SELECTOR = "test-key-selector";
 
 	@Test
 	void constructor() {
@@ -30,6 +31,7 @@ class CryptoKeyTest {
 		assertThat(cryptoKey.getCreatedDate()).isNull();
 		assertThat(cryptoKey.getKeyStartTime()).isNull();
 		assertThat(cryptoKey.getRekeyMode()).isNull();
+		assertThat(cryptoKey.getKeySelector()).isNull();
 	}
 
 	@Test
@@ -44,6 +46,7 @@ class CryptoKeyTest {
 		cryptoKey.setCreatedDate(TEST_KEY_CREATED_DATE);
 		cryptoKey.setLastModifiedDate(TEST_KEY_MODIFIED_DATE);
 		cryptoKey.setRekeyMode(CryptoKey.RekeyMode.KEY_ON);
+		cryptoKey.setKeySelector(TEST_KEY_SELECTOR);
 
 		assertThat(cryptoKey.getId()).isEqualTo(TEST_ID);
 		assertThat(cryptoKey.getType()).isEqualTo(TestCryptoKeyTypes.TEST.getName());
@@ -54,6 +57,7 @@ class CryptoKeyTest {
 		assertThat(cryptoKey.getCreatedDate()).isEqualTo(TEST_KEY_CREATED_DATE);
 		assertThat(cryptoKey.getLastModifiedDate()).isEqualTo(TEST_KEY_MODIFIED_DATE);
 		assertThat(cryptoKey.getRekeyMode()).isEqualTo(CryptoKey.RekeyMode.KEY_ON);
+		assertThat(cryptoKey.getKeySelector()).isEqualTo(TEST_KEY_SELECTOR);
 	}
 
 	@Test

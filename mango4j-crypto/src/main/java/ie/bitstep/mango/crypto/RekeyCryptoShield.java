@@ -25,9 +25,12 @@ public class RekeyCryptoShield {
 			}
 
 			@Override
-			// TODO: This method is provided for backward compatibility and delegates to the no-argument getCurrentEncryptionKey() method.
 			public CryptoKey getCurrentEncryptionKey(String keySelector) {
-				return getCurrentEncryptionKey();
+				if ("".equals(keySelector) || (getCurrentEncryptionKey() != null && keySelector.equals(getCurrentEncryptionKey().getKeySelector()))) {
+					return getCurrentEncryptionKey();
+				} else {
+					return null;
+				}
 			}
 
 			@Override

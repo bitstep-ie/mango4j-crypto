@@ -18,6 +18,13 @@ public class ProgressTracker {
 		this.maxFailureCountPerExecution = maxFailureCountPerExecution;
 	}
 
+	public ProgressTracker(ProgressTracker progressTracker) {
+		this.maxFailureCountPerExecution = progressTracker.maxFailureCountPerExecution;
+		this.numberOfRecordsProcessed = progressTracker.numberOfRecordsProcessed;
+		this.numberOfRecordsFailed = progressTracker.numberOfRecordsFailed;
+		this.numberOfBatchesProcessed = progressTracker.numberOfBatchesProcessed;
+	}
+
 	/**
 	 * Increments the processed records count.
 	 */
