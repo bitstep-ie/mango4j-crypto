@@ -29,6 +29,22 @@ class ProgressTrackerTest {
 	}
 
 	@Test
+	void constructorWithNullDelegate() {
+		assertThatThrownBy(() -> new ProgressTracker(null))
+				.isInstanceOf(NullPointerException.class)
+				.hasMessage("progressTrackerDelegate cannot be null");
+	}
+
+	@Test
+	void constructorWithDelegate() {
+		ProgressTracker delegate = new ProgressTracker(MAX_FAILURE_COUNT);
+		progressTracker = new ProgressTracker(delegate);
+
+		assertThat(getMaxFailureCountPerExecution()).isEqualTo(MAX_FAILURE_COUNT);
+		assertThat(getProgressTrackerDelegate()).isSameAs(delegate);
+	}
+
+	@Test
 	void getNumberOfRecordsUpdated() {
 		assertThat(progressTracker.getNumberOfRecordsProcessed()).isZero();
 	}
@@ -43,12 +59,34 @@ class ProgressTrackerTest {
 	}
 
 	@Test
+	void incrementRecordsProcessedWhenDelegateExists() {
+		ProgressTracker delegate = new ProgressTracker(MAX_FAILURE_COUNT);
+		progressTracker = new ProgressTracker(delegate);
+
+		progressTracker.incrementNumberOfRecordsProcessed();
+
+		assertThat(progressTracker.getNumberOfRecordsProcessed()).isEqualTo(1);
+		assertThat(delegate.getNumberOfRecordsProcessed()).isEqualTo(1);
+	}
+
+	@Test
 	void incrementBatchesProcessed() {
 		setNumberOfBatchesProcessed(2);
 
 		progressTracker.incrementNumberOfBatchesProcessed();
 
 		assertThat(progressTracker.getNumberOfBatchesProcessed()).isEqualTo(3);
+	}
+
+	@Test
+	void incrementBatchesProcessedWhenDelegateExists() {
+		ProgressTracker delegate = new ProgressTracker(MAX_FAILURE_COUNT);
+		progressTracker = new ProgressTracker(delegate);
+
+		progressTracker.incrementNumberOfBatchesProcessed();
+
+		assertThat(progressTracker.getNumberOfBatchesProcessed()).isEqualTo(1);
+		assertThat(delegate.getNumberOfBatchesProcessed()).isEqualTo(1);
 	}
 
 	@Test
@@ -94,10 +132,33 @@ class ProgressTrackerTest {
 	}
 
 	@Test
+	void incrementNumberOfRecordsFailedWhenDelegateExists() {
+		ProgressTracker delegate = new ProgressTracker(0);
+		progressTracker = new ProgressTracker(delegate);
+
+		assertThatThrownBy(progressTracker::incrementNumberOfRecordsFailed)
+				.isInstanceOf(TooManyFailuresException.class)
+				.hasMessage("Max errors threshold of 0 per execution exceeded while processing records, failure count=1");
+
+		assertThat(progressTracker.getNumberOfRecordsFailed()).isEqualTo(1);
+		assertThat(delegate.getNumberOfRecordsFailed()).isEqualTo(1);
+	}
+
+	@Test
 	void getNumberOfRecordsFailedTest() {
 		progressTracker.incrementNumberOfRecordsFailed();
 
 		assertThat(progressTracker.getNumberOfRecordsFailed()).isEqualTo(1);
+	}
+
+	private ProgressTracker getProgressTrackerDelegate() {
+		try {
+			Field delegateField = ProgressTracker.class.getDeclaredField("progressTrackerDelegate");
+			delegateField.setAccessible(true);
+			return (ProgressTracker) delegateField.get(progressTracker);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private int getNumberOfRecordsFailed() {
