@@ -37,7 +37,7 @@ class ProgressTrackerTest {
 	void incrementRecordsProcessed() {
 		setNumberOfRecordsProcessed(2);
 
-		progressTracker.incrementRecordsProcessed();
+		progressTracker.incrementNumberOfRecordsProcessed();
 
 		assertThat(progressTracker.getNumberOfRecordsProcessed()).isEqualTo(3);
 	}
@@ -46,7 +46,7 @@ class ProgressTrackerTest {
 	void incrementBatchesProcessed() {
 		setNumberOfBatchesProcessed(2);
 
-		progressTracker.incrementBatchesProcessed();
+		progressTracker.incrementNumberOfBatchesProcessed();
 
 		assertThat(progressTracker.getNumberOfBatchesProcessed()).isEqualTo(3);
 	}

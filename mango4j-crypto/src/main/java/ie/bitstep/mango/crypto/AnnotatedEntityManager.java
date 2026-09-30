@@ -318,12 +318,12 @@ public class AnnotatedEntityManager {
 	}
 
 	/**
-	 * Returns fields marked with {@link Encrypt} for the entity type.
+	 * Returns cipher groups marked with {@link CipherGroup} for the entity type.
 	 *
 	 * @param annotatedEntityClass the entity class to look up
-	 * @return the list of fields to encrypt
+	 * @return the list of cipher groups
 	 */
-	List<CipherGroup> getCipherGroups(Class<?> annotatedEntityClass) {
+	public List<CipherGroup> getCipherGroups(Class<?> annotatedEntityClass) {
 		return cipherGroups.getOrDefault(annotatedEntityClass, emptyList());
 	}
 

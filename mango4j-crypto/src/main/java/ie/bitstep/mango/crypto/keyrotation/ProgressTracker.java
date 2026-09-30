@@ -2,9 +2,15 @@ package ie.bitstep.mango.crypto.keyrotation;
 
 import ie.bitstep.mango.crypto.keyrotation.exceptions.TooManyFailuresException;
 
+import java.util.function.Consumer;
+
+import static java.util.Objects.requireNonNull;
+
 public class ProgressTracker {
 
 	private final int maxFailureCountPerExecution;
+	private final ProgressTracker progressTrackerDelegate;
+
 	private int numberOfRecordsProcessed = 0;
 	private int numberOfRecordsFailed = 0;
 	private int numberOfBatchesProcessed = 0;
@@ -16,34 +22,45 @@ public class ProgressTracker {
 	 */
 	public ProgressTracker(int maxFailureCountPerExecution) {
 		this.maxFailureCountPerExecution = maxFailureCountPerExecution;
+		this.progressTrackerDelegate = null;
 	}
 
-	public ProgressTracker(ProgressTracker progressTracker) {
-		this.maxFailureCountPerExecution = progressTracker.maxFailureCountPerExecution;
-		this.numberOfRecordsProcessed = progressTracker.numberOfRecordsProcessed;
-		this.numberOfRecordsFailed = progressTracker.numberOfRecordsFailed;
-		this.numberOfBatchesProcessed = progressTracker.numberOfBatchesProcessed;
+	public ProgressTracker(ProgressTracker progressTrackerDelegate) {
+		requireNonNull(progressTrackerDelegate, "progressTrackerDelegate cannot be null");
+		this.maxFailureCountPerExecution = progressTrackerDelegate.maxFailureCountPerExecution;
+		this.progressTrackerDelegate = progressTrackerDelegate;
+	}
+
+	private void executeFunctionOnProgressTrackerDelegate(Consumer<ProgressTracker> methodExecutor) {
+		if (progressTrackerDelegate != null) {
+			methodExecutor.accept(progressTrackerDelegate);
+		}
 	}
 
 	/**
 	 * Increments the processed records count.
 	 */
-	public void incrementRecordsProcessed() {
+	public void incrementNumberOfRecordsProcessed() {
 		numberOfRecordsProcessed += 1;
+		executeFunctionOnProgressTrackerDelegate(ProgressTracker::incrementNumberOfRecordsProcessed);
 	}
 
 	/**
 	 * Increments the processed batches count.
 	 */
-	public void incrementBatchesProcessed() {
+	public void incrementNumberOfBatchesProcessed() {
 		numberOfBatchesProcessed += 1;
+		executeFunctionOnProgressTrackerDelegate(ProgressTracker::incrementNumberOfBatchesProcessed);
 	}
 
 	/**
 	 * Increments failed records and throws if the threshold is exceeded.
 	 */
 	public void incrementNumberOfRecordsFailed() {
-		if (++numberOfRecordsFailed > maxFailureCountPerExecution && maxFailureCountPerExecution >= 0) {
+		// Increment locally first so the child stays consistent even if the delegate throws.
+		++numberOfRecordsFailed;
+		executeFunctionOnProgressTrackerDelegate(ProgressTracker::incrementNumberOfRecordsFailed);
+		if (maxFailureCountPerExecution >= 0 && numberOfRecordsFailed > maxFailureCountPerExecution) {
 			throw new TooManyFailuresException(
 				String.format("Max errors threshold of %d per execution exceeded while processing records, failure count=%d",
 					maxFailureCountPerExecution, numberOfRecordsFailed));

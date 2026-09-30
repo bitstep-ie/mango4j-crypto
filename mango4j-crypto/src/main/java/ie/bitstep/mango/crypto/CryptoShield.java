@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
 
 import static java.lang.String.valueOf;
 import static java.lang.System.Logger.Level.ERROR;
-import static java.lang.System.Logger.Level.INFO;
+import static java.lang.System.Logger.Level.TRACE;
 
 /**
  * Applications that use Entities annotated with the mango4j-crypto annotations (
@@ -482,7 +482,7 @@ public class CryptoShield {
 				String keySelector = cipherGroup.targetField().getAnnotation(EncryptedData.class).keySelector();
 				CryptoKey currentCipherGroupEncryptionKey = cryptoShieldDelegate.getCurrentEncryptionKey(keySelector);
 				if (currentCipherGroupEncryptionKey == null && cryptoShieldDelegate != this.cryptoShieldDelegate) {
-					logger.log(INFO, "No active encryption key found for key selector ''{0}'' during a rekey, so this cipher group does not need rekeying", keySelector);
+					logger.log(TRACE, "No active encryption key found for key selector ''{0}'' during a rekey, so this cipher group does not need rekeying", keySelector);
 					return;
 				} else if (currentCipherGroupEncryptionKey == null) {
 					throw new ActiveEncryptionKeyNotFoundException();
