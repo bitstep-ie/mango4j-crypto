@@ -19,6 +19,7 @@ import ie.bitstep.mango.crypto.core.exceptions.TransientCryptoException;
 import ie.bitstep.mango.crypto.core.factories.ConfigurableObjectMapperFactory;
 import ie.bitstep.mango.crypto.core.factories.ObjectMapperFactory;
 import ie.bitstep.mango.crypto.core.formatters.CiphertextFormatter;
+import ie.bitstep.mango.crypto.core.formatters.DefaultCiphertextFormatter;
 import ie.bitstep.mango.crypto.core.providers.CryptoKeyProvider;
 import ie.bitstep.mango.crypto.hmac.HmacStrategy;
 import ie.bitstep.mango.utils.thread.NamedScheduledExecutorBuilder;
@@ -41,6 +42,7 @@ import java.util.stream.Collectors;
 
 import static java.lang.String.valueOf;
 import static java.lang.System.Logger.Level.ERROR;
+import static java.lang.System.Logger.Level.TRACE;
 
 /**
  * Applications that use Entities annotated with the mango4j-crypto annotations (
@@ -71,36 +73,76 @@ public class CryptoShield {
 		private CryptoKeyProvider cryptoKeyProvider;
 		private List<EncryptionServiceDelegate> encryptionServiceDelegates;
 		private RetryConfiguration retryConfiguration;
+		private CiphertextFormatter ciphertextFormatter;
 
+		/**
+		 * Mandatory
+		 *
+		 * @param annotatedEntities list of entities (with {@link Encrypt}, {@link Hmac} fields) that will be processed
+		 *                          by this library.
+		 * @return this builder.
+		 */
 		public Builder withAnnotatedEntities(Collection<Class<?>> annotatedEntities) {
 			this.annotatedEntities = annotatedEntities;
 			return this;
 		}
 
 		/**
-		 * If this builder method isn't used then we default to {@link ConfigurableObjectMapperFactory}
+		 * Optional: If this builder method isn't used then we default to {@link ConfigurableObjectMapperFactory}.
 		 *
 		 * @param objectMapperFactory Implementation of {@link ObjectMapperFactory} that the application wants the
-		 *                            library to use
-		 * @return this builder
+		 *                            library to use.
+		 * @return this builder.
 		 */
 		public Builder withObjectMapperFactory(ObjectMapperFactory objectMapperFactory) {
 			this.objectMapperFactory = objectMapperFactory;
 			return this;
 		}
 
+		/**
+		 * Mandatory
+		 *
+		 * @param cryptoKeyProvider The implementation of {@link CryptoKeyProvider} to use.
+		 * @return this builder.
+		 */
 		public Builder withCryptoKeyProvider(CryptoKeyProvider cryptoKeyProvider) {
 			this.cryptoKeyProvider = cryptoKeyProvider;
 			return this;
 		}
 
+		/**
+		 * Mandatory
+		 *
+		 * @param encryptionServiceDelegates The list of {@link EncryptionServiceDelegate EncryptionServiceDelegates}
+		 *                                   that you want the library to support at runtime.
+		 * @return this builder.
+		 */
 		public Builder withEncryptionServiceDelegates(List<EncryptionServiceDelegate> encryptionServiceDelegates) {
 			this.encryptionServiceDelegates = encryptionServiceDelegates;
 			return this;
 		}
 
+		/**
+		 * Optional: Supply an instance of {@link RetryConfiguration} if you need the encrypt/decrypt operations to be
+		 * retried after {@link TransientCryptoException} failures.
+		 *
+		 * @param retryConfiguration The configured retry configuration to use.
+		 * @return this builder.
+		 */
 		public Builder withRetryConfiguration(RetryConfiguration retryConfiguration) {
 			this.retryConfiguration = retryConfiguration;
+			return this;
+		}
+
+		/**
+		 * If this builder method isn't used then we default to {@link DefaultCiphertextFormatter}
+		 *
+		 * @param ciphertextFormatter CiphertextFormatter instance to use. Use this method if you want to supply your own
+		 *                            implementation of {@link DefaultCiphertextFormatter} instead of the default implementation that comes with the library
+		 * @return this builder
+		 */
+		public Builder withCiphertextFormatter(CiphertextFormatter ciphertextFormatter) {
+			this.ciphertextFormatter = ciphertextFormatter;
 			return this;
 		}
 
@@ -110,7 +152,8 @@ public class CryptoShield {
 					objectMapperFactory,
 					cryptoKeyProvider,
 					encryptionServiceDelegates,
-					retryConfiguration
+					retryConfiguration,
+					ciphertextFormatter
 			);
 		}
 	}
@@ -119,14 +162,19 @@ public class CryptoShield {
 						ObjectMapperFactory objectMapperFactory,
 						CryptoKeyProvider cryptoKeyProvider,
 						List<EncryptionServiceDelegate> encryptionServiceDelegates,
-						RetryConfiguration retryConfiguration) {
+						RetryConfiguration retryConfiguration,
+						CiphertextFormatter ciphertextFormatter) {
 		if (objectMapperFactory == null) {
 			objectMapperFactory = new ConfigurableObjectMapperFactory();
 		}
 		this.objectMapper = objectMapperFactory.objectMapper();
-		this.ciphertextFormatter = new CiphertextFormatter(cryptoKeyProvider, objectMapperFactory);
+		if (ciphertextFormatter == null) {
+			this.ciphertextFormatter = new DefaultCiphertextFormatter(cryptoKeyProvider, objectMapperFactory);
+		} else {
+			this.ciphertextFormatter = ciphertextFormatter;
+		}
 		this.cryptoKeyProvider = cryptoKeyProvider;
-		this.encryptionService = new EncryptionService(encryptionServiceDelegates, ciphertextFormatter, objectMapperFactory);
+		this.encryptionService = new EncryptionService(encryptionServiceDelegates, this.ciphertextFormatter, objectMapperFactory);
 		this.annotatedEntityManager = new AnnotatedEntityManager(annotatedEntities, new HmacStrategyHelper(encryptionService, cryptoKeyProvider));
 		this.retryConfiguration = retryConfiguration;
 
@@ -155,6 +203,14 @@ public class CryptoShield {
 			@Override
 			public CryptoKey getCurrentEncryptionKey() {
 				return cryptoKeyProvider.getCurrentEncryptionKey();
+			}
+
+			@Override
+			public CryptoKey getCurrentEncryptionKey(String keySelector) {
+				if ("".equals(keySelector)) {
+					return getCurrentEncryptionKey();
+				}
+				return cryptoKeyProvider.getCurrentEncryptionKey(keySelector);
 			}
 		};
 	}
@@ -326,6 +382,7 @@ public class CryptoShield {
 	 * deafult method to generate HMACs for a given source value using all current HMAC keys. This method is useful
 	 * for applications that need to generate HMACs for values outside the context of an annotated entity,
 	 * usually for search operations. This method will use a null hmacAlias for the HMAC.
+	 *
 	 * @param sourceValue The source value for which to generate HMACs
 	 * @return A collection of {@link HmacHolder} objects containing the resulting HMACs
 	 */
@@ -413,39 +470,38 @@ public class CryptoShield {
 	}
 
 	private void setEncryptedDataField(Object entity, CryptoShieldDelegate cryptoShieldDelegate) {
-		List<Field> encryptedFields = annotatedEntityManager.getFieldsToEncrypt(entity.getClass());
-		if (encryptedFields.isEmpty()) {
+		List<CipherGroup> cipherGroups = annotatedEntityManager.getCipherGroups(entity.getClass());
+		if (cipherGroups.isEmpty()) {
 			// maybe this entity only has HMACs
 			return;
 		}
 
-		if (cryptoShieldDelegate.getCurrentEncryptionKey() == null) {
-			// The delegate check is needed due to the fact that currently the rekey job (currently in BETA) does the
-			// re-encrypt and re-HMAC operations separately so cryptoShieldDelegate.getCurrentEncryptionKey() returns null
-			// here for the re-HMAC job which isn't a problem and we just return immediately cause there's no encryption to do.
-			// This all needs removed when the rekey stuff is refactored.
-			if (cryptoShieldDelegate != this.cryptoShieldDelegate) {
-				return;
-			} else {
-				throw new ActiveEncryptionKeyNotFoundException();
-			}
-		}
+		cipherGroups.forEach(cipherGroup -> {
+			ObjectNode rootNode = convertToJson(entity, cipherGroup.sourceFields());
+			try {
+				String keySelector = cipherGroup.targetField().getAnnotation(EncryptedData.class).keySelector();
+				CryptoKey currentCipherGroupEncryptionKey = cryptoShieldDelegate.getCurrentEncryptionKey(keySelector);
+				if (currentCipherGroupEncryptionKey == null && cryptoShieldDelegate != this.cryptoShieldDelegate) {
+					logger.log(TRACE, "No active encryption key found for key selector ''{0}'' during a rekey, so this cipher group does not need rekeying", keySelector);
+					return;
+				} else if (currentCipherGroupEncryptionKey == null) {
+					throw new ActiveEncryptionKeyNotFoundException();
+				}
 
-		ObjectNode rootNode = convertToJson(entity, encryptedFields);
-		try {
-			if (!rootNode.isEmpty()) {
-				String finalCipherText = ciphertextFormatter.format(doEncrypt(rootNode, cryptoShieldDelegate));
-				annotatedEntityManager.getEncryptedDataField(entity.getClass()).set(entity, finalCipherText); // NOSONAR - we set accessible to true on startup
+				if (!rootNode.isEmpty()) {
+					String finalCipherText = ciphertextFormatter.format(doEncrypt(rootNode, currentCipherGroupEncryptionKey));
+					cipherGroup.targetField().set(entity, finalCipherText); // NOSONAR - we set accessible to true on startup
+				}
+				Field encryptionKeyIdField = cipherGroup.keyIdField();
+				if (encryptionKeyIdField != null) {
+					encryptionKeyIdField.set(entity, currentCipherGroupEncryptionKey.getId()); // NOSONAR - we set accessible to true on startup
+				}
+			} catch (NonTransientCryptoException e) {
+				throw e;
+			} catch (Exception e) {
+				throw new NonTransientCryptoException(String.format("An error occurred trying to create the ciphertext:%s", e.getClass()), e);
 			}
-			Optional<Field> encryptionKeyIdFieldMaybe = annotatedEntityManager.getEncryptionKeyIdField(entity.getClass());
-			if (encryptionKeyIdFieldMaybe.isPresent()) {
-				encryptionKeyIdFieldMaybe.get().set(entity, cryptoShieldDelegate.getCurrentEncryptionKey().getId()); // NOSONAR - we set accessible to true on startup
-			}
-		} catch (NonTransientCryptoException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new NonTransientCryptoException(String.format("An error occurred trying to create the ciphertext:%s", e.getClass()), e);
-		}
+		});
 	}
 
 	private ObjectNode convertToJson(Object entity, List<Field> encryptedFields) {
@@ -467,8 +523,8 @@ public class CryptoShield {
 		return rootNode;
 	}
 
-	private CiphertextContainer doEncrypt(ObjectNode rootNode, CryptoShieldDelegate cryptoShieldDelegate) throws JsonProcessingException {
-		return encryptionService.encrypt(cryptoShieldDelegate.getCurrentEncryptionKey(), objectMapper.writeValueAsString(rootNode));
+	private CiphertextContainer doEncrypt(ObjectNode rootNode, CryptoKey encryptionKey) throws JsonProcessingException {
+		return encryptionService.encrypt(encryptionKey, objectMapper.writeValueAsString(rootNode));
 	}
 
 	/**
@@ -531,17 +587,19 @@ public class CryptoShield {
 				return;
 			}
 
-			Object encryptedData = annotatedEntityManager.getEncryptedDataField(entity.getClass()).get(entity);
-			if (encryptedData == null) {
-				return;
-			}
+			for (CipherGroup cipherGroup : annotatedEntityManager.getCipherGroups(entity.getClass())) {
+				Object encryptedData = cipherGroup.targetField().get(entity);
+				if (encryptedData == null) {
+					continue;
+				}
 
-			String finalCiphertext = valueOf(encryptedData);
-			JsonNode decryptedJsonNode = objectMapper.readTree(encryptionService.decrypt(finalCiphertext));
-			for (Field field : fieldsToEncrypt) {
-				JsonNode fieldValue = decryptedJsonNode.get(field.getName());
-				if (fieldValue != null) {
-					field.set(entity, objectMapper.treeToValue(fieldValue, field.getType())); // NOSONAR
+				String finalCiphertext = valueOf(encryptedData);
+				JsonNode decryptedJsonNode = objectMapper.readTree(encryptionService.decrypt(finalCiphertext));
+				for (Field field : fieldsToEncrypt) {
+					JsonNode fieldValue = decryptedJsonNode.get(field.getName());
+					if (fieldValue != null) {
+						field.set(entity, objectMapper.treeToValue(fieldValue, field.getType())); // NOSONAR
+					}
 				}
 			}
 		} catch (TransientCryptoException e) {

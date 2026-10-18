@@ -23,7 +23,7 @@ class EncryptionServiceDelegateTest {
 	@Mock
 	private CryptoKeyProvider mockCryptoKeyProvider;
 
-	private final EncryptionService encryptionService = new EncryptionService(List.of(), mockCryptoKeyProvider);
+	private final EncryptionService encryptionService = new EncryptionService(List.of(new TestEncryptionServiceDelegate()), mockCryptoKeyProvider);
 	private final CryptoKey testCryptoKey = TestData.testCryptoKey();
 
 	static class ConfigPojo {

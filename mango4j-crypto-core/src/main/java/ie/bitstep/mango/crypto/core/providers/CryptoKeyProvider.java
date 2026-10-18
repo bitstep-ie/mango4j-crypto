@@ -25,6 +25,10 @@ public interface CryptoKeyProvider {
 	 */
 	CryptoKey getCurrentEncryptionKey();
 
+	default CryptoKey getCurrentEncryptionKey(String keySelector) {
+		return getCurrentEncryptionKey();
+	}
+
 	/**
 	 *
 	 * @return A list of {@link CryptoKey HMAC keys} that should be used for the current cryptographic operation.

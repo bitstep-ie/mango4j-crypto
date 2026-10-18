@@ -7,12 +7,14 @@ import ie.bitstep.mango.crypto.core.exceptions.UnsupportedKeyTypeException;
 import ie.bitstep.mango.crypto.core.factories.ConfigurableObjectMapperFactory;
 import ie.bitstep.mango.crypto.core.factories.ObjectMapperFactory;
 import ie.bitstep.mango.crypto.core.formatters.CiphertextFormatter;
+import ie.bitstep.mango.crypto.core.formatters.DefaultCiphertextFormatter;
 import ie.bitstep.mango.crypto.core.providers.CryptoKeyProvider;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public final class EncryptionService {
@@ -41,7 +43,7 @@ public final class EncryptionService {
 	public EncryptionService(Collection<EncryptionServiceDelegate> encryptionServiceDelegates,
 							 CryptoKeyProvider cryptoKeyProvider,
 							 ObjectMapperFactory objectMapperFactory) {
-		this(encryptionServiceDelegates, new CiphertextFormatter(cryptoKeyProvider, objectMapperFactory), objectMapperFactory);
+		this(encryptionServiceDelegates, new DefaultCiphertextFormatter(cryptoKeyProvider, objectMapperFactory), objectMapperFactory);
 	}
 
 	/**
@@ -54,6 +56,9 @@ public final class EncryptionService {
 	public EncryptionService(Collection<EncryptionServiceDelegate> encryptionServiceDelegates,
 							 CiphertextFormatter ciphertextFormatter,
 							 ObjectMapperFactory objectMapperFactory) {
+		if (encryptionServiceDelegates == null || encryptionServiceDelegates.isEmpty() || encryptionServiceDelegates.stream().anyMatch(Objects::isNull)) {
+			throw new NullPointerException("Constructor parameters cannot be null");
+		}
 		this.ciphertextFormatter = ciphertextFormatter;
 		this.objectMapperFactory = objectMapperFactory;
 		encryptionServiceDelegates.forEach(encryptionServiceDelegate -> {

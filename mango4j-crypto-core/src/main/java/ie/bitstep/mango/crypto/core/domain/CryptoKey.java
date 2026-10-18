@@ -1,6 +1,7 @@
 package ie.bitstep.mango.crypto.core.domain;
 
 import ie.bitstep.mango.crypto.core.encryption.EncryptionServiceDelegate;
+import ie.bitstep.mango.crypto.core.providers.CryptoKeyProvider;
 
 import java.time.Instant;
 import java.util.Map;
@@ -81,7 +82,7 @@ public class CryptoKey {
 
 	/**
 	 * Semi-optional field. Only needed for applications which use tenant segregation of their data. This field isn't needed for normal
-	 * operations, but it is needed for automatic re-key functionality if your applications uses tenants.
+	 * operations, but it is needed for automatic re-key functionality if your application uses tenants.
 	 */
 	private String tenantId;
 
@@ -95,6 +96,22 @@ public class CryptoKey {
 	 * </P>
 	 */
 	private RekeyMode rekeyMode;
+
+	/**
+	 * Optional: Advanced usage logical selector used to choose the active encryption key for a particular cipher
+	 * group when {@link CryptoKeyProvider#getCurrentEncryptionKey()} isn't enough to resolve the correct key at runtime.
+	 * <p>
+	 * This value is intended to be paired with a field-level
+	 * {@link ie.bitstep.mango.crypto.annotations.EncryptedData#keySelector() EncryptedData.keySelector()}
+	 * declaration, so that an application can maintain multiple keys (for example by data sensitivity classification)
+	 * and resolve the appropriate key through the overloaded {@link ie.bitstep.mango.crypto.core.providers.CryptoKeyProvider#getCurrentEncryptionKey(String)}.
+	 * </p>
+	 * <p>
+	 * This field is only necessary to support rekeying functionality for entities which have multiple cipher groups.
+	 * If your application doesn't bother with the concept of different cipher groups in entities then this field can be left null.
+	 * </p>
+	 */
+	private String keySelector;
 
 	/**
 	 * Mandatory field. All {@link CryptoKey CryptoKeys} must set this value to a valid (immutable) date.
@@ -161,6 +178,14 @@ public class CryptoKey {
 
 	public void setRekeyMode(RekeyMode rekeyMode) {
 		this.rekeyMode = rekeyMode;
+	}
+
+	public String getKeySelector() {
+		return keySelector;
+	}
+
+	public void setKeySelector(String keySelector) {
+		this.keySelector = keySelector;
 	}
 
 	public Instant getCreatedDate() {
