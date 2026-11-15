@@ -1,6 +1,6 @@
 package ie.bitstep.mango.crypto.keyrotation;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import ie.bitstep.mango.crypto.CryptoShield;
 import ie.bitstep.mango.crypto.annotations.EncryptedData;
 import ie.bitstep.mango.crypto.core.domain.CryptoKey;

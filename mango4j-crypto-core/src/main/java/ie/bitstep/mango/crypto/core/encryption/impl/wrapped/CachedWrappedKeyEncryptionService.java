@@ -1,6 +1,6 @@
 package ie.bitstep.mango.crypto.core.encryption.impl.wrapped;
 
-import ie.bitstep.mango.collections.ConcurrentCache;
+import ie.bitstep.mango.crypto.core.cache.LingeringCloseCache;
 import ie.bitstep.mango.crypto.core.domain.CiphertextContainer;
 import ie.bitstep.mango.crypto.core.domain.CryptoKey;
 import ie.bitstep.mango.crypto.core.domain.HmacHolder;
@@ -55,8 +55,8 @@ public class CachedWrappedKeyEncryptionService extends EncryptionServiceDelegate
 	 * to allow configuration through Spring. This is safe and acceptable in a Spring
 	 * application since the class will typically be instantiated as a managed bean.
 	 *********************************************************************************/
-	private static final ConcurrentCache<String, CachedWrappedKeyHolder> CACHED_WRAPPED_KEY_HOLDER_CONCURRENT_CACHE =
-			new ConcurrentCache<>(
+	private static final LingeringCloseCache<String, CachedWrappedKeyHolder> CACHED_WRAPPED_KEY_HOLDER_CONCURRENT_CACHE =
+			new LingeringCloseCache<>(
 					CACHED_KEYS_TTL,
 					CURRENT_KEY_TTL,
 					KEY_DESTRUCTION_GRACE_PERIOD,

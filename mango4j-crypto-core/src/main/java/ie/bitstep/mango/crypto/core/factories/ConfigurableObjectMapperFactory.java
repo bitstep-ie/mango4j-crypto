@@ -1,10 +1,11 @@
 package ie.bitstep.mango.crypto.core.factories;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.StreamReadConstraints;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.StreamReadConstraints;
+import tools.jackson.core.json.JsonFactory;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.MapperFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 public class ConfigurableObjectMapperFactory implements ObjectMapperFactory {
 	public static final int ONE_KILOBYTE = 1024;
@@ -26,8 +27,10 @@ public class ConfigurableObjectMapperFactory implements ObjectMapperFactory {
 				.streamReadConstraints(constraints)
 				.build();
 
-			instance = new ObjectMapper(jsonFactory);
-			instance.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+			instance = JsonMapper.builder(jsonFactory)
+				.disable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
+				.changeDefaultVisibility(visibility -> visibility.withFieldVisibility(JsonAutoDetect.Visibility.ANY))
+				.build();
 		}
 
 		return instance;

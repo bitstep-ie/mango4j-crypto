@@ -1,9 +1,9 @@
 package ie.bitstep.mango.crypto.core.formatters;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.ObjectNode;
 import ie.bitstep.mango.crypto.core.domain.CiphertextContainer;
 import ie.bitstep.mango.crypto.core.exceptions.CiphertextFormatterException;
 import ie.bitstep.mango.crypto.core.factories.ObjectMapperFactory;
@@ -43,7 +43,7 @@ public class CiphertextFormatter {
 			JsonNode dataNode = jsonNode.get(DATA_ATTRIBUTE_NAME);
 			return new CiphertextContainer(cryptoKeyProvider.getById(cryptoKeyId), objectMapperFactory.objectMapper().convertValue(dataNode, new TypeReference<>() {
 			}));
-		} catch (JsonProcessingException e) {
+		} catch (JacksonException e) {
 			throw new CiphertextFormatterException(String.format("An error occurred trying to parse the String into a %s", CiphertextContainer.class.getSimpleName()), e);
 		}
 	}
