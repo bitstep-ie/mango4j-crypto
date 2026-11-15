@@ -16,10 +16,12 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Function;
@@ -33,8 +35,10 @@ import static java.lang.System.Logger.Level.ERROR;
 import static java.lang.System.Logger.Level.INFO;
 import static java.lang.System.Logger.Level.TRACE;
 import static java.lang.System.Logger.Level.WARNING;
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * <b>Warning!!!</b> This class is currently experimental and is expected to go through several more iterations of both redesign
@@ -107,7 +111,7 @@ public class RekeyScheduler {
 			logger.log(INFO, e.getMessage());
 		} catch (Exception e) {
 			// Don't log generic exception details for security purposes, just log the exception type. The exception message may contain sensitive information about the data being rekeyed.
-			logger.log(ERROR, "An error occurred trying to rekey encryption keys{0}:{1}", tenantLogString(tenantId), e.getCause().getClass().getSimpleName());
+			logger.log(ERROR, "An error occurred trying to rekey encryption keys{0}:{1}", tenantLogString(tenantId), e.getClass().getSimpleName());
 		}
 
 		try {
@@ -116,13 +120,14 @@ public class RekeyScheduler {
 			logger.log(INFO, e.getMessage());
 		} catch (Exception e) {
 			// Don't log generic exception details for security purposes, just log the exception type. The exception message may contain sensitive information about the data being rekeyed.
-			logger.log(ERROR, "An error occurred trying to rekey HMAC keys{0}:{1}", tenantLogString(tenantId), e.getCause().getClass().getSimpleName());
+			logger.log(ERROR, "An error occurred trying to rekey HMAC keys{0}:{1}", tenantLogString(tenantId), e.getClass().getSimpleName());
 		}
 	}
 
 	private void reEncrypt(String tenantId, List<CryptoKey> tenantEncryptionKeysSortedByDateDescending, ProgressTracker totalProgressForThisTenant) {
 		logger.log(TRACE, "Beginning re-encrypt{0}", tenantLogString(tenantId));
 		Map<String, List<CryptoKey>> tenantEncryptionKeysGroupedByKeySelectorSortedByDateDescending = getEncryptionKeysGroupedByKeySelectorSortedByDateDescending(tenantId, tenantEncryptionKeysSortedByDateDescending);
+		Set<String> keySelectorsUsedInRekeyEntities = new HashSet<>();
 		for (RekeyService<?> rekeyService : rekeySchedulerConfig.getRekeyServices()) {
 			List<RekeyServiceTaskHolder> rekeyServiceTaskHolders = new ArrayList<>();
 			if (rekeySchedulerConfig.getCryptoShield().getAnnotatedEntityManager().getFieldsToEncrypt(rekeyService.getEntityType()).isEmpty()) {
@@ -137,6 +142,7 @@ public class RekeyScheduler {
 					return;
 				}
 
+				keySelectorsUsedInRekeyEntities.addAll(keySelectorsUsedInEntity);
 				CryptoKey latestCryptoKeyForKeySelector = tenantsCryptoKeysForThisSelectorSortedByDateDescending.get(0);
 				if (latestCryptoKeyForKeySelector.getRekeyMode() == KEY_ON) {
 					logger.log(TRACE, "RekeyMode is set to {0} on the latest encryption key{1}{2}", KEY_ON, keySelectorLogString(keySelector), tenantLogString(tenantId));
@@ -165,25 +171,76 @@ public class RekeyScheduler {
 				// for the entire run and pass it to each entity's rekey service task holder. But for now, just create a new one for each entity.
 				ProgressTracker finishedProgressForThisEntity = rekeyEntity(rekeyServiceTaskHolders, totalProgressForThisTenant);
 				logger.log(INFO, "Full re-key of all records for entity {0} has been completed{1}. Total of {2} records rekeyed for this entity", rekeyService.getEntityType().getSimpleName(), tenantLogString(tenantId), finishedProgressForThisEntity.getNumberOfRecordsProcessed());
+				if (finishedProgressForThisEntity.getNumberOfRecordsFailed() > 0) {
+					logger.log(WARNING, "Some records failed to rekey for entity {0}{1}. Total of {2} records failed to rekey for this entity", rekeyService.getEntityType().getSimpleName(), tenantLogString(tenantId), finishedProgressForThisEntity.getNumberOfRecordsFailed());
+
+				}
 			}
 		}
 		logger.log(INFO, "Full re-key of all records{0} has been completed. Total of {1} records rekeyed by this job", tenantLogString(tenantId), totalProgressForThisTenant.getNumberOfRecordsProcessed());
-		cleanupRedundantKeys(tenantEncryptionKeysGroupedByKeySelectorSortedByDateDescending);
+
+		// only cleanup keys that are actually used in rekey entities, otherwise we could end up deleting keys that are still in use by other entities
+		cleanupRedundantKeys(tenantEncryptionKeysGroupedByKeySelectorSortedByDateDescending.entrySet().stream()
+				.filter(entry -> keySelectorsUsedInRekeyEntities.contains(entry.getKey()))
+				.collect(toMap(Map.Entry::getKey, Map.Entry::getValue)));
 	}
 
 	private void cleanupRedundantKeys(Map<String, List<CryptoKey>> tenantEncryptionKeysGroupedByKeySelectorSortedByDateDescending) {
-		for (List<CryptoKey> tenantEncryptionKeys : tenantEncryptionKeysGroupedByKeySelectorSortedByDateDescending.values()) {
+		for (Map.Entry<String, List<CryptoKey>> entry : tenantEncryptionKeysGroupedByKeySelectorSortedByDateDescending.entrySet()) {
+			String keySelector = entry.getKey();
+			List<CryptoKey> keys = entry.getValue();
 			boolean shouldDeleteAllNonLatestKeys = false;
-			for (int count = 0; count < tenantEncryptionKeys.size(); count++) {
-				if (count == 0 && tenantEncryptionKeys.get(0).getRekeyMode() == KEY_ON) {
-					shouldDeleteAllNonLatestKeys = true;
-				} else if (shouldDeleteAllNonLatestKeys || (count > 0 && tenantEncryptionKeys.get(count).getRekeyMode() == KEY_OFF)) {
-					logger.log(DEBUG, "No application instances are using the following deprecated encryption key anymore (and any records which previously used it have been re-keyed to the latest encryption key), so we''ll delete it: {0}", tenantEncryptionKeys.get(count));
-					removeKey(tenantEncryptionKeys.get(count));
-				}
 
+			for (int count = 0; count < keys.size(); count++) {
+				CryptoKey key = keys.get(count);
+
+				if (count == 0 && key.getRekeyMode() == KEY_ON) {
+					shouldDeleteAllNonLatestKeys = true;
+				} else if (shouldDeleteAllNonLatestKeys || (count > 0 && key.getRekeyMode() == KEY_OFF)) {
+					if (isKeyUnusedByConfiguredEntities(keySelector, key)) {
+						logger.log(DEBUG, "No configured entity is using this deprecated encryption key; marking it for deletion: {0}", key);
+						removeKey(key);
+					} else {
+						logger.log(WARNING, "Keeping deprecated encryption key because its usage could not be verified or records still use it: {0}", key);
+					}
+				}
 			}
 		}
+	}
+
+	private boolean isKeyUnusedByConfiguredEntities(String keySelector, CryptoKey key) {
+		boolean foundApplicableRekeyService = false;
+
+		for (RekeyService<?> rekeyService : rekeySchedulerConfig.getRekeyServices()) {
+			Class<?> entityType = rekeyService.getEntityType();
+			if (rekeySchedulerConfig.getCryptoShield().getAnnotatedEntityManager().getFieldsToEncrypt(entityType).isEmpty()) {
+				continue;
+			}
+
+			boolean entityUsesSelector = rekeySchedulerConfig.getCryptoShield()
+					.getAnnotatedEntityManager()
+					.getCipherGroups(entityType)
+					.stream()
+					.map(CipherGroup::keySelector)
+					.anyMatch(keySelector::equals);
+			if (!entityUsesSelector) {
+				continue;
+			}
+
+			foundApplicableRekeyService = true;
+			try {
+				List<?> recordsUsingKey = rekeyService.findRecordsUsingCryptoKey(key);
+				if (recordsUsingKey == null || !recordsUsingKey.isEmpty()) {
+					return false;
+				}
+			} catch (Exception e) {
+				logger.log(ERROR, "Could not verify encryption key usage for entity {0}:{1}",
+						entityType.getSimpleName(), e.getClass().getSimpleName());
+				return false;
+			}
+		}
+
+		return foundApplicableRekeyService;
 	}
 
 	private Map<String, List<CryptoKey>> getEncryptionKeysGroupedByKeySelectorSortedByDateDescending(String tenantId, List<CryptoKey> tenantEncryptionKeysSortedByDateDescending) {
@@ -244,7 +301,7 @@ public class RekeyScheduler {
 	}
 
 	private static String keySelectorLogString(String keySelector) {
-		return "".equals(keySelector) ? "" : " for key selector " + keySelector;
+		return keySelector.isEmpty() ? "" : " for key selector " + keySelector;
 	}
 
 	private void reHmac(String tenantId, List<CryptoKey> tenantHmacKeysSortedByDateDescending, ProgressTracker totalProgressForThisTenant) {
@@ -287,7 +344,8 @@ public class RekeyScheduler {
 		CryptoKey keyThatTriggeredTheRekey;
 		Optional<HmacStrategy> hmacStrategy = rekeySchedulerConfig.getCryptoShield().getAnnotatedEntityManager().getHmacStrategy(rekeyService.getEntityType());
 		if (hmacStrategy.isEmpty()) {
-			throw new RekeySkipException(String.format("No HMAC strategy found for %s.", rekeyService.getEntityType().getSimpleName()));
+			logger.log(DEBUG, "No HMAC strategy found for {}.", rekeyService.getEntityType().getSimpleName());
+			return emptyList();
 		}
 
 		CryptoKey latestHmacKey = tenantHmacKeysSortedByDateDescending.get(0);
@@ -465,7 +523,7 @@ public class RekeyScheduler {
 			rekeySchedulerConfig.getRekeyCryptoKeyManager().markKeyForDeletion(tenantsDeprecatedCryptoKey);
 		} catch (Exception e) {
 			// Don't log generic exception details for security purposes, just log the exception type. The exception message may contain sensitive information about the data being rekeyed.
-			logger.log(ERROR, "An error occurred trying to mark the Crypto key for deletion {0}:{1}", tenantsDeprecatedCryptoKey, e.getCause().getClass().getSimpleName());
+			logger.log(ERROR, "An error occurred trying to mark the Crypto key for deletion {0}:{1}", tenantsDeprecatedCryptoKey, e.getClass().getSimpleName());
 		}
 	}
 

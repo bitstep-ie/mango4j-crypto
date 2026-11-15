@@ -207,7 +207,7 @@ public class CryptoShield {
 
 			@Override
 			public CryptoKey getCurrentEncryptionKey(String keySelector) {
-				if ("".equals(keySelector)) {
+				if (keySelector.isEmpty()) {
 					return getCurrentEncryptionKey();
 				}
 				return cryptoKeyProvider.getCurrentEncryptionKey(keySelector);

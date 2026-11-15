@@ -19,14 +19,12 @@ import java.lang.reflect.Modifier;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static java.lang.System.Logger.Level.ERROR;
 import static java.lang.System.Logger.Level.INFO;
@@ -212,10 +210,18 @@ public class AnnotatedEntityManager {
 
 		Map<String, List<Field>> cipherGroupSourceFields = new HashMap<>();
 		List<CipherGroup> entityCipherGroups = new ArrayList<>();
-		Map<String, Field> targetEncryptedDataFields = Arrays.stream(annotatedEntityClass.getDeclaredFields())
-				.filter(field -> field.isAnnotationPresent(EncryptedData.class))
-				.collect(Collectors.toMap(field -> field.getAnnotation(EncryptedData.class).cipherGroup(), field -> field));
-		targetEncryptedDataFields.forEach((s, field) -> field.setAccessible(true)); // NOSONAR
+
+		Map<String, Field> targetEncryptedDataFieldGroups = new HashMap<>();
+		for (Field encryptedDataField : ReflectionUtils.getFieldsByAnnotation(annotatedEntityClass, EncryptedData.class)) {
+			if (targetEncryptedDataFieldGroups.containsKey(encryptedDataField.getAnnotation(EncryptedData.class).cipherGroup())) {
+				throw new NonTransientCryptoException(String.format("%s has multiple fields marked with @%s for the same cipherGroup '%s'. " +
+								"Please ensure that each cipherGroup has only one field annotated with @%s",
+						annotatedEntityClass.getSimpleName(), EncryptedData.class.getSimpleName(),
+						encryptedDataField.getAnnotation(EncryptedData.class).cipherGroup(), EncryptedData.class.getSimpleName()));
+			}
+			targetEncryptedDataFieldGroups.put(encryptedDataField.getAnnotation(EncryptedData.class).cipherGroup(), encryptedDataField);
+		}
+		targetEncryptedDataFieldGroups.forEach((s, field) -> field.setAccessible(true)); // NOSONAR
 
 		fieldsToEncrypt.forEach(fieldToEncrypt -> {
 			EnableMigrationSupport migrationSupport = fieldToEncrypt.getAnnotation(EnableMigrationSupport.class);
@@ -241,33 +247,39 @@ public class AnnotatedEntityManager {
 		}
 
 		cipherGroupSourceFields.forEach((cipherGroupName, sourceFields) -> {
-			if (!targetEncryptedDataFields.containsKey(cipherGroupName)) {
-				throw new NonTransientCryptoException(String.format("%s has a field marked with @%s but without a corresponding field marked with @%s",
-						annotatedEntityClass.getSimpleName(), Encrypt.class.getSimpleName(), EncryptedData.class.getSimpleName()));
+			if (!targetEncryptedDataFieldGroups.containsKey(cipherGroupName)) {
+				throw new NonTransientCryptoException(String.format("%s has a field marked with @%s%s but without a corresponding field marked with @%s",
+						annotatedEntityClass.getSimpleName(), Encrypt.class.getSimpleName(), cipherGroupName.isEmpty() ? "" : " for cipher group " + cipherGroupName, EncryptedData.class.getSimpleName()));
 			}
-			Field cipherGroupEncryptionKeyId = encryptionKeyIdFields.stream()
-					.filter(cipherGroupEncryptionKeyIdfield -> cipherGroupEncryptionKeyIdfield.getAnnotation(EncryptionKeyId.class).cipherGroup().equals(cipherGroupName))
-					.findFirst()
-					.orElse(null);
-
-			if (cipherGroupEncryptionKeyId != null) {
-				if (cipherGroupEncryptionKeyId.getType() != String.class) {
-					throw new NonTransientCryptoException(String.format("%s has a field of type %s marked with %s. " +
-									"Please change this field type to String",
-							annotatedEntityClass.getSimpleName(), cipherGroupEncryptionKeyId.getType(), EncryptionKeyId.class.getSimpleName()));
-				}
-				cipherGroupEncryptionKeyId.setAccessible(true); // NOSONAR
-			} else {
-				LOGGER.log(INFO, "No field marked with @{0} was found" + ("".equals(cipherGroupName) ? " " : " for cipher group {1} ") + "in class {2}. " +
-								"It''s advisable to have a field annotated with @{0} for each cipher group to help with rekeying functionality.",
-						EncryptionKeyId.class.getSimpleName(), cipherGroupName, annotatedEntityClass.getSimpleName());
-			}
-
-			Field targetEncryptedDataField = targetEncryptedDataFields.get(cipherGroupName);
-			entityCipherGroups.add(new CipherGroup(cipherGroupName, targetEncryptedDataField.getAnnotation(EncryptedData.class).keySelector(), copyOf(sourceFields), targetEncryptedDataField, cipherGroupEncryptionKeyId));
+			Field targetEncryptedDataField = targetEncryptedDataFieldGroups.get(cipherGroupName);
+			entityCipherGroups.add(new CipherGroup(cipherGroupName, targetEncryptedDataField.getAnnotation(EncryptedData.class).keySelector(), copyOf(sourceFields), targetEncryptedDataField, getCipherGroupEncryptionKeyIdField(annotatedEntityClass, cipherGroupName, encryptionKeyIdFields)));
 		});
 		this.cipherGroups.put(annotatedEntityClass, entityCipherGroups);
 		sourceEncryptedFields.putIfAbsent(annotatedEntityClass, fieldsToEncrypt);
+	}
+
+	private static Field getCipherGroupEncryptionKeyIdField(Class<?> annotatedEntityClass, String cipherGroupName, List<Field> encryptionKeyIdFields) {
+		List<Field> cipherGroupEncryptionKeyIdFields = encryptionKeyIdFields.stream()
+				.filter(cipherGroupEncryptionKeyIdfield -> cipherGroupEncryptionKeyIdfield.getAnnotation(EncryptionKeyId.class).cipherGroup().equals(cipherGroupName))
+				.toList();
+		if (cipherGroupEncryptionKeyIdFields.size() > 1) {
+			throw new NonTransientCryptoException(String.format("%s has multiple fields marked with @%s for cipher group %s",
+					annotatedEntityClass.getSimpleName(), EncryptionKeyId.class.getSimpleName(), cipherGroupName));
+		}
+		Field cipherGroupEncryptionKeyId = cipherGroupEncryptionKeyIdFields.isEmpty() ? null : cipherGroupEncryptionKeyIdFields.get(0);
+		if (cipherGroupEncryptionKeyId != null) {
+			if (cipherGroupEncryptionKeyId.getType() != String.class) {
+				throw new NonTransientCryptoException(String.format("%s has a field of type %s marked with %s. " +
+								"Please change this field type to String",
+						annotatedEntityClass.getSimpleName(), cipherGroupEncryptionKeyId.getType(), EncryptionKeyId.class.getSimpleName()));
+			}
+			cipherGroupEncryptionKeyId.setAccessible(true); // NOSONAR
+		} else {
+			LOGGER.log(INFO, "No field marked with @{0} was found" + (cipherGroupName.isEmpty() ? " " : " for cipher group {1} ") + "in class {2}. " +
+							"It''s advisable to have a field annotated with @{0} for each cipher group to help with rekeying functionality.",
+					EncryptionKeyId.class.getSimpleName(), cipherGroupName, annotatedEntityClass.getSimpleName());
+		}
+		return cipherGroupEncryptionKeyId;
 	}
 
 	/**

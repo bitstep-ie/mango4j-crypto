@@ -270,6 +270,25 @@ class AnnotatedEntityManagerTest {
 	}
 
 	@Test
+	@DisplayName("Constructor test for entity with multiple @EncryptionKeyId fields for the same cipher group")
+	void constructorMultipleEncryptionKeyIdFieldsForCipherGroup() {
+		class TestEntityWithDuplicateEncryptionKeyIdFields {
+			@Encrypt(cipherGroup = "group-a")
+			private transient String pan;
+			@EncryptedData(cipherGroup = "group-a")
+			private String encryptedPan;
+			@EncryptionKeyId(cipherGroup = "group-a")
+			private String firstEncryptionKeyId;
+			@EncryptionKeyId(cipherGroup = "group-a")
+			private String secondEncryptionKeyId;
+		}
+
+		assertThatThrownBy(() -> new AnnotatedEntityManager(List.of(TestEntityWithDuplicateEncryptionKeyIdFields.class), mockHmacStrategyHelper))
+				.isInstanceOf(NonTransientCryptoException.class)
+				.hasMessage("TestEntityWithDuplicateEncryptionKeyIdFields has multiple fields marked with @EncryptionKeyId for cipher group group-a");
+	}
+
+	@Test
 	@DisplayName("Constructor test for entity with an @Encrypt field but without a corresponding @EncryptedData field")
 	void constructorNoEncryptedBlobFieldForEncryptField() {
 		List<Class<?>> annotatedEntityClasses = List.of(InvalidAnnotatedEntityForDoubleHmacFieldStrategyNoEncryptedDataField.class);

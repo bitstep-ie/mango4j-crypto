@@ -26,7 +26,7 @@ public class RekeyCryptoShield {
 
 			@Override
 			public CryptoKey getCurrentEncryptionKey(String keySelector) {
-				if ("".equals(keySelector) || (getCurrentEncryptionKey() != null && keySelector.equals(getCurrentEncryptionKey().getKeySelector()))) {
+				if (keySelector.isEmpty() || (getCurrentEncryptionKey() != null && keySelector.equals(getCurrentEncryptionKey().getKeySelector()))) {
 					return getCurrentEncryptionKey();
 				} else {
 					return null;
