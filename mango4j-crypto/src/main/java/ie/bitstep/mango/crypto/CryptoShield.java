@@ -1,10 +1,10 @@
 package ie.bitstep.mango.crypto;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeType;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.JsonNodeType;
+import tools.jackson.databind.node.ObjectNode;
 import ie.bitstep.mango.crypto.annotations.Encrypt;
 import ie.bitstep.mango.crypto.annotations.EncryptedData;
 import ie.bitstep.mango.crypto.annotations.Hmac;
@@ -21,7 +21,6 @@ import ie.bitstep.mango.crypto.core.factories.ObjectMapperFactory;
 import ie.bitstep.mango.crypto.core.formatters.CiphertextFormatter;
 import ie.bitstep.mango.crypto.core.providers.CryptoKeyProvider;
 import ie.bitstep.mango.crypto.hmac.HmacStrategy;
-import ie.bitstep.mango.utils.thread.NamedScheduledExecutorBuilder;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -34,6 +33,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.UnaryOperator;
@@ -53,6 +54,8 @@ import static java.lang.System.Logger.Level.ERROR;
  * for this class to work.
  */
 public class CryptoShield {
+	static final String RETRY_THREAD_NAME_PREFIX = "crypto-retry-task-";
+
 	private final System.Logger logger = System.getLogger(CryptoShield.class.getName());
 	protected final ObjectMapper objectMapper;
 	protected final AnnotatedEntityManager annotatedEntityManager;
@@ -131,16 +134,7 @@ public class CryptoShield {
 		this.retryConfiguration = retryConfiguration;
 
 		if (this.retryConfiguration != null) {
-			this.scheduler =
-					NamedScheduledExecutorBuilder.builder()
-							.poolSize(retryConfiguration.poolSize())
-							.threadNamePrefix("crypto-retry-task")
-							.uncaughtExceptionHandler((t, e) ->
-									// log or handle uncaught exceptions
-									logger.log(ERROR, "Uncaught in {0}: {1}", t.getName(), e)
-							)
-							.removeOnCancelPolicy(true)
-							.build();
+			this.scheduler = newRetryScheduler(retryConfiguration.poolSize());
 		} else {
 			this.scheduler = null;
 		}
@@ -467,7 +461,7 @@ public class CryptoShield {
 		return rootNode;
 	}
 
-	private CiphertextContainer doEncrypt(ObjectNode rootNode, CryptoShieldDelegate cryptoShieldDelegate) throws JsonProcessingException {
+	private CiphertextContainer doEncrypt(ObjectNode rootNode, CryptoShieldDelegate cryptoShieldDelegate) throws JacksonException {
 		return encryptionService.encrypt(cryptoShieldDelegate.getCurrentEncryptionKey(), objectMapper.writeValueAsString(rootNode));
 	}
 
@@ -553,5 +547,17 @@ public class CryptoShield {
 
 	public CryptoKeyProvider getCryptoKeyProvider() {
 		return cryptoKeyProvider;
+	}
+
+	private ScheduledExecutorService newRetryScheduler(int poolSize) {
+		AtomicInteger threadCounter = new AtomicInteger(1);
+		ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(poolSize, runnable -> {
+			Thread thread = new Thread(runnable, RETRY_THREAD_NAME_PREFIX + threadCounter.getAndIncrement());
+			thread.setUncaughtExceptionHandler((t, e) ->
+					logger.log(ERROR, "Uncaught in {0}: {1}", t.getName(), e));
+			return thread;
+		});
+		executor.setRemoveOnCancelPolicy(true);
+		return executor;
 	}
 }

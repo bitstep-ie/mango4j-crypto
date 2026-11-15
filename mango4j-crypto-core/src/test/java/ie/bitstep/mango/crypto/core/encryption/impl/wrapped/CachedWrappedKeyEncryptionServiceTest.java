@@ -1,6 +1,6 @@
 package ie.bitstep.mango.crypto.core.encryption.impl.wrapped;
 
-import ie.bitstep.mango.collections.ConcurrentCache;
+import ie.bitstep.mango.crypto.core.cache.LingeringCloseCache;
 import ie.bitstep.mango.crypto.core.domain.CiphertextContainer;
 import ie.bitstep.mango.crypto.core.domain.CryptoKey;
 import ie.bitstep.mango.crypto.core.domain.CryptoKeyUsage;
@@ -483,10 +483,10 @@ class CachedWrappedKeyEncryptionServiceTest implements CryptoKeyProvider {
 
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	private void destroyCurrentKey() throws NoSuchFieldException, IllegalAccessException {
-		ConcurrentCache cachedWrappedKeyHolderConcurrentCache = getConcurrentCache();
-		Field currentEntryField = cachedWrappedKeyHolderConcurrentCache.getClass().getDeclaredField("currentEntry");
+		LingeringCloseCache cachedWrappedKeyHolderLingeringCloseCache = getLingeringCloseCache();
+		Field currentEntryField = cachedWrappedKeyHolderLingeringCloseCache.getClass().getDeclaredField("currentEntry");
 		currentEntryField.setAccessible(true);
-		AtomicReference currentEntry = (AtomicReference) currentEntryField.get(cachedWrappedKeyHolderConcurrentCache);
+		AtomicReference currentEntry = (AtomicReference) currentEntryField.get(cachedWrappedKeyHolderLingeringCloseCache);
 		String cacheCurrentKeyId = (String) ((Map.Entry) currentEntry.get()).getKey();
 
 		CachedWrappedKeyHolder actualCurrentKey = getCurrentKey();
@@ -497,37 +497,37 @@ class CachedWrappedKeyEncryptionServiceTest implements CryptoKeyProvider {
 		given(mockedCachedWrappedKeyHolder.key()).willThrow(new KeyAlreadyDestroyedException()).willReturn(Arrays.copyOf(currentKeyBytes, currentKeyBytes.length));
 		given(mockedCachedWrappedKeyHolder.persistableEncryptedKey()).willReturn(actualCurrentKey.persistableEncryptedKey());
 		given(mockedCachedWrappedKeyHolder.keyId()).willReturn(actualCurrentKey.keyId());
-		cachedWrappedKeyHolderConcurrentCache.putCurrent(cacheCurrentKeyId, mockedCachedWrappedKeyHolder);
+		cachedWrappedKeyHolderLingeringCloseCache.putCurrent(cacheCurrentKeyId, mockedCachedWrappedKeyHolder);
 	}
 
 	private CachedWrappedKeyHolder getCurrentKey() {
-		return getConcurrentCache().getCurrent();
+		return getLingeringCloseCache().getCurrent();
 	}
 
 	@SuppressWarnings("unchecked")
-	private ConcurrentCache<String, CachedWrappedKeyHolder> getConcurrentCache() {
+	private LingeringCloseCache<String, CachedWrappedKeyHolder> getLingeringCloseCache() {
 		try {
-			Field cachedWrappedKeyHolderConcurrentCacheField = CachedWrappedKeyEncryptionService.class.getDeclaredField("CACHED_WRAPPED_KEY_HOLDER_CONCURRENT_CACHE");
-			cachedWrappedKeyHolderConcurrentCacheField.setAccessible(true);
-			return ((ConcurrentCache<String, CachedWrappedKeyHolder>) cachedWrappedKeyHolderConcurrentCacheField.get(null));
+			Field cachedWrappedKeyHolderLingeringCloseCacheField = CachedWrappedKeyEncryptionService.class.getDeclaredField("CACHED_WRAPPED_KEY_HOLDER_CONCURRENT_CACHE");
+			cachedWrappedKeyHolderLingeringCloseCacheField.setAccessible(true);
+			return ((LingeringCloseCache<String, CachedWrappedKeyHolder>) cachedWrappedKeyHolderLingeringCloseCacheField.get(null));
 		} catch (Exception e) {
 			throw new AssertionError(e);
 		}
 	}
 
 	private void clearCache() {
-		getConcurrentCache().clear();
+		getLingeringCloseCache().clear();
 	}
 
 	private Duration getCacheEntryTTL() {
-		return getConcurrentCache().getCacheEntryTTL();
+		return getLingeringCloseCache().getCacheEntryTTL();
 	}
 
 	private Duration getCurrentEntryTTL() {
-		return getConcurrentCache().getCurrentEntryTTL();
+		return getLingeringCloseCache().getCurrentEntryTTL();
 	}
 
 	private Duration getCacheGracePeriod() {
-		return getConcurrentCache().getCacheGracePeriod();
+		return getLingeringCloseCache().getCacheGracePeriod();
 	}
 }

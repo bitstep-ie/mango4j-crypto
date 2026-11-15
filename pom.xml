@@ -38,10 +38,10 @@
 
     <groupId>ie.bitstep.mango</groupId>
     <artifactId>mango4j-crypto-framework</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>4.0.0-SNAPSHOT</version>
 
     <properties>
-        <java.version>17</java.version>
+        <java.version>25</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <encoding>UTF-8</encoding>
@@ -58,16 +58,16 @@
         <maven.javadoc.plugin.version>3.12.0</maven.javadoc.plugin.version>
         <maven.checkstyle.plugin.version>3.6.0</maven.checkstyle.plugin.version>
         <checkstyle.version>10.26.1</checkstyle.version>
-        <pitest.plugin.version>1.22.1</pitest.plugin.version>
+        <pitest.plugin.version>1.30.1</pitest.plugin.version>
         <pitest.junit5.plugin.version>1.2.3</pitest.junit5.plugin.version>
 
         <!--    Dependencies versions    -->
-        <mango4j.version>1.0.0</mango4j.version>
+        <mango4j.version>4.0.0-SNAPSHOT</mango4j.version>
         <junit-jupiter.version>6.1.2</junit-jupiter.version>
         <junit-mockito.version>5.21.0</junit-mockito.version>
         <mockito-core.version>5.23.0</mockito-core.version>
         <assertj.version>3.27.7</assertj.version>
-        <jackson.version>2.22.1</jackson.version>
+        <jackson.version>3.1.7</jackson.version>
         <commons-collections.version>4.5.0</commons-collections.version>
         <slf4j-api.version>2.0.18</slf4j-api.version>
     </properties>
@@ -194,7 +194,7 @@
                 </dependencies>
                 <configuration>
                     <withHistory>false</withHistory>
-                    <mutationThreshold>99</mutationThreshold>
+                    <mutationThreshold>100</mutationThreshold>
                     <targetClasses>
                         <param>ie.bitstep.mango*</param>
                     </targetClasses>
@@ -228,21 +228,6 @@
                 </executions>
             </plugin>
 
-             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                    <id>sign-artifacts</id>
-                    <phase>verify</phase>
-                    <goals>
-                        <goal>sign</goal>
-                    </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
             <!-- Sources -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -260,9 +245,60 @@
         </plugins>
     </build>
 
+    <profiles>
+        <!-- GPG signing is only needed for publishing: mvn deploy -Prelease -->
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>3.2.8</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Mutation testing, fails the build below 100%: mvn clean verify -Phammer-time -->
+        <profile>
+            <id>hammer-time</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-maven</artifactId>
+                        <configuration>
+                            <mutationThreshold>100</mutationThreshold>
+                            <coverageThreshold>100</coverageThreshold>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>run-mutation-tests</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>mutationCoverage</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
     <dependencies>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
+            <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
         </dependency>
