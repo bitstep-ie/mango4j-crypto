@@ -19,7 +19,6 @@ import ie.bitstep.mango.crypto.core.exceptions.TransientCryptoException;
 import ie.bitstep.mango.crypto.core.factories.ConfigurableObjectMapperFactory;
 import ie.bitstep.mango.crypto.core.factories.ObjectMapperFactory;
 import ie.bitstep.mango.crypto.core.formatters.CiphertextFormatter;
-import ie.bitstep.mango.crypto.core.formatters.DefaultCiphertextFormatter;
 import ie.bitstep.mango.crypto.core.providers.CryptoKeyProvider;
 import ie.bitstep.mango.crypto.hmac.HmacStrategy;
 import ie.bitstep.mango.utils.thread.NamedScheduledExecutorBuilder;
@@ -73,7 +72,6 @@ public class CryptoShield {
 		private CryptoKeyProvider cryptoKeyProvider;
 		private List<EncryptionServiceDelegate> encryptionServiceDelegates;
 		private RetryConfiguration retryConfiguration;
-		private CiphertextFormatter ciphertextFormatter;
 
 		/**
 		 * Mandatory
@@ -134,26 +132,13 @@ public class CryptoShield {
 			return this;
 		}
 
-		/**
-		 * If this builder method isn't used then we default to {@link DefaultCiphertextFormatter}
-		 *
-		 * @param ciphertextFormatter CiphertextFormatter instance to use. Use this method if you want to supply your own
-		 *                            implementation of {@link DefaultCiphertextFormatter} instead of the default implementation that comes with the library
-		 * @return this builder
-		 */
-		public Builder withCiphertextFormatter(CiphertextFormatter ciphertextFormatter) {
-			this.ciphertextFormatter = ciphertextFormatter;
-			return this;
-		}
-
 		public CryptoShield build() {
 			return new CryptoShield(
 					annotatedEntities,
 					objectMapperFactory,
 					cryptoKeyProvider,
 					encryptionServiceDelegates,
-					retryConfiguration,
-					ciphertextFormatter
+					retryConfiguration
 			);
 		}
 	}
@@ -162,17 +147,12 @@ public class CryptoShield {
 						ObjectMapperFactory objectMapperFactory,
 						CryptoKeyProvider cryptoKeyProvider,
 						List<EncryptionServiceDelegate> encryptionServiceDelegates,
-						RetryConfiguration retryConfiguration,
-						CiphertextFormatter ciphertextFormatter) {
+						RetryConfiguration retryConfiguration) {
 		if (objectMapperFactory == null) {
 			objectMapperFactory = new ConfigurableObjectMapperFactory();
 		}
 		this.objectMapper = objectMapperFactory.objectMapper();
-		if (ciphertextFormatter == null) {
-			this.ciphertextFormatter = new DefaultCiphertextFormatter(cryptoKeyProvider, objectMapperFactory);
-		} else {
-			this.ciphertextFormatter = ciphertextFormatter;
-		}
+		this.ciphertextFormatter = new CiphertextFormatter(cryptoKeyProvider, objectMapperFactory);
 		this.cryptoKeyProvider = cryptoKeyProvider;
 		this.encryptionService = new EncryptionService(encryptionServiceDelegates, this.ciphertextFormatter, objectMapperFactory);
 		this.annotatedEntityManager = new AnnotatedEntityManager(annotatedEntities, new HmacStrategyHelper(encryptionService, cryptoKeyProvider));

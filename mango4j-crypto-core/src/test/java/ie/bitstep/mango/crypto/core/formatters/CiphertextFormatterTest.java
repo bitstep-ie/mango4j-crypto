@@ -33,7 +33,7 @@ class CiphertextFormatterTest {
 	private ObjectMapperFactory objectMapperFactory;
 
 	@InjectMocks
-	private DefaultCiphertextFormatter ciphertextFormatter;
+	private CiphertextFormatter ciphertextFormatter;
 
 	private CryptoKey testCryptoKey;
 

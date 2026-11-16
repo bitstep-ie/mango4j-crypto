@@ -7,7 +7,6 @@ import ie.bitstep.mango.crypto.core.exceptions.UnsupportedKeyTypeException;
 import ie.bitstep.mango.crypto.core.factories.ConfigurableObjectMapperFactory;
 import ie.bitstep.mango.crypto.core.factories.ObjectMapperFactory;
 import ie.bitstep.mango.crypto.core.formatters.CiphertextFormatter;
-import ie.bitstep.mango.crypto.core.formatters.DefaultCiphertextFormatter;
 import ie.bitstep.mango.crypto.core.providers.CryptoKeyProvider;
 
 import java.util.Collection;
@@ -43,7 +42,7 @@ public final class EncryptionService {
 	public EncryptionService(Collection<EncryptionServiceDelegate> encryptionServiceDelegates,
 							 CryptoKeyProvider cryptoKeyProvider,
 							 ObjectMapperFactory objectMapperFactory) {
-		this(encryptionServiceDelegates, new DefaultCiphertextFormatter(cryptoKeyProvider, objectMapperFactory), objectMapperFactory);
+		this(encryptionServiceDelegates, new CiphertextFormatter(cryptoKeyProvider, objectMapperFactory), objectMapperFactory);
 	}
 
 	/**

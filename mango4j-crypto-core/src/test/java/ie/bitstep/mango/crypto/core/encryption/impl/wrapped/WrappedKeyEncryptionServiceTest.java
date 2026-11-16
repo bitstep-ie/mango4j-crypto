@@ -16,7 +16,6 @@ import ie.bitstep.mango.crypto.core.exceptions.NonTransientCryptoException;
 import ie.bitstep.mango.crypto.core.exceptions.UnsupportedKeyTypeException;
 import ie.bitstep.mango.crypto.core.factories.ConfigurableObjectMapperFactory;
 import ie.bitstep.mango.crypto.core.formatters.CiphertextFormatter;
-import ie.bitstep.mango.crypto.core.formatters.DefaultCiphertextFormatter;
 import ie.bitstep.mango.crypto.core.providers.CryptoKeyProvider;
 import ie.bitstep.mango.crypto.core.utils.Generators;
 import org.junit.jupiter.api.Test;
@@ -133,7 +132,7 @@ class WrappedKeyEncryptionServiceTest implements CryptoKeyProvider {
 		);
 		cryptoKeys.put(cryptoKey.getId(), cryptoKey);
 
-		CiphertextFormatter cipherTextFormatter = new DefaultCiphertextFormatter(this, new ConfigurableObjectMapperFactory());
+		CiphertextFormatter cipherTextFormatter = new CiphertextFormatter(this, new ConfigurableObjectMapperFactory());
 
 		EncryptionServiceDelegate pbEncryptionService = new Base64EncryptionService();
 
@@ -195,7 +194,7 @@ class WrappedKeyEncryptionServiceTest implements CryptoKeyProvider {
 
 	@Test
 	void validateCreateContentEncryptionParameters() {
-		CiphertextFormatter cipherTextFormatter = new DefaultCiphertextFormatter(this, new ConfigurableObjectMapperFactory());
+		CiphertextFormatter cipherTextFormatter = new CiphertextFormatter(this, new ConfigurableObjectMapperFactory());
 		WrappedKeyEncryptionService es = new WrappedKeyEncryptionService(this, cipherTextFormatter);
 		new EncryptionService(
 			List.of(es), this
@@ -249,7 +248,7 @@ class WrappedKeyEncryptionServiceTest implements CryptoKeyProvider {
 		CiphertextContainer encrypted = encryptionService.encrypt(getById("AES-CBC"), data);
 
 		String encryptedText = new
-				DefaultCiphertextFormatter(this, new ConfigurableObjectMapperFactory()).format(encrypted)
+				CiphertextFormatter(this, new ConfigurableObjectMapperFactory()).format(encrypted)
 			.replace(PKCS5_PADDING.getPadding(), "BAD_PADDING");
 
 		assertThrows(NonTransientCryptoException.class, () ->
@@ -269,7 +268,7 @@ class WrappedKeyEncryptionServiceTest implements CryptoKeyProvider {
 	void decryptCBC() {
 		EncryptionService encryptionService = setUp(256);
 		CiphertextContainer encrypted = encryptionService.encrypt(getById("AES-CBC"), data);
-		String decrypted = encryptionService.decrypt(new DefaultCiphertextFormatter(this, new ConfigurableObjectMapperFactory()).format(encrypted));
+		String decrypted = encryptionService.decrypt(new CiphertextFormatter(this, new ConfigurableObjectMapperFactory()).format(encrypted));
 
 		assertThat(decrypted).isEqualTo(data);
 	}
@@ -286,7 +285,7 @@ class WrappedKeyEncryptionServiceTest implements CryptoKeyProvider {
 	void decryptGCM() {
 		EncryptionService encryptionService = setUp(256);
 		CiphertextContainer encrypted = encryptionService.encrypt(getById("AES-GCM"), data);
-		String decrypted = encryptionService.decrypt(new DefaultCiphertextFormatter(this, new ConfigurableObjectMapperFactory()).format(encrypted));
+		String decrypted = encryptionService.decrypt(new CiphertextFormatter(this, new ConfigurableObjectMapperFactory()).format(encrypted));
 
 		assertThat(decrypted).isEqualTo(data);
 	}

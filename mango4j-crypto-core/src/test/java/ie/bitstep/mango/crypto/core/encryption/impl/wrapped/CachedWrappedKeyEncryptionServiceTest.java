@@ -16,7 +16,6 @@ import ie.bitstep.mango.crypto.core.exceptions.KeyAlreadyDestroyedException;
 import ie.bitstep.mango.crypto.core.exceptions.NonTransientCryptoException;
 import ie.bitstep.mango.crypto.core.factories.ConfigurableObjectMapperFactory;
 import ie.bitstep.mango.crypto.core.formatters.CiphertextFormatter;
-import ie.bitstep.mango.crypto.core.formatters.DefaultCiphertextFormatter;
 import ie.bitstep.mango.crypto.core.providers.CryptoKeyProvider;
 import ie.bitstep.mango.crypto.core.utils.Generators;
 import org.junit.jupiter.api.AfterEach;
@@ -184,7 +183,7 @@ class CachedWrappedKeyEncryptionServiceTest implements CryptoKeyProvider {
 		);
 		cryptoKeys.put(noCipherModeKey.getId(), noCipherModeKey);
 
-		CiphertextFormatter cipherTextFormatter = new DefaultCiphertextFormatter(this, new ConfigurableObjectMapperFactory());
+		CiphertextFormatter cipherTextFormatter = new CiphertextFormatter(this, new ConfigurableObjectMapperFactory());
 
 		EncryptionServiceDelegate pbEncryptionService = new Base64EncryptionService();
 
@@ -200,7 +199,7 @@ class CachedWrappedKeyEncryptionServiceTest implements CryptoKeyProvider {
 	@Test
 	void testCachedWrappedKeyEncryptionService() {
 		// GIVEN
-		CiphertextFormatter cipherTextFormatter = new DefaultCiphertextFormatter(this, new ConfigurableObjectMapperFactory());
+		CiphertextFormatter cipherTextFormatter = new CiphertextFormatter(this, new ConfigurableObjectMapperFactory());
 
 		// WHEN
 		new CachedWrappedKeyEncryptionService(
@@ -217,7 +216,7 @@ class CachedWrappedKeyEncryptionServiceTest implements CryptoKeyProvider {
 
 	@Test
 	void validateCreateContentEncryptionParameters() {
-		CiphertextFormatter cipherTextFormatter = new DefaultCiphertextFormatter(this, new ConfigurableObjectMapperFactory());
+		CiphertextFormatter cipherTextFormatter = new CiphertextFormatter(this, new ConfigurableObjectMapperFactory());
 		CachedWrappedKeyEncryptionService es = new CachedWrappedKeyEncryptionService(this, cipherTextFormatter);
 		new EncryptionService(
 				List.of(es), this
@@ -275,7 +274,7 @@ class CachedWrappedKeyEncryptionServiceTest implements CryptoKeyProvider {
 			CiphertextContainer encrypted = encryptionService.encrypt(cbcCryptoKey, data);
 
 			String encryptedText = new
-					DefaultCiphertextFormatter(this, new ConfigurableObjectMapperFactory()).format(encrypted)
+					CiphertextFormatter(this, new ConfigurableObjectMapperFactory()).format(encrypted)
 					.replace(PKCS5_PADDING.getPadding(), "BAD_PADDING");
 
 			assertThrows(NonTransientCryptoException.class, () ->
@@ -294,8 +293,8 @@ class CachedWrappedKeyEncryptionServiceTest implements CryptoKeyProvider {
 
 			CiphertextContainer encrypted1 = encryptionService.encrypt(getById(AES_GCM_CACHED_WRAPPED_KEY_ID), data);
 			CiphertextContainer encrypted2 = encryptionService.encrypt(getById(AES_GCM_CACHED_WRAPPED_KEY_ID), data);
-			String decrypted1 = encryptionService.decrypt(new DefaultCiphertextFormatter(this, new ConfigurableObjectMapperFactory()).format(encrypted1));
-			String decrypted2 = encryptionService.decrypt(new DefaultCiphertextFormatter(this, new ConfigurableObjectMapperFactory()).format(encrypted2));
+			String decrypted1 = encryptionService.decrypt(new CiphertextFormatter(this, new ConfigurableObjectMapperFactory()).format(encrypted1));
+			String decrypted2 = encryptionService.decrypt(new CiphertextFormatter(this, new ConfigurableObjectMapperFactory()).format(encrypted2));
 
 			assertThat(encrypted1.getCryptoKey()).isEqualTo(aesGCMKey);
 			assertThat(encrypted2.getCryptoKey()).isEqualTo(aesGCMKey);
@@ -318,8 +317,8 @@ class CachedWrappedKeyEncryptionServiceTest implements CryptoKeyProvider {
 
 			clearCache();
 
-			String decrypted1 = encryptionService.decrypt(new DefaultCiphertextFormatter(this, new ConfigurableObjectMapperFactory()).format(encrypted1));
-			String decrypted2 = encryptionService.decrypt(new DefaultCiphertextFormatter(this, new ConfigurableObjectMapperFactory()).format(encrypted2));
+			String decrypted1 = encryptionService.decrypt(new CiphertextFormatter(this, new ConfigurableObjectMapperFactory()).format(encrypted1));
+			String decrypted2 = encryptionService.decrypt(new CiphertextFormatter(this, new ConfigurableObjectMapperFactory()).format(encrypted2));
 
 			assertThat(encrypted1.getCryptoKey()).isEqualTo(aesGCMKey);
 			assertThat(encrypted2.getCryptoKey()).isEqualTo(aesGCMKey);
@@ -354,7 +353,7 @@ class CachedWrappedKeyEncryptionServiceTest implements CryptoKeyProvider {
 			assertThat(isEmpty(keyBytes)).isTrue();
 
 			// don't normally use another method to help a test but better to just make sure whatever got encrypted can be decrypted ok too!
-			assertThat(encryptionService.decrypt(new DefaultCiphertextFormatter(this, new ConfigurableObjectMapperFactory()).format(encrypted))).isEqualTo(data);
+			assertThat(encryptionService.decrypt(new CiphertextFormatter(this, new ConfigurableObjectMapperFactory()).format(encrypted))).isEqualTo(data);
 		}
 	}
 
@@ -383,7 +382,7 @@ class CachedWrappedKeyEncryptionServiceTest implements CryptoKeyProvider {
 			assertThat(isEmpty(keyBytes)).isTrue();
 
 			// don't normally use another method to help a test but better to just make sure whatever got encrypted can be decrypted ok too!
-			assertThat(encryptionService.decrypt(new DefaultCiphertextFormatter(this, new ConfigurableObjectMapperFactory()).format(encrypted))).isEqualTo(data);
+			assertThat(encryptionService.decrypt(new CiphertextFormatter(this, new ConfigurableObjectMapperFactory()).format(encrypted))).isEqualTo(data);
 		}
 	}
 
@@ -428,7 +427,7 @@ class CachedWrappedKeyEncryptionServiceTest implements CryptoKeyProvider {
 			// don't normally use another method to help a test but better to just make sure whatever got encrypted can be decrypted ok too!
 			// first have to reset the key bytes in the cache because encrypt will have destroyed them
 			given(mockedCachedWrappedKeyHolder.key()).willReturn(Arrays.copyOf(currentKeyBytes, currentKeyBytes.length));
-			assertThat(encryptionService.decrypt(new DefaultCiphertextFormatter(this, new ConfigurableObjectMapperFactory()).format(encrypted))).isEqualTo(data);
+			assertThat(encryptionService.decrypt(new CiphertextFormatter(this, new ConfigurableObjectMapperFactory()).format(encrypted))).isEqualTo(data);
 		}
 	}
 
@@ -451,7 +450,7 @@ class CachedWrappedKeyEncryptionServiceTest implements CryptoKeyProvider {
 			// creates a new key and puts it in the cache
 			CiphertextContainer encrypted = encryptionService.encrypt(aesGCMKey, data);
 			String decrypted = encryptionService.decrypt(
-					new DefaultCiphertextFormatter(this, new ConfigurableObjectMapperFactory())
+					new CiphertextFormatter(this, new ConfigurableObjectMapperFactory())
 							.format(encrypted));
 
 			assertThat(decrypted).isEqualTo(data);
@@ -472,7 +471,7 @@ class CachedWrappedKeyEncryptionServiceTest implements CryptoKeyProvider {
 			CiphertextContainer encrypted = encryptionService.encrypt(aesGCMKey, data);
 			destroyCurrentKey();
 			String decrypted = encryptionService.decrypt(
-					new DefaultCiphertextFormatter(this, new ConfigurableObjectMapperFactory())
+					new CiphertextFormatter(this, new ConfigurableObjectMapperFactory())
 							.format(encrypted));
 
 			assertThat(decrypted).isEqualTo(data);

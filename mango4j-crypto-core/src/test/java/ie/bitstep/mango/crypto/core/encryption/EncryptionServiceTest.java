@@ -7,7 +7,6 @@ import ie.bitstep.mango.crypto.core.exceptions.UnsupportedKeyTypeException;
 import ie.bitstep.mango.crypto.core.factories.ConfigurableObjectMapperFactory;
 import ie.bitstep.mango.crypto.core.factories.ObjectMapperFactory;
 import ie.bitstep.mango.crypto.core.formatters.CiphertextFormatter;
-import ie.bitstep.mango.crypto.core.formatters.DefaultCiphertextFormatter;
 import ie.bitstep.mango.crypto.core.providers.CryptoKeyProvider;
 import ie.bitstep.mango.crypto.core.testdata.TestData;
 import org.junit.jupiter.api.BeforeEach;
@@ -67,7 +66,7 @@ class EncryptionServiceTest {
 		testCiphertextContainer = TestData.testCipherTextContainer();
 		testMockHmacHolder = TestData.testHmacHolder();
 		testMockHmacHolders = List.of(testMockHmacHolder);
-		cipherTextFormatter = new DefaultCiphertextFormatter(mockCryptoKeyProvider, new ConfigurableObjectMapperFactory());
+		cipherTextFormatter = new CiphertextFormatter(mockCryptoKeyProvider, new ConfigurableObjectMapperFactory());
 	}
 
 	@SuppressWarnings("DataFlowIssue")
