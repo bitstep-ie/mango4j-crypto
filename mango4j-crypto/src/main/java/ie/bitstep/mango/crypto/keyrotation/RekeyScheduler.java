@@ -130,13 +130,15 @@ public class RekeyScheduler {
 		Set<String> keySelectorsUsedInRekeyEntities = new HashSet<>();
 		for (RekeyService<?> rekeyService : rekeySchedulerConfig.getRekeyServices()) {
 			List<RekeyServiceTaskHolder> rekeyServiceTaskHolders = new ArrayList<>();
-			if (rekeySchedulerConfig.getCryptoShield().getAnnotatedEntityManager().getFieldsToEncrypt(rekeyService.getEntityType()).isEmpty()) {
+			if (rekeySchedulerConfig.getCryptoShield().getAnnotatedEntityManager().getCipherGroups(rekeyService.getEntityType()).isEmpty()
+			&& rekeySchedulerConfig.getCryptoShield().getAnnotatedEntityManager().getFieldsToCascadeEncrypt(rekeyService.getEntityType()).isEmpty()) {
 				logger.log(DEBUG, "Entity {0} does not have encrypted fields, so nothing to rekey for it", rekeyService.getEntityType().getSimpleName());
 				continue;
 			}
 
 			tenantEncryptionKeysGroupedByKeySelectorSortedByDateDescending.forEach((keySelector, tenantsCryptoKeysForThisSelectorSortedByDateDescending) -> {
 				List<String> keySelectorsUsedInEntity = rekeySchedulerConfig.getCryptoShield().getAnnotatedEntityManager().getCipherGroups(rekeyService.getEntityType()).stream().map(CipherGroup::keySelector).toList();
+				// TODO: We should probably also check the fields to cascade encrypt here too, but for now just check the cipher groups since that's the main use case.
 				if (!keySelectorsUsedInEntity.contains(keySelector)) {
 					logger.log(TRACE, "Entity {0} does not have a cipher group using key selector {1}, so no RekeyServiceTaskHolder created for this combination", rekeyService.getEntityType().getSimpleName(), keySelector);
 					return;
@@ -197,7 +199,7 @@ public class RekeyScheduler {
 				if (count == 0 && key.getRekeyMode() == KEY_ON) {
 					shouldDeleteAllNonLatestKeys = true;
 				} else if (shouldDeleteAllNonLatestKeys || (count > 0 && key.getRekeyMode() == KEY_OFF)) {
-					if (isKeyUnusedByConfiguredEntities(keySelector, key)) {
+					if (key.getUsage() == CryptoKeyUsage.HMAC || isEncryptionKeyUnusedByConfiguredEntities(keySelector, key)) {
 						logger.log(DEBUG, "No configured entity is using this deprecated encryption key; marking it for deletion: {0}", key);
 						removeKey(key);
 					} else {
@@ -208,12 +210,12 @@ public class RekeyScheduler {
 		}
 	}
 
-	private boolean isKeyUnusedByConfiguredEntities(String keySelector, CryptoKey key) {
+	private boolean isEncryptionKeyUnusedByConfiguredEntities(String keySelector, CryptoKey key) {
 		boolean foundApplicableRekeyService = false;
 
 		for (RekeyService<?> rekeyService : rekeySchedulerConfig.getRekeyServices()) {
 			Class<?> entityType = rekeyService.getEntityType();
-			if (rekeySchedulerConfig.getCryptoShield().getAnnotatedEntityManager().getFieldsToEncrypt(entityType).isEmpty()) {
+			if (rekeySchedulerConfig.getCryptoShield().getAnnotatedEntityManager().getCipherGroups(entityType).isEmpty()) {
 				continue;
 			}
 
@@ -245,8 +247,7 @@ public class RekeyScheduler {
 
 	private Map<String, List<CryptoKey>> getEncryptionKeysGroupedByKeySelectorSortedByDateDescending(String tenantId, List<CryptoKey> tenantEncryptionKeysSortedByDateDescending) {
 		Map<String, List<CryptoKey>> cryptoKeysGroupedByKeySelector = tenantEncryptionKeysSortedByDateDescending.stream().collect(keySelectorCollector());
-		if (tenantEncryptionKeysSortedByDateDescending.isEmpty() || cryptoKeysGroupedByKeySelector.entrySet()
-				.stream().anyMatch(keySelectorCryptoKeyGroup -> keySelectorCryptoKeyGroup.getValue().size() == 1)) {
+		if (tenantEncryptionKeysSortedByDateDescending.isEmpty()) {
 			// TODO: We should probably allow re-encryption to proceed if there's only a single key with a rekey mode of KEY_ON, but since that would really be a misconfiguration we'll not allow that for now
 			throw new RekeySkipException(String.format("No encryption keys were found%s (minimum of 2 needed).....skipping the currently scheduled encryption rekey tasks for this tenant ", tenantLogString(tenantId)));
 		}
@@ -259,7 +260,7 @@ public class RekeyScheduler {
 			// TODO: Revisit this to investigate handling of keys that were already involved in a previous and successful rekey but where the rekey mode was just never set back to null.
 			// That's probably gonna be quite common so this check will probably need to be relaxed to allow for that scenario. But for now, let's just throw an exception and skip the rekey for this tenant.
 			if (keySelectorEntry.getValue().size() == 1) {
-				throw new RekeySkipException(String.format("%s encryption keys were found with key selector %s%s (minimum of 2 needed).....skipping the currently scheduled encryption rekey tasks for this tenant ", tenantEncryptionKeysSortedByDateDescending.size(), keySelectorEntry.getKey(), tenantLogString(tenantId)));
+				throw new RekeySkipException(String.format("1 encryption key was found with key selector %s%s (minimum of 2 needed).....skipping the currently scheduled encryption rekey tasks for this tenant ", keySelectorEntry.getKey(), tenantLogString(tenantId)));
 			}
 		}
 

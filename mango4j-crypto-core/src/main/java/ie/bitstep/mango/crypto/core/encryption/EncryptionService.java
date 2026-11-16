@@ -57,7 +57,7 @@ public final class EncryptionService {
 							 CiphertextFormatter ciphertextFormatter,
 							 ObjectMapperFactory objectMapperFactory) {
 		if (encryptionServiceDelegates == null || encryptionServiceDelegates.isEmpty() || encryptionServiceDelegates.stream().anyMatch(Objects::isNull)) {
-			throw new NullPointerException("Constructor parameters cannot be null");
+			throw new NullPointerException("No encryption service delegates provided");
 		}
 		this.ciphertextFormatter = ciphertextFormatter;
 		this.objectMapperFactory = objectMapperFactory;

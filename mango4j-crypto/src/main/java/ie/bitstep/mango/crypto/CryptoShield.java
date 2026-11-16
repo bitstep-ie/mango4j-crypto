@@ -488,10 +488,12 @@ public class CryptoShield {
 					throw new ActiveEncryptionKeyNotFoundException();
 				}
 
+				String finalCipherText = null;
 				if (!rootNode.isEmpty()) {
-					String finalCipherText = ciphertextFormatter.format(doEncrypt(rootNode, currentCipherGroupEncryptionKey));
-					cipherGroup.targetField().set(entity, finalCipherText); // NOSONAR - we set accessible to true on startup
+					finalCipherText = ciphertextFormatter.format(doEncrypt(rootNode, currentCipherGroupEncryptionKey));
 				}
+				// Always set the target field to the finalCipherText, even if it's null, because we want to clear out any existing ciphertext if all source fields are null.
+				cipherGroup.targetField().set(entity, finalCipherText); // NOSONAR - we set accessible to true on startup
 				Field encryptionKeyIdField = cipherGroup.keyIdField();
 				if (encryptionKeyIdField != null) {
 					encryptionKeyIdField.set(entity, currentCipherGroupEncryptionKey.getId()); // NOSONAR - we set accessible to true on startup
@@ -580,14 +582,13 @@ public class CryptoShield {
 	// Sonar bug: incorrectly flags line as java:S2209. Thinks it's a static reference, no idea why.
 	private void resetFieldsFromEncryptedData(Object entity) {
 		try {
-			List<Field> fieldsToEncrypt = annotatedEntityManager.getFieldsToEncrypt(entity.getClass());
-			if (fieldsToEncrypt.isEmpty()) {
+			List<CipherGroup> cipherGroups = annotatedEntityManager.getCipherGroups(entity.getClass());
+			if (cipherGroups.isEmpty()) {
 				// maybe this entity only has HMACs - revisit: should we throw an exception here to warn
 				// app that decrypt was called on an object that can't be decrypted?
 				return;
 			}
-
-			for (CipherGroup cipherGroup : annotatedEntityManager.getCipherGroups(entity.getClass())) {
+			for (CipherGroup cipherGroup : cipherGroups) {
 				Object encryptedData = cipherGroup.targetField().get(entity);
 				if (encryptedData == null) {
 					continue;
@@ -595,7 +596,7 @@ public class CryptoShield {
 
 				String finalCiphertext = valueOf(encryptedData);
 				JsonNode decryptedJsonNode = objectMapper.readTree(encryptionService.decrypt(finalCiphertext));
-				for (Field field : fieldsToEncrypt) {
+				for (Field field : cipherGroup.sourceFields()) {
 					JsonNode fieldValue = decryptedJsonNode.get(field.getName());
 					if (fieldValue != null) {
 						field.set(entity, objectMapper.treeToValue(fieldValue, field.getType())); // NOSONAR

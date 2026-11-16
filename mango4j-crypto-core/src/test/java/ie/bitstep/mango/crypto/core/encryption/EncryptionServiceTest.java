@@ -76,7 +76,7 @@ class EncryptionServiceTest {
 	void constructorNullEntityClassList() {
 		assertThatThrownBy(() -> new EncryptionService(null, mockCryptoKeyProvider))
 				.isInstanceOf(NullPointerException.class)
-				.hasMessage("Constructor parameters cannot be null");
+				.hasMessage("No encryption service delegates provided");
 	}
 
 	@Test
@@ -87,7 +87,7 @@ class EncryptionServiceTest {
 
 		assertThatThrownBy(() -> new EncryptionService(encryptionServiceDelegates, mockCryptoKeyProvider))
 				.isInstanceOf(NullPointerException.class)
-				.hasMessage("Constructor parameters cannot be null");
+				.hasMessage("No encryption service delegates provided");
 	}
 
 	@Test
@@ -97,7 +97,7 @@ class EncryptionServiceTest {
 
 		assertThatThrownBy(() -> new EncryptionService(encryptionServiceDelegates, mockCryptoKeyProvider))
 				.isInstanceOf(NullPointerException.class)
-				.hasMessage("Constructor parameters cannot be null");
+				.hasMessage("No encryption service delegates provided");
 	}
 
 	@Test

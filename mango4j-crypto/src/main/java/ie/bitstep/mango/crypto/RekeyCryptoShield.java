@@ -26,11 +26,16 @@ public class RekeyCryptoShield {
 
 			@Override
 			public CryptoKey getCurrentEncryptionKey(String keySelector) {
-				if (keySelector.isEmpty() || (getCurrentEncryptionKey() != null && keySelector.equals(getCurrentEncryptionKey().getKeySelector()))) {
-					return getCurrentEncryptionKey();
-				} else {
+				if (currentEncryptionKey == null) {
 					return null;
 				}
+
+				String currentKeySelector = currentEncryptionKey.getKeySelector();
+				if (currentKeySelector == null) {
+					// normalize null to empty string for comparison since some keys might have null key selectors and some might have empty string key selectors, but they should be treated the same.
+					currentKeySelector = "";
+				}
+				return keySelector.equals(currentKeySelector) ? currentEncryptionKey : null;
 			}
 
 			@Override

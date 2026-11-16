@@ -59,7 +59,6 @@ public class AnnotatedEntityManager {
 			throw new NullPointerException("Constructor parameters cannot be null");
 		}
 		annotatedEntityClasses.forEach(annotatedEntityClass -> {
-			// do a full sanity check on the entity. make sure that if it has an encryptkeyid field that iot has the other stuff too, etc.
 			registerCipherGroups(annotatedEntityClass);
 			registerHmacStrategy(annotatedEntityClass, hmacStrategyHelper);
 			registerAllConfidentialFields(annotatedEntityClass);
@@ -317,16 +316,6 @@ public class AnnotatedEntityManager {
 			// Before completion date - log WARNING
 			LOGGER.log(WARNING, message);
 		}
-	}
-
-	/**
-	 * Returns fields marked with {@link Encrypt} for the entity type.
-	 *
-	 * @param annotatedEntityClass the entity class to look up
-	 * @return the list of fields to encrypt
-	 */
-	public List<Field> getFieldsToEncrypt(Class<?> annotatedEntityClass) {
-		return sourceEncryptedFields.getOrDefault(annotatedEntityClass, emptyList());
 	}
 
 	/**
