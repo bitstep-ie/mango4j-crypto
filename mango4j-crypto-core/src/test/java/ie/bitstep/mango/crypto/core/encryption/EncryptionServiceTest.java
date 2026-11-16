@@ -10,6 +10,7 @@ import ie.bitstep.mango.crypto.core.formatters.CiphertextFormatter;
 import ie.bitstep.mango.crypto.core.providers.CryptoKeyProvider;
 import ie.bitstep.mango.crypto.core.testdata.TestData;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -18,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -65,6 +67,36 @@ class EncryptionServiceTest {
 		testMockHmacHolder = TestData.testHmacHolder();
 		testMockHmacHolders = List.of(testMockHmacHolder);
 		cipherTextFormatter = new CiphertextFormatter(mockCryptoKeyProvider, new ConfigurableObjectMapperFactory());
+	}
+
+	@SuppressWarnings("DataFlowIssue")
+	@Test
+	@DisplayName("Constructor test for a null entity list")
+	void constructorNullEntityClassList() {
+		assertThatThrownBy(() -> new EncryptionService(null, mockCryptoKeyProvider))
+				.isInstanceOf(NullPointerException.class)
+				.hasMessage("No encryption service delegates provided");
+	}
+
+	@Test
+	@DisplayName("Constructor test for an entity list with a single null element")
+	void constructorNullEntityClass() {
+		List<EncryptionServiceDelegate> encryptionServiceDelegates = new ArrayList<>();
+		encryptionServiceDelegates.add(null);
+
+		assertThatThrownBy(() -> new EncryptionService(encryptionServiceDelegates, mockCryptoKeyProvider))
+				.isInstanceOf(NullPointerException.class)
+				.hasMessage("No encryption service delegates provided");
+	}
+
+	@Test
+	@DisplayName("Constructor test for an empty entity list")
+	void constructorEmptyEntityClassList() {
+		List<EncryptionServiceDelegate> encryptionServiceDelegates = List.of();
+
+		assertThatThrownBy(() -> new EncryptionService(encryptionServiceDelegates, mockCryptoKeyProvider))
+				.isInstanceOf(NullPointerException.class)
+				.hasMessage("No encryption service delegates provided");
 	}
 
 	@Test

@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.node.MissingNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
+import ie.bitstep.mango.crypto.core.domain.CiphertextContainer;
 import ie.bitstep.mango.crypto.core.domain.CryptoKey;
 import ie.bitstep.mango.crypto.core.domain.HmacHolder;
 import ie.bitstep.mango.crypto.core.encryption.EncryptionService;
@@ -20,7 +21,6 @@ import ie.bitstep.mango.crypto.core.factories.ConfigurableObjectMapperFactory;
 import ie.bitstep.mango.crypto.core.factories.ObjectMapperFactory;
 import ie.bitstep.mango.crypto.core.formatters.CiphertextFormatter;
 import ie.bitstep.mango.crypto.core.providers.CryptoKeyProvider;
-import ie.bitstep.mango.crypto.exceptions.DeserializationException;
 import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.HighlyConfidentialObject;
 import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.TestMockHmacEntity;
 import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.TestMockHmacEntityWithNoEncryptFields;
@@ -29,11 +29,12 @@ import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.cascade.TestEnti
 import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.cascade.TestEntityWithCollectionCascadeEncryptFields;
 import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.custom.NothingAnnotatedEntity;
 import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.list.TestAnnotatedEntityForListHmacFieldStrategy;
+import ie.bitstep.mango.crypto.testdata.entities.multipleciphergroups.TestAnnotatedEntityForMultipleCipherGroups;
 import ie.bitstep.mango.crypto.testdata.implementations.hmacstrategies.MockHmacStrategyImpl;
 import ie.bitstep.mango.reflection.utils.ReflectionUtils;
 import ie.bitstep.mango.utils.thread.NamedScheduledExecutorBuilder;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -62,6 +63,7 @@ import static ie.bitstep.mango.crypto.testdata.TestData.SOME_HIGHLY_CONFIDENTIAL
 import static ie.bitstep.mango.crypto.testdata.TestData.TEST_CIPHERTEXT_CONTAINER;
 import static ie.bitstep.mango.crypto.testdata.TestData.TEST_CRYPTO_KEY;
 import static ie.bitstep.mango.crypto.testdata.TestData.TEST_CRYPTO_KEY_2;
+import static ie.bitstep.mango.crypto.testdata.TestData.TEST_CRYPTO_KEY_DATA_ATTRIBUTE;
 import static ie.bitstep.mango.crypto.testdata.TestData.TEST_CRYPTO_KEY_ID;
 import static ie.bitstep.mango.crypto.testdata.TestData.TEST_ETHNICITY;
 import static ie.bitstep.mango.crypto.testdata.TestData.TEST_ETHNICITY_FIELD_NAME;
@@ -233,6 +235,65 @@ class CryptoShieldTest {
 		assertThat(MockHmacStrategyImpl.hmacStrategyHelperPassedToConstructor.cryptoKeyProvider()).isEqualTo(mockCryptoKeyProvider);
 		assertThat(MockHmacStrategyImpl.hmacStrategyHelperPassedToConstructor.encryptionService()).isInstanceOf(EncryptionService.class);
 		assertThat(objectNodeArgumentCaptor.getValue().get(TEST_ETHNICITY_FIELD_NAME).asText()).isEqualTo(TEST_ETHNICITY);
+	}
+
+	@Nested
+	class EncryptMultipleCipherGroups {
+
+		private static final String HIGH_CONFIDENTIALITY_KEY_SELECTOR = "highConfidentialityKeySelector";
+		private static final String LOW_CONFIDENTIALITY_KEY_SELECTOR = "lowConfidentialityKeySelector";
+		private static final String HIGH_CONFIDENTIALITY_KEY_ID = "highConfidentialityKeyId";
+		private static final String LOW_CONFIDENTIALITY_KEY_ID = "lowConfidentialityKeyId";
+		private static final String TEST_HIGHLY_CONFIDENTIAL_ENCRYPTED_DATA_CIPHERTEXT = "TestHighlyConfidentialEncryptedDataCiphertext";
+		private static final String TEST_LOW_CONFIDENTIALITY_ENCRYPTED_DATA_CIPHERTEXT = "TestLowConfidentialityEncryptedDataCiphertext";
+
+		@Test
+		void encryptMultipleCipherGroupsWithObject() throws JsonProcessingException {
+			given(mockObjectMapperFactory.objectMapper()).willReturn(mockedObjectMapper);
+			given(mockedObjectMapper.createObjectNode()).willReturn(new ObjectMapper().createObjectNode(), new ObjectMapper().createObjectNode());
+			given(mockedObjectMapper.convertValue(TEST_PAN, JsonNode.class)).willReturn(new TextNode(TEST_PAN));
+			given(mockedObjectMapper.convertValue(TEST_USERNAME, JsonNode.class)).willReturn(new TextNode(TEST_USERNAME));
+			given(mockedObjectMapper.writeValueAsString(objectNodeArgumentCaptor.capture())).willReturn(TEST_MOCK_SOURCE_CIPHERTEXT);
+			CryptoKey highConfidentialityKey = testCryptoKey();
+			highConfidentialityKey.setId(HIGH_CONFIDENTIALITY_KEY_ID);
+			CryptoKey lowConfidentialityKey = testCryptoKey();
+			lowConfidentialityKey.setId(LOW_CONFIDENTIALITY_KEY_ID);
+			given(mockCryptoKeyProvider.getCurrentEncryptionKey(HIGH_CONFIDENTIALITY_KEY_SELECTOR)).willReturn(highConfidentialityKey);
+			given(mockCryptoKeyProvider.getCurrentEncryptionKey(LOW_CONFIDENTIALITY_KEY_SELECTOR)).willReturn(lowConfidentialityKey);
+			CiphertextContainer highConfidentialityCiphertextContainer = new CiphertextContainer(highConfidentialityKey, Map.of(TEST_CRYPTO_KEY_DATA_ATTRIBUTE, TEST_MOCK_SOURCE_CIPHERTEXT));
+			CiphertextContainer lowConfidentialityCiphertextContainer = new CiphertextContainer(lowConfidentialityKey, Map.of(TEST_CRYPTO_KEY_DATA_ATTRIBUTE, TEST_MOCK_SOURCE_CIPHERTEXT));
+			given(mockEncryptionService.encrypt(highConfidentialityKey, TEST_MOCK_SOURCE_CIPHERTEXT)).willReturn(highConfidentialityCiphertextContainer);
+			given(mockEncryptionService.encrypt(lowConfidentialityKey, TEST_MOCK_SOURCE_CIPHERTEXT)).willReturn(lowConfidentialityCiphertextContainer);
+			given(mockCiphertextFormatter.format(highConfidentialityCiphertextContainer)).willReturn(TEST_HIGHLY_CONFIDENTIAL_ENCRYPTED_DATA_CIPHERTEXT);
+			given(mockCiphertextFormatter.format(lowConfidentialityCiphertextContainer)).willReturn(TEST_LOW_CONFIDENTIALITY_ENCRYPTED_DATA_CIPHERTEXT);
+
+			cryptoShield = new CryptoShield(List.of(TestAnnotatedEntityForMultipleCipherGroups.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
+			overrideDirectlyInstantiatedFieldsWithMocks();
+
+			TestAnnotatedEntityForMultipleCipherGroups testEntity = new TestAnnotatedEntityForMultipleCipherGroups();
+			testEntity.setPan(TEST_PAN);
+			testEntity.setUserName(TEST_USERNAME);
+			testEntity.setFavouriteColor(TEST_FAVOURITE_COLOR);
+			cryptoShield.encrypt(testEntity);
+
+			assertThat(testEntity.getLowConfidentialityEncryptedData()).isEqualTo(TEST_LOW_CONFIDENTIALITY_ENCRYPTED_DATA_CIPHERTEXT);
+			assertThat(testEntity.getHighConfidentialityEncryptedData()).isEqualTo(TEST_HIGHLY_CONFIDENTIAL_ENCRYPTED_DATA_CIPHERTEXT);
+			assertThat(testEntity.getLowConfidentialityEncryptionKeyId()).isEqualTo(LOW_CONFIDENTIALITY_KEY_ID);
+			assertThat(testEntity.getHighConfidentialityEncryptionKeyId()).isEqualTo(HIGH_CONFIDENTIALITY_KEY_ID);
+			assertThat(testEntity.getFavouriteColor()).isEqualTo(TEST_FAVOURITE_COLOR);
+
+			List<ObjectNode> objectNodeArgumentCaptorAllValues = objectNodeArgumentCaptor.getAllValues();
+			ObjectNode panObjectNode = objectNodeArgumentCaptorAllValues.stream()
+					.filter(jsonNodes -> jsonNodes.get(PAN_FIELD_NAME) != null)
+					.findFirst().orElseThrow();
+			ObjectNode userNameObjectNode = objectNodeArgumentCaptorAllValues.stream()
+					.filter(jsonNodes -> jsonNodes.get(TEST_USER_NAME_FIELD_NAME) != null)
+					.findFirst().orElseThrow();
+			assertThat(panObjectNode.get(PAN_FIELD_NAME).asText()).isEqualTo(TEST_PAN);
+			assertThat(panObjectNode.get(TEST_USER_NAME_FIELD_NAME)).isNull();
+			assertThat(userNameObjectNode.get(TEST_USER_NAME_FIELD_NAME).asText()).isEqualTo(TEST_USERNAME);
+			assertThat(userNameObjectNode.get(PAN_FIELD_NAME)).isNull();
+		}
 	}
 
 	@Test
@@ -557,7 +618,6 @@ class CryptoShieldTest {
 	@Test
 	void encryptFieldGetFailure() {
 		given(mockObjectMapperFactory.objectMapper()).willReturn(mockedObjectMapper);
-		given(mockCryptoKeyProvider.getCurrentEncryptionKey()).willReturn(TEST_CRYPTO_KEY);
 		RuntimeException cause = new RuntimeException("Test Exception Message");
 		given(mockedObjectMapper.convertValue(TEST_PAN, JsonNode.class)).willThrow(cause);
 
@@ -640,7 +700,6 @@ class CryptoShieldTest {
 		TransientCryptoException transientCryptoException = new TransientCryptoException("Test Transient Exception", new RuntimeException());
 		given(mockedObjectMapper.createObjectNode())
 				.willThrow(transientCryptoException);
-		given(mockCryptoKeyProvider.getCurrentEncryptionKey()).willReturn(TEST_CRYPTO_KEY);
 
 		RetryConfiguration retryConfiguration = new RetryConfiguration(TEST_POOL_SIZE, 3, Duration.ofMillis(200), 2);
 		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), retryConfiguration);
@@ -812,7 +871,6 @@ class CryptoShieldTest {
 		assertThat(MockHmacStrategyImpl.hmacStrategyHelperPassedToConstructor.encryptionService()).isInstanceOf(EncryptionService.class);
 		assertThat(MockHmacStrategyImpl.entityPassedToHmac).isEqualTo(testEntity);
 
-		then(mockedObjectMapper).shouldHaveNoInteractions();
 		then(mockCiphertextFormatter).shouldHaveNoInteractions();
 	}
 
@@ -820,7 +878,7 @@ class CryptoShieldTest {
 	void encryptNoCurrentEncryptionKeyButRekeyCryptoShieldDelegate() {
 		given(mockObjectMapperFactory.objectMapper()).willReturn(mockedObjectMapper);
 		CryptoShieldDelegate mockCryptoShieldDelegate = Mockito.mock(CryptoShieldDelegate.class);
-		given(mockCryptoShieldDelegate.getCurrentEncryptionKey()).willReturn(null);
+		given(mockCryptoShieldDelegate.getCurrentEncryptionKey("")).willReturn(null);
 		given(mockCryptoShieldDelegate.getHmacStrategy(testEntity)).willReturn(Optional.of(new MockHmacStrategyImpl(null, null)));
 
 		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
@@ -832,7 +890,6 @@ class CryptoShieldTest {
 		assertThat(MockHmacStrategyImpl.hmacStrategyHelperPassedToConstructor.cryptoKeyProvider()).isEqualTo(mockCryptoKeyProvider);
 		assertThat(MockHmacStrategyImpl.hmacStrategyHelperPassedToConstructor.encryptionService()).isInstanceOf(EncryptionService.class);
 
-		then(mockedObjectMapper).shouldHaveNoInteractions();
 		then(mockCiphertextFormatter).shouldHaveNoInteractions();
 	}
 
@@ -1103,21 +1160,6 @@ class CryptoShieldTest {
 		then(mockCryptoKeyProvider).shouldHaveNoInteractions();
 		then(mockCiphertextFormatter).shouldHaveNoInteractions();
 		then(mockedObjectMapper).shouldHaveNoInteractions();
-	}
-
-	@Test
-	@Disabled("Revisit if we want to restrict to certain field types")
-	void decryptExceptionWrongValueType() throws JsonProcessingException {
-		given(mockObjectMapperFactory.objectMapper()).willReturn(mockedObjectMapper);
-		given(mockEncryptionService.decrypt(TEST_MOCK_ENCRYPTED_DATA)).willReturn(TEST_MOCK_SOURCE_CIPHERTEXT);
-		given(mockedObjectMapper.readTree(TEST_MOCK_SOURCE_CIPHERTEXT)).willReturn(new ObjectNode(JsonNodeFactory.instance).put("pan", 234234234L));
-
-		cryptoShield = new CryptoShield(List.of(TestMockHmacEntity.class), mockObjectMapperFactory, mockCryptoKeyProvider, List.of(mockEncryptionServiceDelegate), null);
-		testEntity.setEncryptedData(TEST_MOCK_ENCRYPTED_DATA);
-
-		assertThatThrownBy(() -> cryptoShield.decrypt(testEntity))
-				.isInstanceOf(DeserializationException.class)
-				.hasMessage("Field 'pan' is of type 'NUMBER'. Only String fields are currently supported");
 	}
 
 	@Test
@@ -1821,7 +1863,7 @@ class CryptoShieldTest {
 
 	@SuppressWarnings("unchecked")
 	@Test
-	void testBuilderBuildsCryptoShieldWithCorrectFieldsUsingReflection() {
+	void testBuilderBuildsCryptoShieldWithUsualFields() {
 		given(mockObjectMapperFactory.objectMapper()).willReturn(mockedObjectMapper);
 		given(mockRetryConfiguration.poolSize()).willReturn(TEST_POOL_SIZE);
 

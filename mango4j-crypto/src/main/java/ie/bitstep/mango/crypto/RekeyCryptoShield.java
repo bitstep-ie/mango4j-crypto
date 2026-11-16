@@ -25,6 +25,20 @@ public class RekeyCryptoShield {
 			}
 
 			@Override
+			public CryptoKey getCurrentEncryptionKey(String keySelector) {
+				if (currentEncryptionKey == null) {
+					return null;
+				}
+
+				String currentKeySelector = currentEncryptionKey.getKeySelector();
+				if (currentKeySelector == null) {
+					// normalize null to empty string for comparison since some keys might have null key selectors and some might have empty string key selectors, but they should be treated the same.
+					currentKeySelector = "";
+				}
+				return keySelector.equals(currentKeySelector) ? currentEncryptionKey : null;
+			}
+
+			@Override
 			public Optional<HmacStrategy> getHmacStrategy(Object entity) {
 				Optional<HmacStrategy> hmacStrategy = cryptoShield.getAnnotatedEntityManager().getHmacStrategy(entity.getClass());
 				if (currentHmacKey != null && hmacStrategy.isPresent()) {

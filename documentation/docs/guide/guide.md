@@ -289,9 +289,6 @@ for an explanation of these values. Once the CryptoKey.rekeyMode field is set to
 KEY_ON or KEY_OFF this RekeyScheduler will trigger the rekeying process the next time it runs (defined by
 `withRekeyCheckInterval()` as above).
 
-> NOTE: You can still use the RekeyScheduler to configure a rekey for any entity that only has @Encrypt fields (and
-> doesn't have HMACs). It's just that HMAC rekey is currently only supported for entities that use the List HMAC Strategy.
-
 
 ## Encryption Service Delegates
 In mango4j-crypto all the code for cryptographic operations is hidden behind an abstraction we refer to as the '
@@ -776,7 +773,7 @@ The @Encrypt annotation should be placed on fields which must be encrypted. This
 @EncryptedData partner annotation to be placed on the (single) field
 where the library should put the resulting ciphertext (which is generated in one go for all fields), so you only need
 one @EncryptedData field regardless of the number of @Encrypt
-fields. This is shown in the example entity code below.
+fields. This is shown in the previous example entity code.
 
 > **NOTE**: All fields marked with @Encrypt must be transient or the library will throw an error on registration of the
 > entity. The only exception to this is when also using the @EnabledMigrationSupport annotation during once off

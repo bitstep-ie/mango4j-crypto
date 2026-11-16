@@ -248,7 +248,7 @@ class WrappedKeyEncryptionServiceTest implements CryptoKeyProvider {
 		CiphertextContainer encrypted = encryptionService.encrypt(getById("AES-CBC"), data);
 
 		String encryptedText = new
-			CiphertextFormatter(this, new ConfigurableObjectMapperFactory()).format(encrypted)
+				CiphertextFormatter(this, new ConfigurableObjectMapperFactory()).format(encrypted)
 			.replace(PKCS5_PADDING.getPadding(), "BAD_PADDING");
 
 		assertThrows(NonTransientCryptoException.class, () ->

@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public final class EncryptionService {
@@ -54,6 +55,9 @@ public final class EncryptionService {
 	public EncryptionService(Collection<EncryptionServiceDelegate> encryptionServiceDelegates,
 							 CiphertextFormatter ciphertextFormatter,
 							 ObjectMapperFactory objectMapperFactory) {
+		if (encryptionServiceDelegates == null || encryptionServiceDelegates.isEmpty() || encryptionServiceDelegates.stream().anyMatch(Objects::isNull)) {
+			throw new NullPointerException("No encryption service delegates provided");
+		}
 		this.ciphertextFormatter = ciphertextFormatter;
 		this.objectMapperFactory = objectMapperFactory;
 		encryptionServiceDelegates.forEach(encryptionServiceDelegate -> {
