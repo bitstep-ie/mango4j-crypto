@@ -116,6 +116,7 @@ public class SingleHmacFieldStrategy implements HmacStrategy {
 				String fieldValue = getFieldStringValue(entity, sourceField);
 				if (fieldValue == null) {
 					// Don't bother trying to HMAC null values
+					targetHmacField.set(entity, null); // NOSONAR
 					continue;
 				}
 				List<HmacHolder> hmacHolders = List.of(new HmacHolder(hmacKeyToUse, fieldValue, sourceField.getName()));

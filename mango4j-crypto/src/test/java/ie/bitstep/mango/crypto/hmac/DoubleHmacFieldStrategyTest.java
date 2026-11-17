@@ -209,6 +209,8 @@ class DoubleHmacFieldStrategyTest {
 		given(mockHmacHelper.encryptionService()).willReturn(mockEncryptionService);
 
 		testEntity.setPan(null);
+		testEntity.setPanHmac1("stale-pan-hmac-1");
+		testEntity.setPanHmac2("stale-pan-hmac-2");
 
 		doubleHmacFieldStrategy.hmac(testEntity);
 

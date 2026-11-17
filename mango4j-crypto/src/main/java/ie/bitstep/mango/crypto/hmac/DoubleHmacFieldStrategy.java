@@ -159,11 +159,14 @@ public class DoubleHmacFieldStrategy implements HmacStrategy {
 			Field sourceField = entry.getKey();
 			List<Field> targetHmacFields = entry.getValue();
 			String fieldValue = getFieldStringValue(entity, sourceField);
-			if (fieldValue == null) {
-				// Don't bother trying to HMAC null values
-				continue;
-			}
 			try {
+				if (fieldValue == null) {
+					// Don't bother trying to HMAC null values
+					for (Field targetHmacField : targetHmacFields) {
+						targetHmacField.set(entity, null); // NOSONAR
+					}
+					continue;
+				}
 				List<CryptoKey> sortedCryptoKeys = HmacUtils.hmacKeysInCreationDateDescendingOrder(doubleHmacFieldStrategyDelegate.getCurrentHmacKeys());
 				if (sortedCryptoKeys.size() > 2) {
 					throw new NonTransientCryptoException(format("More than 2 current HMAC keys were found for entity " +

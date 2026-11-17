@@ -185,6 +185,7 @@ class SingleHmacFieldStrategyTest {
 		willDoNothing().given(mockEncryptionService).hmac(hmacHolderArgumentCaptor.capture());
 		given(mockHmacHelper.encryptionService()).willReturn(mockEncryptionService);
 		testEntity.setPan(null);
+		testEntity.setPanHmac("stale-pan-hmac");
 
 		singleHmacFieldStrategy.hmac(testEntity);
 
