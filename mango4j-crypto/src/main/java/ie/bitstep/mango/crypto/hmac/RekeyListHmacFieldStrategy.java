@@ -45,7 +45,8 @@ public class RekeyListHmacFieldStrategy implements HmacStrategy, ListHmacFieldSt
 		if (existingLookups == null || existingLookups.isEmpty()) {
 			filterPredicate = currentHmacKey -> true;
 		} else {
-			filterPredicate = currentHmacKey -> existingLookups.stream().noneMatch(hmacHolder -> hmacHolder.getCryptoKeyId().equals(currentHmacKey.getId()));
+			filterPredicate = currentHmacKey -> existingLookups.stream()
+					.noneMatch(hmacHolder -> hmacHolder.getCryptoKeyId().equals(currentHmacKey.getId()) && hmacHolder.getHmacAlias().equals(sourceField.getName()));
 		}
 		return currentHmacKeys.stream()
 			.filter(filterPredicate)

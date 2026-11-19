@@ -74,11 +74,22 @@ public class RekeyListHmacStrategyTest {
 
 	@Test
 	void getDefaultHmacHoldersExistingLookupsContainSameHmacKey() throws NoSuchFieldException {
-		CryptoShieldHmacHolder existingHmacHolder = new CryptoShieldHmacHolder(TEST_CRYPTO_KEY_ID, "Doesn't_Matter");
+		CryptoShieldHmacHolder existingHmacHolder = new CryptoShieldHmacHolder(TEST_CRYPTO_KEY_ID, "Doesn't_Matter", PAN_FIELD_NAME);
 		testEntity.setLookups(List.of(existingHmacHolder));
 		Field field = testEntity.getClass().getDeclaredField("pan");
 		Collection<HmacHolder> defaultHmacHolders = rekeyListHmacFieldStrategy.getDefaultHmacHolders(List.of(TEST_CRYPTO_KEY), field, TEST_PAN, testEntity);
 		assertThat(defaultHmacHolders).isEmpty();
+	}
+
+	@Test
+	void getDefaultHmacHoldersExistingLookupsContainSameKeyForDifferentField() throws NoSuchFieldException {
+		testEntity.setLookups(List.of(new CryptoShieldHmacHolder(TEST_CRYPTO_KEY_ID, "existing", "userName")));
+		Field field = testEntity.getClass().getDeclaredField("pan");
+
+		Collection<HmacHolder> defaultHmacHolders = rekeyListHmacFieldStrategy.getDefaultHmacHolders(List.of(TEST_CRYPTO_KEY), field, TEST_PAN, testEntity);
+
+		assertThat(defaultHmacHolders).anyMatch(hmacHolder -> hmacHolder.getCryptoKey().equals(TEST_CRYPTO_KEY)
+				&& hmacHolder.getHmacAlias().equals(PAN_FIELD_NAME) && hmacHolder.getValue().equals(TEST_PAN));
 	}
 
 	@Test
