@@ -289,6 +289,12 @@ for an explanation of these values. Once the CryptoKey.rekeyMode field is set to
 KEY_ON or KEY_OFF this RekeyScheduler will trigger the rekeying process the next time it runs (defined by
 `withRekeyCheckInterval()` as above).
 
+The scheduler ignores keys whose `keyStartTime` is in the future when selecting rekey tasks, target keys and keys for
+cleanup. A key becomes eligible when its start time is reached; the configured key cache period must also have elapsed.
+For single-HMAC rekeys, the scheduler's selected tenant key is used directly rather than resolving the current key from
+the background thread's provider context. When all single-HMAC source fields are null or empty, their HMAC values are
+cleared and the selected key ID is still written so the record can be recognised as processed.
+
 
 ## Encryption Service Delegates
 In mango4j-crypto all the code for cryptographic operations is hidden behind an abstraction we refer to as the '
