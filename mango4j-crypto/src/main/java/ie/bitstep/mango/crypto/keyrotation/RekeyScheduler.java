@@ -62,6 +62,10 @@ public class RekeyScheduler {
 			logger.log(TRACE, "Beginning rekey job");
 			Map<String, List<CryptoKey>> allEncryptionKeys = new HashMap<>();
 			for (CryptoKey cryptoKey : rekeySchedulerConfig.getCryptoShield().getCryptoKeyProvider().getAllCryptoKeys()) {
+				if (cryptoKey.getKeyStartTime() != null && cryptoKey.getKeyStartTime().isAfter(rekeySchedulerConfig.getClock().instant())) {
+					logger.log(TRACE, "Crypto Key {0} has a start time in the future, so it will be considered non-existent rekeying until that time is reached", cryptoKey);
+					continue;
+				}
 				// HashMap allows null keys so if the app doesn't have tenants then cryptokey.getTenantId() can return null and
 				// this functionality will still work fine
 				allEncryptionKeys.computeIfAbsent(cryptoKey.getTenantId(), tenantId -> new ArrayList<>()).add(cryptoKey);

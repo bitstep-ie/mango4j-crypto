@@ -23,9 +23,6 @@ class RekeyDoubleHmacStrategyTest {
 	@Mock
 	private DoubleHmacFieldStrategy mockDoubleHmacStrategy;
 
-	@Mock
-	private CryptoKey mockHmacKey;
-
 	private DoubleHmacFieldStrategyDelegate doubleHmacFieldStrategyDelegate;
 	private RekeyDoubleHmacFieldStrategy rekeyDoubleHmacFieldStrategy;
 	private TestAnnotatedEntityForDoubleHmacFieldStrategy testEntity;
@@ -54,6 +51,8 @@ class RekeyDoubleHmacStrategyTest {
 	void getCurrentHmacKeys() {
 		assertThat(doubleHmacFieldStrategyDelegate.getCurrentHmacKeys()).isEqualTo(List.of(testCurrentHmacKey));
 		assertThatCode(() -> doubleHmacFieldStrategyDelegate.setFieldForOlderHmacKey(null, null, null))
+				.doesNotThrowAnyException();
+		assertThatCode(() -> doubleHmacFieldStrategyDelegate.setOlderHmacKeyId(null, null))
 				.doesNotThrowAnyException();
 	}
 }

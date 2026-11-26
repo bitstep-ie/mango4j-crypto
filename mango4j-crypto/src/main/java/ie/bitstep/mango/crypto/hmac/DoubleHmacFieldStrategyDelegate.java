@@ -14,4 +14,6 @@ interface DoubleHmacFieldStrategyDelegate {
 	List<CryptoKey> getCurrentHmacKeys();
 
 	void setFieldForOlderHmacKey(Object entity, List<HmacHolder> hmacHolders, List<Field> targetHmacFields);
+
+	void setOlderHmacKeyId(Object entity, List<CryptoKey> sortedCryptoKeys);
 }

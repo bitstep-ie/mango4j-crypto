@@ -185,6 +185,7 @@ class SingleHmacFieldStrategyTest {
 		willDoNothing().given(mockEncryptionService).hmac(hmacHolderArgumentCaptor.capture());
 		given(mockHmacHelper.encryptionService()).willReturn(mockEncryptionService);
 		testEntity.setPan(null);
+		testEntity.setPanHmac("stale-pan-hmac");
 
 		singleHmacFieldStrategy.hmac(testEntity);
 
@@ -198,6 +199,24 @@ class SingleHmacFieldStrategyTest {
 		assertThat(hmacHolderArgumentCaptor.getValue().get(0).getCryptoKey()).isEqualTo(testCryptoKey);
 		assertThat(hmacHolderArgumentCaptor.getValue().get(0).getValue()).isEqualTo(TEST_USERNAME);
 		assertThat(hmacHolderArgumentCaptor.getValue().get(0).getHmacAlias()).isEqualTo(TEST_USER_NAME_FIELD_NAME);
+	}
+
+	@Test
+	void hmacAllEmptyValuesUpdatesKeyMarker() {
+		given(mockHmacHelper.cryptoKeyProvider()).willReturn(mockCryptoKeyProvider);
+		given(mockCryptoKeyProvider.getCurrentHmacKeys()).willReturn(List.of(testCryptoKey));
+		testEntity.setPan(null);
+		testEntity.setUserName("");
+		testEntity.setPanHmac("stale-pan");
+		testEntity.setUserNameHmac("stale-name");
+		testEntity.setHmacKeyId("old");
+
+		singleHmacFieldStrategy.hmac(testEntity);
+
+		assertThat(testEntity.getPanHmac()).isNull();
+		assertThat(testEntity.getUserNameHmac()).isNull();
+		assertThat(testEntity.getHmacKeyId()).isEqualTo(testCryptoKey.getId());
+		then(mockEncryptionService).shouldHaveNoInteractions();
 	}
 
 	@Test

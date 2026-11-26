@@ -24,8 +24,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static ie.bitstep.mango.crypto.hmac.FieldValidator.validateSourceHmacField;
@@ -286,24 +284,25 @@ public class ListHmacFieldStrategy implements HmacStrategy {
 	 * @param listHmacFieldStrategyDelegate optional delegate for rekey operations
 	 */
 	void hmac(Object entity, ListHmacFieldStrategyDelegate listHmacFieldStrategyDelegate) {
-		Set<HmacHolder> allHmacHolders = new HashSet<>();
 		List<HmacHolder> lookupHmacs = new ArrayList<>();
 		List<HmacHolder> uniqueHmacs = new ArrayList<>();
-		populateHmacHolders(entity, listHmacFieldStrategyDelegate, uniqueHmacs, lookupHmacs);
+		List<CryptoKey> currentHmacKeys = listHmacFieldStrategyDelegate != null
+				? listHmacFieldStrategyDelegate.getCurrentHmacKeys() : getCurrentHmacKeys();
+		validateHmacKeys(currentHmacKeys);
+		populateHmacHolders(entity, uniqueHmacs, lookupHmacs, currentHmacKeys);
+		calculateHmacs(lookupHmacs, uniqueHmacs);
+		replaceHmacs(entity, lookupHmacs, uniqueHmacs);
+	}
 
-		if (!lookupHmacs.isEmpty() || !uniqueHmacs.isEmpty()) {
-			if (listHmacFieldStrategyDelegate != null) {
-				listHmacFieldStrategyDelegate.preProcessForRekey(entity, lookupHmacs, uniqueHmacs);
-			}
-			allHmacHolders.addAll(lookupHmacs);
-			allHmacHolders.addAll(uniqueHmacs);
-
-			hmacStrategyHelper.encryptionService()
-					.hmac(allHmacHolders.stream()
-							// skip hmac calculation for null values (HMAC of null is just null)
-							.filter(hmacHolder -> nonNull(hmacHolder.getValue()))
-							.toList());
-			postProcess(entity, lookupHmacs, uniqueHmacs);
+	private void calculateHmacs(List<HmacHolder> lookupHmacs, List<HmacHolder> uniqueHmacs) {
+		Set<HmacHolder> allHmacHolders = new HashSet<>();
+		allHmacHolders.addAll(lookupHmacs);
+		allHmacHolders.addAll(uniqueHmacs);
+		List<HmacHolder> holdersToCalculate = allHmacHolders.stream()
+				.filter(hmacHolder -> nonNull(hmacHolder.getValue()))
+				.toList();
+		if (!holdersToCalculate.isEmpty()) {
+			hmacStrategyHelper.encryptionService().hmac(holdersToCalculate);
 		}
 	}
 
@@ -311,38 +310,28 @@ public class ListHmacFieldStrategy implements HmacStrategy {
 	 * Builds lookup and unique HMAC holder lists for the entity.
 	 *
 	 * @param entity                        the entity to inspect
-	 * @param listHmacFieldStrategyDelegate optional delegate for rekey operations
 	 * @param uniqueHmacs                   output list for unique HMACs
 	 * @param lookupHmacs                   output list for lookup HMACs
+	 * @param currentHmacKeys               keys for this operation
 	 */
-	private void populateHmacHolders(Object entity, ListHmacFieldStrategyDelegate listHmacFieldStrategyDelegate,
-									 List<HmacHolder> uniqueHmacs, List<HmacHolder> lookupHmacs) {
-
-		List<CryptoKey> currentHmacKeys = listHmacFieldStrategyDelegate != null
-				? listHmacFieldStrategyDelegate.getCurrentHmacKeys()
-				: getCurrentHmacKeys();
-		validateHmacKeys(currentHmacKeys);
+	private void populateHmacHolders(Object entity, List<HmacHolder> uniqueHmacs, List<HmacHolder> lookupHmacs, List<CryptoKey> currentHmacKeys) {
 		for (Map.Entry<Field, Hmac> entry : entityHmacFields.entrySet()) {
 			Field sourceField = entry.getKey();
 			List<Hmac.Purposes> hmacPurposesForThisField = Arrays.asList(entry.getValue().purposes());
 			String fieldValue = getFieldStringValue(entity, sourceField);
-			Collection<HmacHolder> defaultHmacHoldersForThisField = listHmacFieldStrategyDelegate != null
-					? listHmacFieldStrategyDelegate.getDefaultHmacHolders(currentHmacKeys, sourceField, fieldValue, entity)
-					: this.getDefaultHmacHolders(currentHmacKeys, sourceField, fieldValue);
+			Collection<HmacHolder> defaultHmacHoldersForThisField = getDefaultHmacHolders(currentHmacKeys, sourceField, fieldValue);
 
 			if (hmacPurposesForThisField.contains(Hmac.Purposes.LOOKUP)) {
-				Collection<HmacHolder> tokenizedHmacHolders = buildTokenizedHmacHolders(defaultHmacHoldersForThisField, sourceField);
 				lookupHmacs.addAll(defaultHmacHoldersForThisField);
-				lookupHmacs.addAll(tokenizedHmacHolders);
+				lookupHmacs.addAll(buildTokenizedHmacHolders(defaultHmacHoldersForThisField, sourceField));
 			}
 
-			if (hmacPurposesForThisField.contains(Hmac.Purposes.UNIQUE) && !belongsToGroup(sourceField) // groups were already processed above
-					&& (!(entry.getValue().isOptionalUnique()) || fieldValue != null)) {
-				// disregard null values which are for optional standalone unique HMACs
+			if (hmacPurposesForThisField.contains(Hmac.Purposes.UNIQUE) && !belongsToGroup(sourceField) // groups are processed below
+					&& (!entry.getValue().isOptionalUnique() || fieldValue != null)) { // only add unique HMACs for optional fields if the value is not null
 				uniqueHmacs.addAll(defaultHmacHoldersForThisField);
 			}
 		}
-		populateCompoundUniqueHmacs(entity, uniqueHmacs);
+		populateCompoundUniqueHmacs(entity, uniqueHmacs, currentHmacKeys);
 	}
 
 	/**
@@ -359,22 +348,22 @@ public class ListHmacFieldStrategy implements HmacStrategy {
 	/**
 	 * Populates compound unique HMACs for unique groups.
 	 *
-	 * @param entity      the entity to inspect
-	 * @param uniqueHmacs output list for unique HMACs
+	 * @param entity          the entity to inspect
+	 * @param uniqueHmacs     output list for unique HMACs
+	 * @param currentHmacKeys keys to calculate for this operation
 	 */
-	private void populateCompoundUniqueHmacs(Object entity, List<HmacHolder> uniqueHmacs) {
+	private void populateCompoundUniqueHmacs(Object entity, List<HmacHolder> uniqueHmacs, List<CryptoKey> currentHmacKeys) {
 		UniqueGroupSet entityInstanceUniqueGroups = new UniqueGroupSet(this.entityUniqueGroups);
 		entityInstanceUniqueGroups.getGroups().forEach((groupName, group) -> {
 			for (UniqueGroupMember uniqueGroupMember : group.getUniqueGroupWrappers()) {
 				String fieldValue = getFieldStringValue(entity, uniqueGroupMember.field());
 				if (uniqueGroupMember.uniqueGroup().isOptional() && fieldValue == null) {
-					// don't calculate compound unique constraint if this optional field has no value
 					return;
 				}
 			}
 			StringBuilder valueToHmac = new StringBuilder();
 			group.getUniqueGroupWrappers().forEach(uniqueGroupMember -> valueToHmac.append(getFieldStringValue(entity, uniqueGroupMember.field())));
-			List<HmacHolder> defaultCompoundUniqueHmacHolders = getCurrentHmacKeys().stream()
+			List<HmacHolder> defaultCompoundUniqueHmacHolders = currentHmacKeys.stream()
 					.map(cryptoKey -> new HmacHolder(cryptoKey, valueToHmac.toString(), groupName))
 					.toList();
 			uniqueHmacs.addAll(defaultCompoundUniqueHmacHolders);
@@ -391,53 +380,20 @@ public class ListHmacFieldStrategy implements HmacStrategy {
 		return entityUniqueGroups.contains(sourceField);
 	}
 
-	/**
-	 * Updates entity lookup/unique lists, retaining any existing HMACs not regenerated.
-	 *
-	 * @param entity              the entity to update
-	 * @param newLookupHmacs      newly generated lookup HMACs
-	 * @param newUniqueValueHmacs newly generated unique HMACs
-	 */
-	private static void postProcess(Object entity, List<HmacHolder> newLookupHmacs, List<HmacHolder> newUniqueValueHmacs) {
+	private static void replaceHmacs(Object entity, List<HmacHolder> newLookupHmacs, List<HmacHolder> newUniqueValueHmacs) {
 		if (Lookup.class.isAssignableFrom(entity.getClass())) {
-			retainExistingHmacs(((Lookup) entity)::getLookups, ((Lookup) entity)::setLookups, newLookupHmacs);
+			((Lookup) entity).setLookups(toCryptoShieldHmacHolders(newLookupHmacs));
 		}
-
 		if (Unique.class.isAssignableFrom(entity.getClass())) {
-			retainExistingHmacs(((Unique) entity)::getUniqueValues, ((Unique) entity)::setUniqueValues, newUniqueValueHmacs);
+			((Unique) entity).setUniqueValues(toCryptoShieldHmacHolders(newUniqueValueHmacs));
 		}
 	}
 
-	/**
-	 * Retains existing HMACs not present in the newly generated list.
-	 *
-	 * @param existingEntityHmacsSupplier supplier of existing HMAC holders
-	 * @param hmacsConsumer               consumer to store the updated list
-	 * @param newHmacHolders              newly generated HMACs
-	 */
-	private static void retainExistingHmacs(Supplier<Collection<CryptoShieldHmacHolder>> existingEntityHmacsSupplier,
-											Consumer<Collection<CryptoShieldHmacHolder>> hmacsConsumer,
-											List<HmacHolder> newHmacHolders) {
-
-		Collection<CryptoShieldHmacHolder> existingEntityHmacHolders = existingEntityHmacsSupplier.get();
-		if (existingEntityHmacHolders == null) {
-			existingEntityHmacHolders = new ArrayList<>();
-		}
-		Collection<CryptoShieldHmacHolder> newEntityHmacs = new ArrayList<>(newHmacHolders.stream()
-				.map(newHmacHolder -> new CryptoShieldHmacHolder(newHmacHolder.getCryptoKey().getId(), newHmacHolder.getValue(), newHmacHolder.getHmacAlias(), newHmacHolder.getTokenizedRepresentation()))
-				.toList());
-
-		for (CryptoShieldHmacHolder existingEntityHmac : existingEntityHmacHolders) {
-			if (newEntityHmacs.stream()
-					.noneMatch(newEntityHmac ->
-							newEntityHmac.getCryptoKeyId().equals(existingEntityHmac.getCryptoKeyId()))) {
-				newEntityHmacs.addAll(existingEntityHmacHolders.stream().filter(cryptoShieldHmacHolder -> cryptoShieldHmacHolder.getCryptoKeyId().equals(existingEntityHmac.getCryptoKeyId())).collect(Collectors.toSet()));
-			}
-		}
-
-		if (!newHmacHolders.isEmpty()) {
-			hmacsConsumer.accept(newEntityHmacs);
-		}
+	private static Collection<CryptoShieldHmacHolder> toCryptoShieldHmacHolders(List<HmacHolder> hmacHolders) {
+		return hmacHolders.stream()
+				.map(hmacHolder -> new CryptoShieldHmacHolder(hmacHolder.getCryptoKey().getId(), hmacHolder.getValue(),
+						hmacHolder.getHmacAlias(), hmacHolder.getTokenizedRepresentation()))
+				.collect(Collectors.toCollection(ArrayList::new));
 	}
 
 	/**
@@ -449,8 +405,9 @@ public class ListHmacFieldStrategy implements HmacStrategy {
 	 */
 	private Collection<HmacHolder> buildTokenizedHmacHolders(Collection<HmacHolder> defaultHmacHoldersForThisField, Field sourceField) {
 		List<HmacHolder> tokenizedHmacHolders;
-		tokenizedHmacHolders = defaultHmacHoldersForThisField.stream().
-				flatMap(hmacHolder -> entityHmacTokenizers.getOrDefault(sourceField, emptySet()).stream()
+		tokenizedHmacHolders = defaultHmacHoldersForThisField.stream()
+				.filter(hmacHolder -> hmacHolder.getValue() != null)
+				.flatMap(hmacHolder -> entityHmacTokenizers.getOrDefault(sourceField, emptySet()).stream()
 						.flatMap(hmacTokenizer -> hmacTokenizer.generateTokenizedValues(hmacHolder).stream()))
 				.toList();
 		return tokenizedHmacHolders;
@@ -464,7 +421,7 @@ public class ListHmacFieldStrategy implements HmacStrategy {
 	 * @param fieldValue      the field value
 	 * @return default HMAC holders
 	 */
-	Collection<HmacHolder> getDefaultHmacHolders(List<CryptoKey> currentHmacKeys, Field sourceField, String fieldValue) {
+	private Collection<HmacHolder> getDefaultHmacHolders(List<CryptoKey> currentHmacKeys, Field sourceField, String fieldValue) {
 		return currentHmacKeys.stream()
 				.map(cryptoKey -> new HmacHolder(cryptoKey, fieldValue, sourceField.getName()))
 				.toList();

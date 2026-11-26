@@ -22,6 +22,8 @@ import ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.doublehmacstrate
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -39,7 +41,6 @@ import static ie.bitstep.mango.crypto.testdata.TestData.TEST_FAVOURITE_COLOR;
 import static ie.bitstep.mango.crypto.testdata.TestData.TEST_PAN;
 import static ie.bitstep.mango.crypto.testdata.TestData.TEST_USERNAME;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -48,6 +49,8 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willAnswer;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
 class DoubleHmacFieldStrategyTest {
@@ -200,6 +203,44 @@ class DoubleHmacFieldStrategyTest {
 		assertThat(testEntity.getUserNameHmac2()).isEqualTo(TEST_USERNAME);
 		assertThat(testEntity.getHmacKeyId1()).isEqualTo(TEST_CRYPTO_KEY_ID);
 		assertThat(testEntity.getHmacKeyId2()).isEqualTo(TEST_CRYPTO_KEY_ID);
+		then(mockCryptoKeyProvider).should(times(1)).getCurrentHmacKeys();
+	}
+
+	@Test
+	void keyIdsAreSetOnceAfterEveryFieldIsProcessed() {
+		DoubleHmacFieldStrategyDelegate delegate = mock(DoubleHmacFieldStrategyDelegate.class);
+		given(delegate.getCurrentHmacKeys()).willReturn(List.of(TEST_CRYPTO_KEY));
+		given(mockHmacHelper.encryptionService()).willReturn(mockEncryptionService);
+		testEntity.setHmacKeyId1("old-1");
+		testEntity.setHmacKeyId2("old-2");
+		doAnswer(invocation -> {
+			assertThat(testEntity.getHmacKeyId1()).isEqualTo("old-1");
+			assertThat(testEntity.getHmacKeyId2()).isEqualTo("old-2");
+			return null;
+		}).when(delegate).setFieldForOlderHmacKey(any(), any(), any());
+
+		doubleHmacFieldStrategy.hmac(testEntity, delegate);
+
+		then(delegate).should(times(3)).setFieldForOlderHmacKey(any(), any(), any());
+		then(delegate).should(times(1)).setOlderHmacKeyId(testEntity, List.of(TEST_CRYPTO_KEY));
+		assertThat(testEntity.getHmacKeyId2()).isEqualTo(TEST_CRYPTO_KEY_ID);
+	}
+
+	@Test
+	void fieldCalculationFailureDoesNotUpdateKeyIds() {
+		given(mockCryptoKeyProvider.getCurrentHmacKeys()).willReturn(List.of(TEST_CRYPTO_KEY));
+		given(mockHmacHelper.cryptoKeyProvider()).willReturn(mockCryptoKeyProvider);
+		given(mockHmacHelper.encryptionService()).willReturn(mockEncryptionService);
+		testEntity.setHmacKeyId1("old-1");
+		testEntity.setHmacKeyId2("old-2");
+		willAnswer(invocation -> {
+			throw new NonTransientCryptoException("HMAC failed");
+		}).given(mockEncryptionService).hmac(any());
+
+		assertThatThrownBy(() -> doubleHmacFieldStrategy.hmac(testEntity))
+				.isInstanceOf(NonTransientCryptoException.class);
+		assertThat(testEntity.getHmacKeyId1()).isEqualTo("old-1");
+		assertThat(testEntity.getHmacKeyId2()).isEqualTo("old-2");
 	}
 
 	@Test
@@ -209,6 +250,8 @@ class DoubleHmacFieldStrategyTest {
 		given(mockHmacHelper.encryptionService()).willReturn(mockEncryptionService);
 
 		testEntity.setPan(null);
+		testEntity.setPanHmac1("stale-pan-hmac-1");
+		testEntity.setPanHmac2("stale-pan-hmac-2");
 
 		doubleHmacFieldStrategy.hmac(testEntity);
 
@@ -220,6 +263,121 @@ class DoubleHmacFieldStrategyTest {
 		assertThat(testEntity.getUserNameHmac2()).isEqualTo(TEST_USERNAME);
 		assertThat(testEntity.getHmacKeyId1()).isEqualTo(TEST_CRYPTO_KEY_ID);
 		assertThat(testEntity.getHmacKeyId2()).isEqualTo(TEST_CRYPTO_KEY_ID);
+	}
+
+	@ParameterizedTest
+	@NullAndEmptySource
+	void allEmptyValuesSetBothKeyIdsForSingleKey(String value) {
+		given(mockHmacHelper.cryptoKeyProvider()).willReturn(mockCryptoKeyProvider);
+		given(mockCryptoKeyProvider.getCurrentHmacKeys()).willReturn(List.of(TEST_CRYPTO_KEY));
+		testEntity.setPan(value);
+		testEntity.setUserName(value);
+		testEntity.setPanHmac1("stale");
+		testEntity.setPanHmac2("stale");
+		testEntity.setUserNameHmac1("stale");
+		testEntity.setUserNameHmac2("stale");
+		testEntity.setHmacKeyId1("old-1");
+		testEntity.setHmacKeyId2("old-2");
+
+		doubleHmacFieldStrategy.hmac(testEntity);
+
+		assertThat(testEntity.getPanHmac1()).isNull();
+		assertThat(testEntity.getPanHmac2()).isNull();
+		assertThat(testEntity.getUserNameHmac1()).isNull();
+		assertThat(testEntity.getUserNameHmac2()).isNull();
+		assertThat(testEntity.getHmacKeyId1()).isEqualTo(TEST_CRYPTO_KEY_ID);
+		assertThat(testEntity.getHmacKeyId2()).isEqualTo(TEST_CRYPTO_KEY_ID);
+		then(mockEncryptionService).shouldHaveNoInteractions();
+	}
+
+	@ParameterizedTest
+	@NullAndEmptySource
+	void allEmptyValuesSetOldAndNewKeyIds(String value) {
+		given(mockHmacHelper.cryptoKeyProvider()).willReturn(mockCryptoKeyProvider);
+		given(oldCryptoKey.getCreatedDate()).willReturn(Instant.ofEpochSecond(1));
+		given(newCryptoKey.getCreatedDate()).willReturn(Instant.ofEpochSecond(2));
+		given(oldCryptoKey.getId()).willReturn("old");
+		given(newCryptoKey.getId()).willReturn("new");
+		given(mockCryptoKeyProvider.getCurrentHmacKeys()).willReturn(List.of(newCryptoKey, oldCryptoKey));
+		testEntity.setPan(value);
+		testEntity.setUserName(value);
+		testEntity.setHmacKeyId1("stale");
+		testEntity.setHmacKeyId2("stale");
+
+		doubleHmacFieldStrategy.hmac(testEntity);
+
+		assertThat(testEntity.getPanHmac1()).isNull();
+		assertThat(testEntity.getPanHmac2()).isNull();
+		assertThat(testEntity.getUserNameHmac1()).isNull();
+		assertThat(testEntity.getUserNameHmac2()).isNull();
+		assertThat(testEntity.getHmacKeyId1()).isEqualTo("old");
+		assertThat(testEntity.getHmacKeyId2()).isEqualTo("new");
+		then(mockEncryptionService).shouldHaveNoInteractions();
+	}
+
+	@ParameterizedTest
+	@NullAndEmptySource
+	void rekeyAllEmptyValuesUpdatesOnlyNewKeyId(String value) {
+		testEntity.setPan(value);
+		testEntity.setUserName(value);
+		testEntity.setPanHmac1("stale");
+		testEntity.setPanHmac2("stale");
+		testEntity.setUserNameHmac1("stale");
+		testEntity.setUserNameHmac2("stale");
+		testEntity.setHmacKeyId1("old-key");
+		testEntity.setHmacKeyId2("stale-key");
+
+		new RekeyDoubleHmacFieldStrategy(doubleHmacFieldStrategy, TEST_CRYPTO_KEY).hmac(testEntity);
+
+		assertThat(testEntity.getPanHmac1()).isNull();
+		assertThat(testEntity.getPanHmac2()).isNull();
+		assertThat(testEntity.getUserNameHmac1()).isNull();
+		assertThat(testEntity.getUserNameHmac2()).isNull();
+		assertThat(testEntity.getHmacKeyId1()).isEqualTo("old-key");
+		assertThat(testEntity.getHmacKeyId2()).isEqualTo(TEST_CRYPTO_KEY_ID);
+		then(mockCryptoKeyProvider).shouldHaveNoInteractions();
+		then(mockEncryptionService).shouldHaveNoInteractions();
+	}
+
+	@Test
+	void rekeyMixedValuesKeepsOlderNonNullHmacAndUpdatesTargetKeyId() {
+		given(mockHmacHelper.encryptionService()).willReturn(mockEncryptionService);
+		testEntity.setPan(null);
+		testEntity.setPanHmac1("stale-pan");
+		testEntity.setPanHmac2("stale-pan");
+		testEntity.setUserNameHmac1("old-name-hmac");
+		testEntity.setUserNameHmac2("stale-name-hmac");
+		testEntity.setHmacKeyId1("old-key");
+		testEntity.setHmacKeyId2("stale-key");
+
+		new RekeyDoubleHmacFieldStrategy(doubleHmacFieldStrategy, TEST_CRYPTO_KEY).hmac(testEntity);
+
+		assertThat(testEntity.getPanHmac1()).isNull();
+		assertThat(testEntity.getPanHmac2()).isNull();
+		assertThat(testEntity.getUserNameHmac1()).isEqualTo("old-name-hmac");
+		assertThat(testEntity.getUserNameHmac2()).isEqualTo(TEST_USERNAME);
+		assertThat(testEntity.getHmacKeyId1()).isEqualTo("old-key");
+		assertThat(testEntity.getHmacKeyId2()).isEqualTo(TEST_CRYPTO_KEY_ID);
+		then(mockEncryptionService).should(times(1)).hmac(any());
+		then(mockCryptoKeyProvider).shouldHaveNoInteractions();
+	}
+
+	@Test
+	void allNullValuesWithoutKeysFailsWithoutChangingFields() {
+		given(mockHmacHelper.cryptoKeyProvider()).willReturn(mockCryptoKeyProvider);
+		given(mockCryptoKeyProvider.getCurrentHmacKeys()).willReturn(List.of());
+		testEntity.setPan(null);
+		testEntity.setUserName(null);
+		testEntity.setPanHmac1("stale");
+		testEntity.setHmacKeyId1("old");
+		testEntity.setHmacKeyId2("old");
+
+		assertThatThrownBy(() -> doubleHmacFieldStrategy.hmac(testEntity)).isInstanceOf(NoHmacKeysFoundException.class);
+
+		assertThat(testEntity.getPanHmac1()).isEqualTo("stale");
+		assertThat(testEntity.getHmacKeyId1()).isEqualTo("old");
+		assertThat(testEntity.getHmacKeyId2()).isEqualTo("old");
+		then(mockEncryptionService).shouldHaveNoInteractions();
 	}
 
 	@Test
@@ -348,13 +506,30 @@ class DoubleHmacFieldStrategyTest {
 	}
 
 	@Test
+	void allNullHmacKeysFailure() {
+		given(mockHmacHelper.cryptoKeyProvider()).willReturn(mockCryptoKeyProvider);
+		given(mockCryptoKeyProvider.getCurrentHmacKeys()).willReturn(java.util.Arrays.asList(null, null));
+
+		assertThatThrownBy(() -> doubleHmacFieldStrategy.hmac(testEntity))
+				.isInstanceOf(NoHmacKeysFoundException.class)
+				.hasMessage("No HMAC CryptoKeys were found");
+	}
+
+	@Test
 	void tooManyHmacKeysFailure() {
 		given(mockHmacHelper.cryptoKeyProvider()).willReturn(mockCryptoKeyProvider);
 		given(mockCryptoKeyProvider.getCurrentHmacKeys()).willReturn(List.of(TEST_CRYPTO_KEY_2, TEST_CRYPTO_KEY, TEST_CRYPTO_KEY));
+		testEntity.setPanHmac1("unchanged");
+		testEntity.setHmacKeyId1("old");
+		testEntity.setHmacKeyId2("old");
 
 		assertThatThrownBy(() -> doubleHmacFieldStrategy.hmac(testEntity))
 				.isInstanceOf(NonTransientCryptoException.class)
-				.hasMessage("More than 2 current HMAC keys were found for entity class 'ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.doublehmacstrategy.TestAnnotatedEntityForDoubleHmacFieldStrategy' and field 'pan'. This strategy only supports up to 2 HMAC keys.");
+				.hasMessageContaining("More than 2 current HMAC keys were found for entity class 'ie.bitstep.mango.crypto.testdata.entities.hmacstrategies.doublehmacstrategy.TestAnnotatedEntityForDoubleHmacFieldStrategy'")
+				.hasMessageContaining("This strategy only supports up to 2 HMAC keys.");
+		assertThat(testEntity.getPanHmac1()).isEqualTo("unchanged");
+		assertThat(testEntity.getHmacKeyId1()).isEqualTo("old");
+		assertThat(testEntity.getHmacKeyId2()).isEqualTo("old");
 	}
 
 	@Test
@@ -368,10 +543,13 @@ class DoubleHmacFieldStrategyTest {
 	}
 
 	@Test
-	void hmacNoHmacFields() {
+	void hmacNoHmacFieldsStillValidatesKeys() {
 		doubleHmacFieldStrategy = new DoubleHmacFieldStrategy(TestAnnotatedEntityDoubleHmacStrategyNoHmacFields.class, mockHmacHelper);
+		given(mockHmacHelper.cryptoKeyProvider()).willReturn(mockCryptoKeyProvider);
+		given(mockCryptoKeyProvider.getCurrentHmacKeys()).willReturn(List.of());
 
-		assertThatNoException().isThrownBy(() -> doubleHmacFieldStrategy.hmac(new TestAnnotatedEntityNoHmacFields()));
+		assertThatThrownBy(() -> doubleHmacFieldStrategy.hmac(new TestAnnotatedEntityNoHmacFields()))
+				.isInstanceOf(NoHmacKeysFoundException.class);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -379,7 +557,8 @@ class DoubleHmacFieldStrategyTest {
 	void setFieldForOlderHmacKeyGeneralExceptionFailure() throws NoSuchFieldException, IllegalAccessException {
 		given(mockCryptoKeyProvider.getCurrentHmacKeys()).willReturn(List.of(TEST_CRYPTO_KEY));
 		given(mockHmacHelper.cryptoKeyProvider()).willReturn(mockCryptoKeyProvider);
-		given(mockHmacHelper.encryptionService()).willReturn(mockEncryptionService);
+		testEntity.setPan(null);
+		testEntity.setUserName(null);
 
 		Field entityHmacKeyIdFieldsField = doubleHmacFieldStrategy.getClass().getDeclaredField("entityHmacKeyIdFields");
 		entityHmacKeyIdFieldsField.setAccessible(true);

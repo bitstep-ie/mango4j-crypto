@@ -28,6 +28,9 @@ each write operation. With the HMAC generated with the old key inserted into the
 generated with the new key inserted into the USERNAME_HMAC_2
 column. If there is only a single key in use then it should insert the same username HMAC twice into both the
 USERNAME_HMAC_1 and USERNAME_HMAC_2 columns so that they match.
+For null or empty source values, both HMAC columns are cleared without calculating an HMAC, while the key ID
+columns are still populated using the selected keys. During rekeying, the second key ID is updated to the target key
+and the first key ID remains unchanged.
 This keeps the entity design simple and for relational DBs it eliminates the need for multiple tables per entity as is
 necessary for the List HMAC strategy. It's important to note
 that all search code must search for the HMAC in both columns at all times though, as it could be in either one. This

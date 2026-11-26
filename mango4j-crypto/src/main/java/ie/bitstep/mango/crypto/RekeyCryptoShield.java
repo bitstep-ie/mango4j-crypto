@@ -6,6 +6,8 @@ import ie.bitstep.mango.crypto.hmac.HmacStrategy;
 import ie.bitstep.mango.crypto.hmac.ListHmacFieldStrategy;
 import ie.bitstep.mango.crypto.hmac.RekeyDoubleHmacFieldStrategy;
 import ie.bitstep.mango.crypto.hmac.RekeyListHmacFieldStrategy;
+import ie.bitstep.mango.crypto.hmac.RekeySingleHmacFieldStrategy;
+import ie.bitstep.mango.crypto.hmac.SingleHmacFieldStrategy;
 
 import java.util.Optional;
 
@@ -47,6 +49,8 @@ public class RekeyCryptoShield {
 						hmacStrategy = Optional.of(rekeyListHmacFieldStrategy);
 					} else if (hmacStrategy.get().getClass().isAssignableFrom(DoubleHmacFieldStrategy.class)) {
 						hmacStrategy = Optional.of(new RekeyDoubleHmacFieldStrategy((DoubleHmacFieldStrategy) hmacStrategy.get(), currentHmacKey));
+					} else if (SingleHmacFieldStrategy.class.isAssignableFrom(hmacStrategy.get().getClass())) {
+						hmacStrategy = Optional.of(new RekeySingleHmacFieldStrategy((SingleHmacFieldStrategy) hmacStrategy.get(), currentHmacKey));
 					}
 				} else {
 					return Optional.empty();
