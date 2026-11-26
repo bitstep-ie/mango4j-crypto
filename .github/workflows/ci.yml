@@ -72,7 +72,7 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
           mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-            -Dsonar.projectKey=bitstep-ie_mango4j \
+            -Dsonar.projectKey=bitstep-ie_mango4j-crypto \
             -Dsonar.organization=bitstep-ie \
             -Dsonar.host.url=${SONAR_HOST_URL} \
             -Dsonar.token=${SONAR_TOKEN} \
@@ -94,7 +94,7 @@ jobs:
         run: |
           mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
             -Dgpg.skip=true \
-            -Dsonar.projectKey=bitstep-ie_mango4j \
+            -Dsonar.projectKey=bitstep-ie_mango4j-crypto \
             -Dsonar.organization=bitstep-ie \
             -Dsonar.host.url=${SONAR_HOST_URL} \
             -Dsonar.token=${SONAR_TOKEN} \
