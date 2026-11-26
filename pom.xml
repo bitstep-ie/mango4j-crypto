@@ -52,7 +52,7 @@
 
         <!--    Plugin versions    -->
         <maven.deploy.plugin.version>3.1.4</maven.deploy.plugin.version>
-        <maven.help.plugin>3.5.1</maven.help.plugin>
+        <maven.help.plugin>3.6.0</maven.help.plugin>
         <maven.compiler.plugin>3.15.0</maven.compiler.plugin>
         <maven.surefire.plugin.version>3.5.5</maven.surefire.plugin.version>
         <maven.javadoc.plugin.version>3.12.0</maven.javadoc.plugin.version>
@@ -64,10 +64,10 @@
         <!--    Dependencies versions    -->
         <mango4j.version>1.0.0</mango4j.version>
         <junit-jupiter.version>6.1.2</junit-jupiter.version>
-        <junit-mockito.version>5.21.0</junit-mockito.version>
+        <junit-mockito.version>5.24.0</junit-mockito.version>
         <mockito-core.version>5.23.0</mockito-core.version>
         <assertj.version>3.27.7</assertj.version>
-        <jackson.version>2.22.1</jackson.version>
+        <jackson.version>3.3.0</jackson.version>
         <commons-collections.version>4.5.0</commons-collections.version>
         <slf4j-api.version>2.0.18</slf4j-api.version>
     </properties>
@@ -88,7 +88,7 @@
             <plugin>
                 <groupId>org.sonatype.central</groupId>
                 <artifactId>central-publishing-maven-plugin</artifactId>
-                <version>0.9.0</version>
+                <version>0.12.0</version>
                 <extensions>true</extensions>
                 <configuration>
                     <publishingServerId>central</publishingServerId>
@@ -211,7 +211,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.14</version>
+                <version>0.8.16</version>
                 <executions>
                     <execution>
                         <goals>
@@ -262,7 +262,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
+            <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
         </dependency>

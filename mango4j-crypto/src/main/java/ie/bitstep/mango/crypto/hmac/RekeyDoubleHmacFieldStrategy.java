@@ -33,6 +33,11 @@ public class RekeyDoubleHmacFieldStrategy implements HmacStrategy {
 			public void setFieldForOlderHmacKey(Object entity, List<HmacHolder> hmacHolders, List<Field> targetHmacFields) {
 				// Do not process the field for the old HMAC key during a rekey
 			}
+
+			@Override
+			public void setOlderHmacKeyId(Object entity, List<CryptoKey> sortedCryptoKeys) {
+				// Do not change the old key ID during a rekey
+			}
 		};
 	}
 

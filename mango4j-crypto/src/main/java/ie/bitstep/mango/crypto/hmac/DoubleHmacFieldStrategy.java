@@ -5,6 +5,7 @@ import ie.bitstep.mango.crypto.annotations.Hmac;
 import ie.bitstep.mango.crypto.annotations.HmacKeyId;
 import ie.bitstep.mango.crypto.core.domain.CryptoKey;
 import ie.bitstep.mango.crypto.core.domain.HmacHolder;
+import ie.bitstep.mango.crypto.core.exceptions.NoHmacKeysFoundException;
 import ie.bitstep.mango.crypto.core.exceptions.NonTransientCryptoException;
 import ie.bitstep.mango.crypto.core.exceptions.TransientCryptoException;
 import ie.bitstep.mango.crypto.utils.ReflectionUtils;
@@ -81,12 +82,20 @@ public class DoubleHmacFieldStrategy implements HmacStrategy {
 					if (hmacHolders.size() == 1) {
 						// if there's only 1 HMAC key then just put the same HMAC value into the 1st field too
 						targetHmacFields.get(0).set(entity, hmacHolders.get(0).getValue()); // NOSONAR - mango4j-crypto revolves around reflection
-						entityHmacKeyIdFields.get(0).set(entity, hmacHolders.get(0).getCryptoKey().getId()); // NOSONAR - mango4j-crypto revolves around reflection
 					} else {
 						// if there's 2 HMAC keys then put the 2nd HMAC value (the one with the old key) into the 1st field
 						targetHmacFields.get(0).set(entity, hmacHolders.get(1).getValue()); // NOSONAR - mango4j-crypto revolves around reflection
-						entityHmacKeyIdFields.get(0).set(entity, hmacHolders.get(1).getCryptoKey().getId()); // NOSONAR - mango4j-crypto revolves around reflection
 					}
+				} catch (Exception e) {
+					throw new NonTransientCryptoException(String.format("An error occurred trying to set the HMAC field on entity %s: %s", entity.getClass().getSimpleName(), e.getClass().getSimpleName()), e);
+				}
+			}
+
+			@Override
+			public void setOlderHmacKeyId(Object entity, List<CryptoKey> sortedCryptoKeys) {
+				try {
+					CryptoKey olderKey = sortedCryptoKeys.get(sortedCryptoKeys.size() - 1);
+					entityHmacKeyIdFields.get(0).set(entity, olderKey.getId()); // NOSONAR
 				} catch (Exception e) {
 					throw new NonTransientCryptoException(String.format("An error occurred trying to set the HMAC field on entity %s: %s", entity.getClass().getSimpleName(), e.getClass().getSimpleName()), e);
 				}
@@ -155,38 +164,39 @@ public class DoubleHmacFieldStrategy implements HmacStrategy {
 	 * @param entity the entity to process
 	 */
 	void hmac(Object entity, DoubleHmacFieldStrategyDelegate doubleHmacFieldStrategyDelegate) {
-		for (Map.Entry<Field, List<Field>> entry : entityHmacFields.entrySet()) {
-			Field sourceField = entry.getKey();
-			List<Field> targetHmacFields = entry.getValue();
-			String fieldValue = getFieldStringValue(entity, sourceField);
-			try {
-				if (fieldValue == null) {
-					// Don't bother trying to HMAC null values
-					for (Field targetHmacField : targetHmacFields) {
-						targetHmacField.set(entity, null); // NOSONAR
-					}
-					continue;
-				}
-				List<CryptoKey> sortedCryptoKeys = HmacUtils.hmacKeysInCreationDateDescendingOrder(doubleHmacFieldStrategyDelegate.getCurrentHmacKeys());
-				if (sortedCryptoKeys.size() > 2) {
-					throw new NonTransientCryptoException(format("More than 2 current HMAC keys were found for entity " +
-									"class '%s' and field '%s'. This strategy only supports up to 2 HMAC keys.",
-							entity.getClass().getName(), sourceField.getName()));
-				}
-
+		try {
+			List<CryptoKey> sortedCryptoKeys = HmacUtils.hmacKeysInCreationDateDescendingOrder(doubleHmacFieldStrategyDelegate.getCurrentHmacKeys());
+			if (sortedCryptoKeys.isEmpty()) {
+				throw new NoHmacKeysFoundException();
+			}
+			if (sortedCryptoKeys.size() > 2) {
+				throw new NonTransientCryptoException(format("More than 2 current HMAC keys were found for entity " +
+						"class '%s'. This strategy only supports up to 2 HMAC keys.", entity.getClass().getName()));
+			}
+			for (Map.Entry<Field, List<Field>> entry : entityHmacFields.entrySet()) {
+				Field sourceField = entry.getKey();
+				List<Field> targetHmacFields = entry.getValue();
+				String fieldValue = getFieldStringValue(entity, sourceField);
 				List<HmacHolder> hmacHolders = sortedCryptoKeys.stream()
 						.map(cryptoKey -> new HmacHolder(cryptoKey, fieldValue, sourceField.getName()))
 						.toList();
-				hmacStrategyHelper.encryptionService().hmac(hmacHolders);
+				if (fieldValue == null) {
+					for (Field targetHmacField : targetHmacFields) {
+						targetHmacField.set(entity, null); // NOSONAR
+					}
+				} else {
+					hmacStrategyHelper.encryptionService().hmac(hmacHolders);
+				}
 				// Put the 1st HMAC value (the one with the most recent key) into the 2nd field
 				targetHmacFields.get(1).set(entity, hmacHolders.get(0).getValue()); // NOSONAR - mango4j-crypto revolves around reflection
-				entityHmacKeyIdFields.get(1).set(entity, hmacHolders.get(0).getCryptoKey().getId()); // NOSONAR - mango4j-crypto revolves around reflection
 				doubleHmacFieldStrategyDelegate.setFieldForOlderHmacKey(entity, hmacHolders, targetHmacFields);
-			} catch (TransientCryptoException | NonTransientCryptoException e) {
-				throw e;
-			} catch (Exception e) {
-				throw new NonTransientCryptoException(String.format("An error occurred trying to set the HMAC fields:%s", e.getClass()), e);
 			}
+			entityHmacKeyIdFields.get(1).set(entity, sortedCryptoKeys.get(0).getId()); // NOSONAR
+			doubleHmacFieldStrategyDelegate.setOlderHmacKeyId(entity, sortedCryptoKeys);
+		} catch (TransientCryptoException | NonTransientCryptoException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new NonTransientCryptoException(String.format("An error occurred trying to set the HMAC fields:%s", e.getClass()), e);
 		}
 	}
 }

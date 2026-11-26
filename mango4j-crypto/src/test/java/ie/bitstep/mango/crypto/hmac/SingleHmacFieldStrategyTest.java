@@ -202,6 +202,24 @@ class SingleHmacFieldStrategyTest {
 	}
 
 	@Test
+	void hmacAllEmptyValuesUpdatesKeyMarker() {
+		given(mockHmacHelper.cryptoKeyProvider()).willReturn(mockCryptoKeyProvider);
+		given(mockCryptoKeyProvider.getCurrentHmacKeys()).willReturn(List.of(testCryptoKey));
+		testEntity.setPan(null);
+		testEntity.setUserName("");
+		testEntity.setPanHmac("stale-pan");
+		testEntity.setUserNameHmac("stale-name");
+		testEntity.setHmacKeyId("old");
+
+		singleHmacFieldStrategy.hmac(testEntity);
+
+		assertThat(testEntity.getPanHmac()).isNull();
+		assertThat(testEntity.getUserNameHmac()).isNull();
+		assertThat(testEntity.getHmacKeyId()).isEqualTo(testCryptoKey.getId());
+		then(mockEncryptionService).shouldHaveNoInteractions();
+	}
+
+	@Test
 	void hmacUnsupportedKeyTypeFailure() {
 		given(mockHmacHelper.cryptoKeyProvider()).willReturn(mockCryptoKeyProvider);
 		given(mockCryptoKeyProvider.getCurrentHmacKeys()).willReturn(List.of(testCryptoKey));
