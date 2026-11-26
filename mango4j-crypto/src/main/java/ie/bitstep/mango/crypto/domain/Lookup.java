@@ -24,10 +24,7 @@ public interface Lookup {
 	void setLookups(Collection<CryptoShieldHmacHolder> hmacHolders);
 
 	/**
-	 * This method is used by the library to avoid throwing away old HMACs (which could cause problems) during HMAC
-	 * calculation. It's also used by the rekey job to avoid re-calculating HMACs for keys which already have HMACs
-	 * calculated in the existing entity (because for rekey we know no source values have been changed so re-calculating
-	 * the same HMACs is redundant).
+	 * Returns the lookup holders currently stored on the entity.
 	 *
 	 * @return Collection containing all the current {@link CryptoShieldHmacHolder HMACs} for the entity.
 	 */

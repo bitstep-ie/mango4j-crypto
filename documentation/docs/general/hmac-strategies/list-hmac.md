@@ -9,6 +9,12 @@ The List HMAC strategy has just 2 fairly elegant concepts:
    document.
 2. For all write operations write the entire list of generated HMACs into your DB.
 
+For normal writes, the generated lookup and unique-value lists replace the existing lists completely. A holder is
+generated for each applicable source and each current HMAC key. Null or empty lookup and mandatory standalone unique
+values produce null-valued holders without calculating an HMAC. An optional standalone unique value that is null or
+empty is omitted from the unique-value list; if the same field is also a lookup, its null lookup holder remains.
+Likewise, a compound unique group is omitted when an optional group member is null or empty.
+
 Part 2 is the tricky bit because when you use an SQL DB, it forces you into a particular entity design. If you take our
 previous examples where we HMAC the username. This would
 mean that we would have a table for the actual record (maybe a USER_PROFILE table) with the encrypted ciphertext and
@@ -66,19 +72,19 @@ table.
    b. Any record which has HMACs calculated with some old HMAC key (that you're trying to remove from the system), but
    does not have HMACs calculated with the new HMAC key -
    **common for passive key rotation**
-5. For each record found, decrypt the record, calculate the HMAC(s) with the new key, insert the HMAC(s) into the
-   lookup/unique constraint tables (or **_add_** them to the lists if
-   using a document DB and save the record). Existing HMACs should remain as they are, untouched.
+5. For each record found, decrypt the record and rekey to the target HMAC key. The resulting lookup and unique lists
+   contain only freshly calculated holders for that key, including tokenized representations. Existing holders are
+   discarded even if they already use the target key.
 6. Wait for all applicable records to be re-keyed
 7. Remove the old HMAC key from the tenant's list of HMAC keys
 8. Wait until the HMAC key cache expiry time has passed (if applicable), so that all application instances are no longer
    using the old HMAC key.
-9. For every record, remove all HMACs from the lookup/unique constraint tables (or document HMAC entries) that were
-   calculated with the old HMAC key. Leaving them there won't
-   affect functionality so this cleanup step is optional from a functionality perspective, but leaving old HMACs in your
-   system is a potential security hazard so applications
-   should perform this step at least for long-lived data.
+9. Clean up any remaining records or HMAC entries calculated with the old key.
 10. You can now delete the old HMAC key from wherever it was stored.
+
+**Important:** Rekeying a record removes its old-key holders immediately. Before rekeying, ensure every application
+instance that searches or enforces uniqueness can use the target key; an instance that only knows an old key may no
+longer find or enforce uniqueness against a rekeyed record.
 
 **Pros of the list HMAC strategy:**
 
