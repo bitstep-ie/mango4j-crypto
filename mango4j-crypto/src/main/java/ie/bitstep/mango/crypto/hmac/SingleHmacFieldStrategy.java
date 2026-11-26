@@ -108,8 +108,12 @@ public class SingleHmacFieldStrategy implements HmacStrategy {
 	 */
 	@Override
 	public void hmac(Object entity) {
+		hmac(entity, this::getHmacKeyToUse);
+	}
+
+	void hmac(Object entity, SingleHmacFieldStrategyDelegate delegate) {
 		try {
-			CryptoKey hmacKeyToUse = getHmacKeyToUse();
+			CryptoKey hmacKeyToUse = delegate.getHmacKeyToUse();
 			for (Map.Entry<Field, Field> entry : entityHmacFields.entrySet()) {
 				Field sourceField = entry.getKey();
 				Field targetHmacField = entry.getValue();
@@ -122,8 +126,8 @@ public class SingleHmacFieldStrategy implements HmacStrategy {
 				List<HmacHolder> hmacHolders = List.of(new HmacHolder(hmacKeyToUse, fieldValue, sourceField.getName()));
 				hmacStrategyHelper.encryptionService().hmac(hmacHolders);
 				targetHmacField.set(entity, hmacHolders.get(0).getValue()); // NOSONAR
-				setHmacKeyId(entity, hmacKeyToUse);
 			}
+			setHmacKeyId(entity, hmacKeyToUse);
 		} catch (TransientCryptoException | UnsupportedKeyTypeException |
 				 CryptoKeyNotFoundException | ActiveHmacKeyNotFoundException | NoHmacKeysFoundException e) {
 			throw e;
