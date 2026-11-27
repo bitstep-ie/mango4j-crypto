@@ -110,6 +110,26 @@ class RekeyCryptoShieldTest {
 	}
 
 	@Test
+	void constructorListHmacSubclass() {
+		ListHmacFieldStrategy strategy = mock(CustomListHmacFieldStrategy.class);
+		given(mockAnnotatedEntityManager.getHmacStrategy(testEntity.getClass())).willReturn(Optional.of(strategy));
+		given(mockCryptoShield.getAnnotatedEntityManager()).willReturn(mockAnnotatedEntityManager);
+
+		assertThat(getRekeyCryptoShieldDelegate().getHmacStrategy(testEntity))
+				.hasValueSatisfying(wrapped -> assertThat(wrapped).isInstanceOf(RekeyListHmacFieldStrategy.class));
+	}
+
+	@Test
+	void constructorDoubleHmacSubclass() {
+		DoubleHmacFieldStrategy strategy = mock(CustomDoubleHmacFieldStrategy.class);
+		given(mockAnnotatedEntityManager.getHmacStrategy(testEntity.getClass())).willReturn(Optional.of(strategy));
+		given(mockCryptoShield.getAnnotatedEntityManager()).willReturn(mockAnnotatedEntityManager);
+
+		assertThat(getRekeyCryptoShieldDelegate().getHmacStrategy(testEntity))
+				.hasValueSatisfying(wrapped -> assertThat(wrapped).isInstanceOf(RekeyDoubleHmacFieldStrategy.class));
+	}
+
+	@Test
 	void constructorSingleHmacStrategy() {
 		given(mockAnnotatedEntityManager.getHmacStrategy(testEntity.getClass())).willReturn(Optional.of(mockSingleHmacFieldStrategy));
 		given(mockCryptoShield.getAnnotatedEntityManager()).willReturn(mockAnnotatedEntityManager);
@@ -233,6 +253,18 @@ class RekeyCryptoShieldTest {
 
 	private static class CustomSingleHmacFieldStrategy extends SingleHmacFieldStrategy {
 		CustomSingleHmacFieldStrategy(Class<?> entityClass, HmacStrategyHelper helper) {
+			super(entityClass, helper);
+		}
+	}
+
+	private static class CustomListHmacFieldStrategy extends ListHmacFieldStrategy {
+		CustomListHmacFieldStrategy(Class<?> entityClass, HmacStrategyHelper helper) {
+			super(entityClass, helper);
+		}
+	}
+
+	private static class CustomDoubleHmacFieldStrategy extends DoubleHmacFieldStrategy {
+		CustomDoubleHmacFieldStrategy(Class<?> entityClass, HmacStrategyHelper helper) {
 			super(entityClass, helper);
 		}
 	}
