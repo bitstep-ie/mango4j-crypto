@@ -160,8 +160,13 @@ public class DoubleHmacFieldStrategy implements HmacStrategy {
 
 	/**
 	 * Calculates HMAC values for all configured fields and sets the corresponding HMAC targets.
+	 * Holders for non-null sources are calculated together; null-valued holders are excluded from that batch.
+	 * When writing the results, a null source clears both target fields, including during rekey.
+	 * For a non-null source, the newer target is updated and the delegate decides whether to update the older
+	 * target; the rekey delegate leaves it unchanged.
 	 *
 	 * @param entity the entity to process
+	 * @param doubleHmacFieldStrategyDelegate supplies keys and controls updates to the older HMAC and key ID
 	 */
 	void hmac(Object entity, DoubleHmacFieldStrategyDelegate doubleHmacFieldStrategyDelegate) {
 		try {
@@ -173,23 +178,37 @@ public class DoubleHmacFieldStrategy implements HmacStrategy {
 				throw new NonTransientCryptoException(format("More than 2 current HMAC keys were found for entity " +
 						"class '%s'. This strategy only supports up to 2 HMAC keys.", entity.getClass().getName()));
 			}
+			// Keep each field's targets and key-ordered holders together for assignment after the batch calculation.
+			List<PerFieldHmacHolder> perFieldHmacHolders = new ArrayList<>();
 			for (Map.Entry<Field, List<Field>> entry : entityHmacFields.entrySet()) {
 				Field sourceField = entry.getKey();
-				List<Field> targetHmacFields = entry.getValue();
 				String fieldValue = getFieldStringValue(entity, sourceField);
 				List<HmacHolder> hmacHolders = sortedCryptoKeys.stream()
 						.map(cryptoKey -> new HmacHolder(cryptoKey, fieldValue, sourceField.getName()))
 						.toList();
-				if (fieldValue == null) {
+				perFieldHmacHolders.add(new PerFieldHmacHolder(entry.getValue(), hmacHolders, fieldValue == null));
+			}
+			// This list shares holders with perFieldHmacHolders; the service updates their values in place.
+			List<HmacHolder> holdersToCalculate = perFieldHmacHolders.stream()
+					.flatMap(field -> field.holders().stream())
+					.filter(holder -> holder.getValue() != null)
+					.toList();
+			if (!holdersToCalculate.isEmpty()) {
+				hmacStrategyHelper.encryptionService().hmac(holdersToCalculate);
+			}
+			for (PerFieldHmacHolder perFieldHmacHolder : perFieldHmacHolders) {
+				List<Field> targetHmacFields = perFieldHmacHolder.targetFields();
+				List<HmacHolder> hmacHolders = perFieldHmacHolder.holders();
+				if (perFieldHmacHolder.nullSource()) {
+					// Clear both slots, including the older slot normally left untouched by rekey.
 					for (Field targetHmacField : targetHmacFields) {
-						targetHmacField.set(entity, null); // NOSONAR
+						targetHmacField.set(entity, hmacHolders.get(0).getValue()); // NOSONAR
 					}
 				} else {
-					hmacStrategyHelper.encryptionService().hmac(hmacHolders);
+					// Put the HMAC with the most recent key into the second field.
+					targetHmacFields.get(1).set(entity, hmacHolders.get(0).getValue()); // NOSONAR - mango4j-crypto revolves around reflection
+					doubleHmacFieldStrategyDelegate.setFieldForOlderHmacKey(entity, hmacHolders, targetHmacFields);
 				}
-				// Put the 1st HMAC value (the one with the most recent key) into the 2nd field
-				targetHmacFields.get(1).set(entity, hmacHolders.get(0).getValue()); // NOSONAR - mango4j-crypto revolves around reflection
-				doubleHmacFieldStrategyDelegate.setFieldForOlderHmacKey(entity, hmacHolders, targetHmacFields);
 			}
 			entityHmacKeyIdFields.get(1).set(entity, sortedCryptoKeys.get(0).getId()); // NOSONAR
 			doubleHmacFieldStrategyDelegate.setOlderHmacKeyId(entity, sortedCryptoKeys);
@@ -198,5 +217,16 @@ public class DoubleHmacFieldStrategy implements HmacStrategy {
 		} catch (Exception e) {
 			throw new NonTransientCryptoException(String.format("An error occurred trying to set the HMAC fields:%s", e.getClass()), e);
 		}
+	}
+
+	/**
+	 * Associates a field's targets with its key-ordered holders and preserves the original source state.
+	 * The null-source flag cannot be inferred reliably after calculation because the service mutates holder values.
+	 *
+	 * @param targetFields HMAC target fields, ordered from older to newer key
+	 * @param holders holders ordered from newer to older key
+	 * @param nullSource whether the source value was null before calculation
+	 */
+	private record PerFieldHmacHolder(List<Field> targetFields, List<HmacHolder> holders, boolean nullSource) {
 	}
 }
